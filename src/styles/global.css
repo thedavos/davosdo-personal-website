@@ -12,25 +12,15 @@
 	--color-tertiary: #b95f00;
 	--color-neutral: #f8fafc;
 
-	/* RGB tokens for existing usage */
-	--black: 15, 23, 42;
-	--gray: 71, 85, 105;
-	--gray-light: 241, 245, 249;
-	--gray-dark: 30, 41, 59;
-
-	/* Backwards-compatible aliases */
-	--accent: var(--color-primary);
-	--accent-dark: var(--color-primary-dark);
-
 	/* Surface and text */
 	--color-background: var(--color-neutral);
 	--color-surface: #ffffff;
-	--color-text: rgb(var(--gray-dark));
-	--color-text-muted: rgb(var(--gray));
-	--color-border: rgb(var(--gray-light));
+	--color-text: #1e293b;
+	--color-text-muted: #475569;
+	--color-border: #f1f5f9;
 
 	/* Decorative */
-	--gray-gradient: rgba(248, 250, 252, 0.95), #ffffff;
+	--color-background-gradient: rgba(248, 250, 252, 0.95), #ffffff;
 	--box-shadow:
 		0 2px 8px rgba(71, 85, 105, 0.10),
 		0 12px 28px rgba(71, 85, 105, 0.14);
@@ -58,7 +48,7 @@ body {
 	padding: 0;
 	text-align: left;
 	background-color: var(--color-background);
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
+	background: linear-gradient(var(--color-background-gradient)) no-repeat;
 	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
