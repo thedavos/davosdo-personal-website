@@ -20,6 +20,9 @@
 		"typescript": "5.9.3"
 	},
 	"devDependencies": {
+		"@iconify-json/lucide": "^1.2.102",
+		"@unocss/astro": "^66.6.8",
+		"unocss": "^66.6.8",
 		"wrangler": "4.75.0"
 	},
 	"engines": {
