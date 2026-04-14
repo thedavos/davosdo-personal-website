@@ -1,24 +1,40 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
+import type { HTMLAttributes } from "astro/types";
 
-type Props = HTMLAttributes<'a'>;
+type Props = HTMLAttributes<"a">;
 
 const { href, class: className, ...props } = Astro.props;
-const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
+const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 const subpath = pathname.match(/[^\/]+/g);
-const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+const isActive = href === pathname || href === "/" + (subpath?.[0] || "");
 ---
 
-<a href={href} class:list={[className, { active: isActive }]} {...props}>
+<a
+	href={href}
+	aria-current={isActive ? "page" : undefined}
+	class:list={["header-link", className, isActive && "header-link--active"]}
+	{...props}
+>
 	<slot />
 </a>
+
 <style>
-	a {
-		display: inline-block;
-		text-decoration: none;
+	.header-link {
+		@apply inline-block relative no-underline transition-colors text-body hover:text-primary;
+		letter-spacing: -0.35px;
+		line-height: 20px;
 	}
-	a.active {
-		font-weight: bolder;
-		text-decoration: underline;
+
+	.header-link--active {
+		@apply text-primary border-b-primary font-semibold;
+	}
+
+	.header-link--active::after {
+		@apply bg-primary absolute;
+		content: "";
+		height: 3px;
+		bottom: 10px;
+		left: 10%;
+		right: 10%;
 	}
 </style>
