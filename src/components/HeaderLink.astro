@@ -6,13 +6,14 @@ type Props = HTMLAttributes<"a">;
 const { href, class: className, ...props } = Astro.props;
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 const subpath = pathname.match(/[^\/]+/g);
-const isActive = href === pathname || href === "/" + (subpath?.[0] || "");
+const isPageActive =
+	typeof href === "string" && (href === pathname || href === "/" + (subpath?.[0] || ""));
 ---
 
 <a
 	href={href}
-	aria-current={isActive ? "page" : undefined}
-	class:list={["header-link", className, isActive && "header-link--active"]}
+	aria-current={isPageActive ? "page" : undefined}
+	class:list={["header-link", className, isPageActive && "header-link--active"]}
 	{...props}
 >
 	<slot />
@@ -20,9 +21,8 @@ const isActive = href === pathname || href === "/" + (subpath?.[0] || "");
 
 <style>
 	.header-link {
-		@apply inline-block relative no-underline transition-colors text-body hover:text-primary;
+		@apply inline-block relative no-underline transition-colors text-body hover:text-primary text-sm;
 		letter-spacing: -0.35px;
-		line-height: 20px;
 	}
 
 	.header-link--active {

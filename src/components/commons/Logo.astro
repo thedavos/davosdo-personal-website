@@ -1,0 +1,27 @@
+---
+interface Props {
+	siteTitle: string;
+}
+
+const { siteTitle } = Astro.props;
+---
+
+<h2 class="site-logo">
+	<a href="/" class="text-logo py-4">{siteTitle}</a>
+</h2>
+
+<style>
+	.site-logo {
+		@apply m-0 text-xl font-bold relative;
+	}
+
+	.site-logo::after {
+		@apply bg-primary rounded-full absolute;
+		content: "";
+		width: 6px;
+		height: 6px;
+		top: 50%;
+		right: -10px;
+		transform: translateY(-50%);
+	}
+</style>

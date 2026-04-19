@@ -13,6 +13,9 @@ export default defineConfig({
 	transformers: [
 		transformerDirectives(),
 	],
+	rules: [
+		["object-cover", { "object-fit": "cover" }],
+	],
 	theme: {
 		colors: {
 			primary: "#6366F1",
@@ -22,21 +25,24 @@ export default defineConfig({
 			neutral: "#F8FAFC",
 			background: "#F8FAFC",
 			surface: "#FFFFFF",
+			panel: "#E6E8EA",
 			body: "#1E293B",
 			muted: "#475569",
 			border: "#F1F5F9",
+			outline: "#C7C4D7",
 		},
 		fontFamily: {
 			sans: "Atkinson, sans-serif",
 		},
 		boxShadow: {
-			soft: "0 2px 8px rgba(71, 85, 105, 0.10), 0 12px 28px rgba(71, 85, 105, 0.14)",
+			sm: "0px 1px 2px 0px rgba(0, 0, 0, 0.05)",
+			md: "0 2px 8px rgba(71, 85, 105, 0.10), 0 12px 28px rgba(71, 85, 105, 0.14)",
 		},
 	},
 	shortcuts: {
 		"page-container": "w-[720px] max-w-[calc(100%-2em)] mx-auto px-4 py-12",
 		"page-container-wide": "w-[960px] max-w-[calc(100%-2em)] mx-auto px-4 py-12",
-		"surface-card": "rounded-xl bg-surface shadow-soft",
+		"surface-card": "rounded-xl bg-surface shadow-md",
 		"meta-text": "text-muted",
 		"content-prose": "text-body leading-[1.7]",
 		"section-title": "mb-2 text-body leading-tight",
