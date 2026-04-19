@@ -1,0 +1,201 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type ButtonElement = "button" | "a";
+type ButtonVariant =
+	| "primary"
+	| "secondary"
+	| "outline"
+	| "ghost"
+	| "link"
+	| "destructive";
+type ButtonSize = "sm" | "md" | "lg" | "icon";
+
+type BaseProps = {
+	as?: ButtonElement;
+	href?: string;
+	variant?: ButtonVariant;
+	size?: ButtonSize;
+	fullWidth?: boolean;
+	loading?: boolean;
+	disabled?: boolean;
+	leftIcon?: string;
+	rightIcon?: string;
+	type?: "button" | "submit" | "reset";
+};
+
+type Props = BaseProps & (HTMLAttributes<"button"> | HTMLAttributes<"a">);
+
+const {
+	as,
+	href,
+	variant = "primary",
+	size = "md",
+	fullWidth = false,
+	loading = false,
+	disabled = false,
+	leftIcon,
+	rightIcon,
+	class: className,
+	type,
+	...props
+} = Astro.props;
+
+const Component = as ?? (href ? "a" : "button");
+const isDisabled = disabled || loading;
+
+const baseClass =
+	"button inline-flex items-center justify-center gap-2 rounded-xl border text-sm font-semibold no-underline transition-[transform,background-color,border-color,color,box-shadow] duration-200 ease-out select-none whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-3 focus-visible:ring-offset-background active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer";
+
+const variantClasses: Record<ButtonVariant, string> = {
+	primary:
+		"border-primary bg-primary text-white shadow-sm hover:border-primary-dark hover:bg-primary-dark",
+	secondary:
+		"border-slate-200 bg-slate-100 text-body hover:border-slate-300 hover:bg-slate-200",
+	outline:
+		"border-border bg-surface text-body hover:border-primary/25 hover:bg-slate-50 hover:text-primary",
+	ghost:
+		"border-transparent bg-transparent text-body hover:bg-slate-100 hover:text-primary",
+	link: "border-transparent bg-transparent px-0 py-0 text-primary rounded-none hover:text-primary-dark hover:underline shadow-none",
+	destructive:
+		"border-red-600 bg-red-600 text-white hover:border-red-700 hover:bg-red-700",
+};
+
+const sizeClasses: Record<ButtonSize, string> = {
+	sm: "min-h-9 px-3.5 py-2 text-sm",
+	md: "min-h-11 px-5 py-2.5 text-sm",
+	lg: "min-h-12 px-6 py-3 text-base",
+	icon: "h-11 w-11 p-0",
+};
+
+const iconSizeClasses: Record<ButtonSize, string> = {
+	sm: "text-base",
+	md: "text-lg",
+	lg: "text-xl",
+	icon: "text-lg",
+};
+
+const classes = [
+	baseClass,
+	variantClasses[variant],
+	sizeClasses[size],
+	fullWidth && "w-full",
+	isDisabled && "pointer-events-none",
+	className,
+]
+	.filter(Boolean)
+	.join(" ");
+
+const sharedProps = {
+	class: classes,
+	"data-variant": variant,
+	"data-size": size,
+	"aria-busy": loading || undefined,
+};
+---
+
+{
+	Component === "a" ? (
+		<a
+			href={isDisabled ? undefined : href}
+			aria-disabled={isDisabled || undefined}
+			tabindex={isDisabled ? -1 : undefined}
+			{...sharedProps}
+			{...props}
+		>
+			{loading && <span class="button__spinner" aria-hidden="true" />}
+			{leftIcon && !loading && (
+				<span
+					class:list={["button__icon", iconSizeClasses[size], leftIcon]}
+					aria-hidden="true"
+				/>
+			)}
+			<span class:list={["button__label", loading && "opacity-80"]}>
+				<slot />
+			</span>
+			{rightIcon && !loading && (
+				<span
+					class:list={["button__icon", iconSizeClasses[size], rightIcon]}
+					aria-hidden="true"
+				/>
+			)}
+		</a>
+	) : (
+		<button
+			type={type ?? "button"}
+			disabled={isDisabled}
+			{...sharedProps}
+			{...props}
+		>
+			{loading && <span class="button__spinner" aria-hidden="true" />}
+			{leftIcon && !loading && (
+				<span
+					class:list={["button__icon", iconSizeClasses[size], leftIcon]}
+					aria-hidden="true"
+				/>
+			)}
+			<span class:list={["button__label", loading && "opacity-80"]}>
+				<slot />
+			</span>
+			{rightIcon && !loading && (
+				<span
+					class:list={["button__icon", iconSizeClasses[size], rightIcon]}
+					aria-hidden="true"
+				/>
+			)}
+		</button>
+	)
+}
+
+<style>
+	.button {
+		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+	}
+
+	.button[data-variant="ghost"],
+	.button[data-variant="link"] {
+		box-shadow: none;
+	}
+
+	.button[data-size="icon"] {
+		gap: 0;
+	}
+
+	.button__label {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.button__icon {
+		display: inline-flex;
+		flex-shrink: 0;
+	}
+
+	.button__spinner {
+		display: inline-block;
+		width: 1em;
+		height: 1em;
+		flex-shrink: 0;
+		border: 2px solid currentColor;
+		border-right-color: transparent;
+		border-radius: 999px;
+		animation: button-spin 0.7s linear infinite;
+	}
+
+	@keyframes button-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.button {
+			transition: none;
+		}
+
+		.button__spinner {
+			animation-duration: 1.4s;
+		}
+	}
+</style>

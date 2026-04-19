@@ -1,0 +1,84 @@
+---
+import Button from "@components/commons/Button.astro";
+import BskyIcon from "@components/icons/BskyIcon.astro";
+import HackTheBoxIcon from "@components/icons/HackTheBoxIcon.astro";
+import XIcon from "@components/icons/XIcon.astro";
+
+type SocialLink = {
+	label: string;
+	href: string;
+	icon?: string;
+	iconComponent?: typeof XIcon | typeof HackTheBoxIcon | typeof BskyIcon;
+	external: boolean;
+};
+
+interface Props {
+	class?: string;
+	links?: SocialLink[];
+}
+
+const defaultLinks: SocialLink[] = [
+	{
+		label: "GitHub",
+		href: "https://github.com/thedavos",
+		icon: "i-lucide-github",
+		external: true,
+	},
+	{
+		label: "LinkedIn",
+		href: "https://www.linkedin.com/in/david-vargas-dominguez/",
+		icon: "i-lucide-linkedin",
+		external: true,
+	},
+	{
+		label: "X",
+		href: "https://x.com/davosdodev",
+		iconComponent: XIcon,
+		external: true,
+	},
+	{
+		label: "Bluesky",
+		href: "https://bsky.app/profile/thedavos.bsky.social",
+		iconComponent: BskyIcon,
+		external: true,
+	},
+	{
+		label: "Hack The Box",
+		href: "https://app.hackthebox.com/",
+		iconComponent: HackTheBoxIcon,
+		external: true,
+	},
+	{
+		label: "Email",
+		href: "mailto:hola@davosdo.dev",
+		icon: "i-lucide-mail",
+		external: false,
+	},
+];
+
+const { class: className, links = defaultLinks } = Astro.props;
+---
+
+<div class:list={["social-links", className]}>
+	{
+		links.map((social) => {
+			const Icon = social.iconComponent;
+
+			return (
+				<Button
+					as="a"
+					href={social.href}
+					variant="ghost"
+					size="icon"
+					aria-label={social.label}
+					title={social.label}
+					target={social.external ? "_blank" : undefined}
+					rel={social.external ? "noreferrer" : undefined}
+					leftIcon={social.icon}
+				>
+					{Icon && <Icon />}
+				</Button>
+			);
+		})
+	}
+</div>
