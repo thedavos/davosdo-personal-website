@@ -10,17 +10,91 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "@/consts";
 	description={SITE_DESCRIPTION}
 	centerContent={true}
 >
-	<h1>Hola, soy David Vargas Domínguez</h1>
-	<h2>Software Engineer</h2>
-	<p>
-		Construyo productos web y móviles escalables con foco en frontend,
-		rendimiento y experiencia de usuario.
+	<p class="hero__eyebrow">Hola, soy</p>
+	<h1 class="hero__name">David Vargas Domínguez</h1>
+	<h2 class="hero__claim">
+		Full Stack Developer primero. Web Pentester también
+	</h2>
+	<p class="hero__body">
+		Trabajo como Full Stack Developer y también realizo pentesting web. Eso me
+		permite no solo desarrollar soluciones funcionales, sino también anticipar
+		fallos, reducir riesgos y cuidar la calidad técnica desde el inicio.
 	</p>
 
-	<div>
-		<Button rightIcon="i-lucide-arrow-right">Ver proyectos</Button>
+	<div class="hero__actions">
+		<Button rightIcon="i-lucide-arrow-right">Ver qué construí</Button>
 		<Button variant="ghost">Hablemos</Button>
 	</div>
 
-	<SocialLinks class="mt-4 flex flex-wrap gap-3" />
+	<SocialLinks
+		class="flex flex-wrap gap-x-2 gap-y-3 max-w-full md:gap-x-2.5 md:gap-y-3.5 md:max-w-[62ch]"
+	/>
 </PageLayout>
+
+<style>
+	.hero__eyebrow {
+		font-size: 16px;
+		font-weight: 500;
+		line-height: 1.4;
+		margin-bottom: 8px;
+	}
+
+	.hero__name {
+		font-size: 72px;
+		font-weight: 700;
+		line-height: 0.98;
+		letter-spacing: -0.04em;
+		margin-bottom: 12px;
+		max-width: 12ch;
+	}
+
+	.hero__claim {
+		font-size: 32px;
+		font-weight: 600;
+		line-height: 1.12;
+		letter-spacing: -0.02em;
+		margin-bottom: 20px;
+		max-width: 18ch;
+	}
+
+	.hero__body {
+		font-size: 19px;
+		font-weight: 400;
+		line-height: 1.6;
+		margin-bottom: 28px;
+		max-width: 62ch;
+	}
+
+	.hero__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-bottom: 20px;
+	}
+
+	@media (max-width: 640px) {
+		.hero__name {
+			font-size: 42px;
+			letter-spacing: -0.03em;
+			margin-bottom: 10px;
+		}
+
+		.hero__claim {
+			font-size: 24px;
+			line-height: 1.15;
+			margin-bottom: 16px;
+		}
+
+		.hero__body {
+			font-size: 17px;
+			margin-bottom: 24px;
+		}
+
+		.hero__actions {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 10px;
+			margin-bottom: 16px;
+		}
+	}
+</style>
