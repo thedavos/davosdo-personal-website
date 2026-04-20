@@ -26,7 +26,7 @@ const defaultLinks: SocialLink[] = [
 	},
 	{
 		label: "LinkedIn",
-		href: "https://www.linkedin.com/in/david-vargas-dominguez/",
+		href: "https://www.linkedin.com/in/thedavos/",
 		icon: "i-lucide-linkedin",
 		external: true,
 	},
@@ -38,13 +38,13 @@ const defaultLinks: SocialLink[] = [
 	},
 	{
 		label: "Bluesky",
-		href: "https://bsky.app/profile/thedavos.bsky.social",
+		href: "https://bsky.app/profile/davoscode.bsky.social",
 		iconComponent: BskyIcon,
 		external: true,
 	},
 	{
 		label: "Hack The Box",
-		href: "https://app.hackthebox.com/",
+		href: "https://profile.hackthebox.com/profile/019dad09-0788-7249-9f3b-00d8edd49171",
 		iconComponent: HackTheBoxIcon,
 		external: true,
 	},
@@ -59,7 +59,7 @@ const defaultLinks: SocialLink[] = [
 const { class: className, links = defaultLinks } = Astro.props;
 ---
 
-<div class:list={["social-links", className]}>
+<div class:list={[className]}>
 	{
 		links.map((social) => {
 			const Icon = social.iconComponent;
