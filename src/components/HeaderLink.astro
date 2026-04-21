@@ -7,7 +7,8 @@ const { href, class: className, ...props } = Astro.props;
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 const subpath = pathname.match(/[^\/]+/g);
 const isPageActive =
-	typeof href === "string" && (href === pathname || href === "/" + (subpath?.[0] || ""));
+	typeof href === "string" &&
+	(href === pathname || href === "/" + (subpath?.[0] || ""));
 ---
 
 <a
@@ -21,20 +22,22 @@ const isPageActive =
 
 <style>
 	.header-link {
-		@apply inline-block relative no-underline transition-colors text-body hover:text-primary text-sm;
-		letter-spacing: -0.35px;
+		@apply inline-flex items-center rounded-full px-3 py-2 no-underline text-sm font-medium text-body transition-colors;
+		letter-spacing: -0.25px;
+	}
+
+	.header-link:hover {
+		background: rgba(99, 102, 241, 0.08);
+		color: var(--color-primary);
+	}
+
+	.header-link:focus-visible {
+		outline: 2px solid rgba(99, 102, 241, 0.35);
+		outline-offset: 3px;
 	}
 
 	.header-link--active {
-		@apply text-primary border-b-primary font-semibold;
-	}
-
-	.header-link--active::after {
-		@apply bg-primary absolute;
-		content: "";
-		height: 3px;
-		bottom: 10px;
-		left: 10%;
-		right: 10%;
+		color: var(--color-primary);
+		font-weight: 700;
 	}
 </style>
