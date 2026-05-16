@@ -1,0 +1,248 @@
+---
+import Card from "@components/commons/Card.astro";
+import Chip from "@components/commons/Chip.astro";
+
+type UseCase = {
+	quote: string;
+	service: string;
+};
+
+type Props = {
+	title?: string;
+	subtitle?: string;
+	introDelay?: number;
+	cardDelayStart?: number;
+	cardDelayStep?: number;
+};
+
+const {
+	title = "Casos de uso",
+	subtitle = "¿En cuál de estos te reconoces?",
+	introDelay = 0.48,
+	cardDelayStart = 0.56,
+	cardDelayStep = 0.06,
+} = Astro.props as Props;
+
+const useCases: UseCase[] = [
+	{
+		quote:
+			"Nuestro proceso de cotización, aprobación y seguimiento de clientes vive repartido entre emails, Excel y grupos de WhatsApp. Cuando alguien pregunta el estado de un pedido, nadie sabe con certeza y ya perdimos negocios por eso.",
+		service: "Web App",
+	},
+	{
+		quote:
+			"Tengo un negocio de delivery o fitness y mis clientes me llaman para agendar, ver su estado o pagar. Necesito una app, no mi celular personal como canal de atención.",
+		service: "Mobile App",
+	},
+	{
+		quote:
+			"Tengo una tienda física o vendo por Instagram, pero no pienso pagar el 18% de comisión a Rappi o Mercado Libre para siempre. Quiero mi propio canal digital, con mi marca y mis datos.",
+		service: "Ecommerce",
+	},
+	{
+		quote:
+			"Recibo más de 50 mensajes al día por WhatsApp: precios, horarios, disponibilidad, siempre lo mismo. Respondo desde el celular a las 11pm y si tardo 10 minutos, el cliente ya le escribió a la competencia.",
+		service: "Automation Bot",
+	},
+	{
+		quote:
+			"Mi equipo de devs hace los mismos 6 pasos manuales para deployar, generar reportes o provisionar entornos. Cada uno lo hace distinto, a veces se saltan pasos y onboardear a alguien nuevo toma días.",
+		service: "CLI Tool",
+	},
+	{
+		quote:
+			"Tenemos cientos de contratos, FAQs, manuales y reportes internos. Mi equipo pierde 2 horas al día buscando información que ya existe en algún documento o, peor, tomando decisiones con datos desactualizados.",
+		service: "AI App",
+	},
+];
+
+const slotClasses = [
+	"use-case-card--wide-start",
+	"use-case-card--top-third",
+	"use-case-card--top-fourth",
+	"use-case-card--bottom-first",
+	"use-case-card--bottom-second",
+	"use-case-card--wide-end",
+];
+---
+
+<div class="use-cases">
+	<div
+		class="use-cases__intro"
+		data-cascade-item
+		style={`--cascade-delay: ${introDelay}s`}
+	>
+		<h2 class="use-cases__title">{title}</h2>
+		<p class="use-cases__subtitle">{subtitle}</p>
+	</div>
+
+	<div class="use-cases__grid" aria-label="Casos de uso">
+		{
+			useCases.map(({ quote, service }, index) => (
+				<Card
+					as="article"
+					variant="outlined"
+					padding="none"
+					class:list={[
+						"use-case-card",
+						"service-card-surface",
+						"service-card-surface-hover",
+						slotClasses[index],
+					]}
+					data-cascade-item
+					style={`--cascade-delay: ${cardDelayStart + index * cardDelayStep}s`}
+				>
+					<div class="use-case-card__body">
+						<p class="use-case-card__quote">
+							<span aria-hidden="true" class="use-case-card__quote-mark">&ldquo;</span>
+							{quote}
+							<span aria-hidden="true" class="use-case-card__quote-mark">&rdquo;</span>
+						</p>
+					</div>
+
+					<div class="card__footer use-case-card__footer" slot="footer">
+						<Chip size="sm">{service}</Chip>
+					</div>
+				</Card>
+			))
+		}
+	</div>
+</div>
+
+<style>
+	.use-cases {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.use-cases__intro {
+		max-width: 62ch;
+	}
+
+	.use-cases__title {
+		margin: 0 0 10px;
+		font-size: 30px;
+		line-height: 1.05;
+		letter-spacing: -0.02em;
+	}
+
+	.use-cases__subtitle {
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 16px;
+		line-height: 1.6;
+	}
+
+	.use-cases__grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-areas:
+			"wide-start wide-start top-third top-fourth"
+			"bottom-first wide-end wide-end bottom-second";
+		grid-template-rows: repeat(2, minmax(240px, 1fr));
+		align-items: stretch;
+		gap: 16px;
+	}
+
+	.use-case-card {
+		display: flex;
+		flex-direction: column;
+		padding: 24px;
+	}
+
+	.use-case-card--wide-start {
+		grid-area: wide-start;
+	}
+
+	.use-case-card--top-third {
+		grid-area: top-third;
+	}
+
+	.use-case-card--top-fourth {
+		grid-area: top-fourth;
+	}
+
+	.use-case-card--bottom-first {
+		grid-area: bottom-first;
+	}
+
+	.use-case-card--bottom-second {
+		grid-area: bottom-second;
+	}
+
+	.use-case-card--wide-end {
+		grid-area: wide-end;
+	}
+
+	.use-case-card__body {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 20px;
+		padding: 16px 0;
+	}
+
+	.use-case-card__quote {
+		margin: 0;
+		color: var(--color-text);
+		font-size: 15px;
+		line-height: 1.7;
+		text-wrap: pretty;
+	}
+
+	.use-case-card__quote-mark {
+		color: rgba(15, 23, 42, 0.82);
+		font-size: 28px;
+		line-height: 0;
+	}
+
+	.use-case-card__footer {
+		justify-content: flex-start;
+	}
+
+	@media (max-width: 768px) {
+		.use-cases__grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-areas:
+				"wide-start wide-start"
+				"top-third top-fourth"
+				"bottom-first bottom-second"
+				"wide-end wide-end";
+			grid-template-rows: repeat(4, minmax(220px, auto));
+		}
+
+		.use-case-card {
+			padding: 20px;
+		}
+
+		.use-case-card__quote {
+			font-size: 17px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.use-cases__grid {
+			grid-template-columns: 1fr;
+			grid-template-areas:
+				"wide-start"
+				"top-third"
+				"top-fourth"
+				"bottom-first"
+				"bottom-second"
+				"wide-end";
+			grid-template-rows: none;
+		}
+	}
+
+	@media (max-width: 767px) {
+		.use-cases__title {
+			font-size: 24px;
+		}
+
+		.use-cases__subtitle {
+			font-size: 15px;
+		}
+	}
+</style>

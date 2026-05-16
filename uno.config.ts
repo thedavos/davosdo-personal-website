@@ -49,5 +49,9 @@ export default defineConfig({
 		"section-title": "mb-2 text-body leading-tight",
 		"link-primary": "text-primary hover:text-primary-dark transition-colors",
 		"text-logo": "text-body no-underline transition-colors hover:text-primary",
+		"service-card-surface":
+			"!border !border-[rgba(99,102,241,0.14)] !rounded-[8px] bg-surface bg-[linear-gradient(135deg,rgba(255,255,255,0.96),rgba(248,250,252,0.82))] !shadow-[0_1px_2px_rgba(71,85,105,0.06),0_18px_42px_rgba(71,85,105,0.10)] transition-[transform,border-color,box-shadow] duration-[180ms] ease-[ease]",
+		"service-card-surface-hover":
+			"hover:translate-y-[-3px] hover:!border-[rgba(99,102,241,0.32)] hover:!shadow-[0_3px_8px_rgba(71,85,105,0.08),0_24px_58px_rgba(71,85,105,0.15)]",
 	},
 })
