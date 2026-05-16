@@ -1,0 +1,71 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type ChipVariant = "default" | "primary" | "muted";
+type ChipSize = "sm" | "md";
+
+type BaseProps = {
+	variant?: ChipVariant;
+	size?: ChipSize;
+};
+
+type Props = BaseProps & HTMLAttributes<"span">;
+
+const {
+	variant = "default",
+	size = "md",
+	class: className,
+	...props
+} = Astro.props;
+---
+
+<span
+	class:list={["chip", `chip--${variant}`, `chip--${size}`, className]}
+	{...props}
+>
+	<slot />
+</span>
+
+<style>
+	.chip {
+		display: inline-flex;
+		align-items: center;
+		border-radius: 999px;
+		border: 1px solid;
+		font-weight: 700;
+		line-height: 1;
+		white-space: nowrap;
+	}
+
+	/* Sizes */
+	.chip--sm {
+		min-height: 26px;
+		padding: 3px 8px;
+		font-size: 12px;
+	}
+
+	.chip--md {
+		min-height: 32px;
+		padding: 5px 10px;
+		font-size: 14px;
+	}
+
+	/* Variants */
+	.chip--default {
+		border-color: rgba(71, 85, 105, 0.14);
+		background: rgba(255, 255, 255, 0.82);
+		color: var(--color-text);
+	}
+
+	.chip--primary {
+		border-color: rgba(99, 102, 241, 0.25);
+		background: rgba(99, 102, 241, 0.08);
+		color: var(--color-primary);
+	}
+
+	.chip--muted {
+		border-color: rgba(71, 85, 105, 0.10);
+		background: rgba(248, 250, 252, 0.9);
+		color: var(--color-text-muted);
+	}
+</style>

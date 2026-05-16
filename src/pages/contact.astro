@@ -1,6 +1,18 @@
 ---
 import PageLayout from "@layouts/PageLayout.astro";
 import SocialLinks from "@components/commons/SocialLinks.astro";
+
+const serviceLabels: Record<string, string> = {
+	"web-apps": "Web Apps",
+	"mobile-apps": "Mobile Apps",
+	"ecommerce": "Ecommerce",
+	"automation-bots": "Automation Bots",
+	"cli": "CLI",
+	"ai-apps": "AI Apps",
+};
+
+const serviceSlug = Astro.url.searchParams.get("service") ?? "";
+const serviceLabel = serviceLabels[serviceSlug] ?? null;
 ---
 
 <PageLayout
@@ -13,6 +25,13 @@ import SocialLinks from "@components/commons/SocialLinks.astro";
 		que necesite una base frontend sólida, este será el punto de entrada.
 	</p>
 
+	{serviceLabel && (
+		<div class="service-context">
+			<span class="service-context__label">Interesado en</span>
+			<strong class="service-context__service">{serviceLabel}</strong>
+		</div>
+	)}
+
 	<section>
 		<h2>Hablemos</h2>
 		<p>
@@ -21,3 +40,26 @@ import SocialLinks from "@components/commons/SocialLinks.astro";
 		<SocialLinks class="mt-4 flex flex-wrap gap-3" />
 	</section>
 </PageLayout>
+
+<style>
+	.service-context {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		margin: 16px 0 32px;
+		padding: 10px 16px;
+		border: 1px solid rgba(99, 102, 241, 0.25);
+		border-radius: 8px;
+		background: rgba(99, 102, 241, 0.06);
+		font-size: 15px;
+	}
+
+	.service-context__label {
+		color: var(--color-text-muted);
+	}
+
+	.service-context__service {
+		color: var(--color-primary);
+		font-weight: 700;
+	}
+</style>

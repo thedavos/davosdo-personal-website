@@ -1,31 +1,229 @@
 ---
+import Card from "@components/commons/Card.astro";
+import Chip from "@components/commons/Chip.astro";
+import Button from "@components/commons/Button.astro";
 import PageLayout from "@layouts/PageLayout.astro";
+
+const services = [
+	{
+		title: "Web Apps",
+		slug: "web-apps",
+		description:
+			"De la idea al producto. Construyo SaaS, dashboards y portales con arquitectura sólida, rendimiento de edge y código que dura.",
+		chips: ["Vue", "React", "Angular", "JS/TS"],
+	},
+	{
+		title: "Mobile Apps",
+		slug: "mobile-apps",
+		description:
+			"Tu app en iOS y Android sin doblar el presupuesto. Experiencias nativas con Flutter, lista para escalar desde el día uno.",
+		chips: ["React Native", "Flutter"],
+	},
+	{
+		title: "Ecommerce",
+		slug: "ecommerce",
+		description:
+			"Tiendas que convierten. Diseño, catálogo, checkout y pasarela de pagos optimizados para que vendas más con menos fricción.",
+		chips: ["Shopify", "Astro", "CMS"],
+	},
+	{
+		title: "Automation Bots",
+		slug: "automation-bots",
+		description:
+			"Elimina el trabajo repetitivo. Bots y pipelines que rastrean, notifican y atienden clientes mientras tú duermes.",
+		chips: ["n8n", "Python"],
+	},
+	{
+		title: "CLI",
+		slug: "cli",
+		description:
+			"Herramientas que entienden tu flujo. Scripts y CLIs a medida para que tu equipo técnico trabaje el doble de rápido.",
+		chips: ["Node.js", "Typescript", "Golang"],
+	},
+	{
+		title: "AI Apps",
+		slug: "ai-apps",
+		description:
+			"IA que resuelve problemas reales. Asistentes, búsqueda semántica y agentes entrenados sobre tu negocio, no sobre demos genéricas.",
+		chips: ["OpenAI", "Vercel AI SDK", "Kapso.ai"],
+	},
+];
 ---
 
 <PageLayout
+	showFooter
 	title="Servicios | davosdo.dev"
 	description="Servicios de desarrollo frontend, arquitectura web y experiencia de usuario."
+	containerClass="w-full max-w-[980px] mx-auto px-4 py-12"
 >
-	<h1>Servicios</h1>
-	<p>
-		Trabajo en productos digitales con foco en claridad técnica, rendimiento y
-		experiencia de usuario.
-	</p>
+	<section class="services" data-cascade-scope>
+		<h1
+			class="services__title"
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
+		>
+			¿En qué te puedo ayudar?
+		</h1>
 
-	<section>
-		<h2>Qué puedo aportar</h2>
-		<p>
-			Desarrollo interfaces modernas, optimizo aplicaciones web existentes y
-			ayudo a convertir ideas de producto en implementaciones mantenibles.
+		<p
+			class="services__subtitle"
+			data-cascade-item
+			style="--cascade-delay: 0.06s"
+		>
+			Desde la idea hasta el deploy. Trabajo con startups, negocios y emprendedores para construir productos digitales que escalan.
 		</p>
-	</section>
 
-	<section>
-		<h2>Áreas principales</h2>
-		<p>
-			Frontend engineering, arquitectura de componentes, performance, design
-			systems, integración con APIs y mejora de calidad técnica en proyectos en
-			producción.
-		</p>
+		<div class="services__grid" aria-label="Servicios">
+			{
+				services.map(({ title, slug, description, chips }, index) => (
+					<Card
+						as="article"
+						variant="outlined"
+						padding="none"
+						class="service-card"
+						data-cascade-item
+						style={`--cascade-delay: ${0.1 + index * 0.06}s`}
+					>
+						<div class="card__header" slot="header">
+							<h2 class="service-card__title">{title}</h2>
+						</div>
+
+						<div class="service-card__body">
+							<p class="service-card__description">{description}</p>
+							<ul class="service-card__chips" aria-label={`Tecnologías para ${title}`}>
+								{chips.map((chip) => (
+									<li>
+										<Chip size="sm">{chip}</Chip>
+									</li>
+								))}
+							</ul>
+						</div>
+
+						<div class="card__footer" slot="footer">
+							<Button
+								as="a"
+								href={`/contact?service=${slug}`}
+								variant="ghost"
+								size="sm"
+								rightIcon="i-lucide-arrow-right"
+							>
+								Hablemos de esto
+							</Button>
+						</div>
+					</Card>
+				))
+			}
+		</div>
 	</section>
 </PageLayout>
+
+<style>
+	.services__title {
+		font-size: 64px;
+		line-height: 0.98;
+		letter-spacing: -0.03em;
+		margin-bottom: 16px;
+	}
+
+	.services__subtitle {
+		margin: 0 0 48px;
+		max-width: 50ch;
+		color: var(--color-text-muted);
+		font-size: 20px;
+		line-height: 1.5;
+	}
+
+	.services__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 16px;
+	}
+
+	.service-card {
+		display: flex;
+		min-height: 260px;
+		flex-direction: column;
+		padding: 24px;
+		border: 1px solid rgba(99, 102, 241, 0.14);
+		border-radius: 8px;
+		background:
+			linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.82)),
+			var(--color-surface);
+		box-shadow:
+			0 1px 2px rgba(71, 85, 105, 0.06),
+			0 18px 42px rgba(71, 85, 105, 0.10);
+		transition:
+			transform 180ms ease,
+			border-color 180ms ease,
+			box-shadow 180ms ease;
+	}
+
+	.service-card:hover {
+		transform: translateY(-3px);
+		border-color: rgba(99, 102, 241, 0.32);
+		box-shadow:
+			0 3px 8px rgba(71, 85, 105, 0.08),
+			0 24px 58px rgba(71, 85, 105, 0.15);
+	}
+
+	.service-card__title {
+		font-size: 22px;
+		line-height: 1.1;
+		letter-spacing: -0.015em;
+		margin: 0;
+	}
+
+	.service-card__body {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 20px;
+		padding: 16px 0;
+	}
+
+	.service-card__description {
+		max-width: 35ch;
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 15px;
+		line-height: 1.6;
+	}
+
+	.service-card__chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
+
+	@media (max-width: 760px) {
+		.services {
+			gap: 26px;
+		}
+
+		.services__title {
+			font-size: 42px;
+			line-height: 1;
+		}
+
+		.services__subtitle {
+			font-size: 18px;
+		}
+
+		.service-card {
+			min-height: auto;
+			padding: 20px;
+		}
+
+		.service-card__title {
+			font-size: 20px;
+		}
+
+		.service-card__description {
+			font-size: 14px;
+		}
+	}
+</style>
