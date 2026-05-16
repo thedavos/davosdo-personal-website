@@ -42,11 +42,33 @@
 	font-display: swap;
 }
 
+html {
+	scrollbar-width: thin;
+	scrollbar-color: gray transparent;
+	scroll-padding-top: 2rem;
+}
+
+/* Chrome, Safari, Edge (WebKit/Blink) */
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 999px;
+  border: 2px solid transparent; /* da efecto de thumb mas fino */
+  background-clip: content-box;
+}
+
 body {
 	font-family: "Atkinson", sans-serif;
 	margin: 0;
 	padding: 0;
-	text-align: left;
 	background-color: var(--color-background);
 	background: linear-gradient(var(--color-background-gradient)) no-repeat;
 	background-size: 100% 600px;
@@ -55,6 +77,9 @@ body {
 	color: var(--color-text);
 	font-size: 20px;
 	line-height: 1.7;
+	text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -165,6 +190,29 @@ hr {
 	}
 }
 
+@media (max-width: 640px) {
+  html { scroll-padding-top: 1rem; }
+  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 { scroll-margin-top: 6rem; }
+  .prose sup a, .prose .footnote-ref, .prose .footnotes, .prose .footnote { scroll-margin-top: 6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
+/* Swup Transitions — Cascade Stagger
+   El contenido entra en cascada: cada hijo aparece con un delay escalonado.
+   El contenedor NO se oculta durante enter — los hijos manejan su propia
+   visibilidad via animation-fill-mode: backwards (arrancan en opacity:0). */
+.transition-swup-slide {
+  opacity: 1;
+}
+
 .sr-only {
 	border: 0;
 	padding: 0;
@@ -173,12 +221,46 @@ hr {
 	height: 1px;
 	width: 1px;
 	overflow: hidden;
-	/* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
 	clip: rect(1px 1px 1px 1px);
-	/* maybe deprecated but we need to support legacy browsers */
 	clip: rect(1px, 1px, 1px, 1px);
-	/* modern browsers, clip-path works inwards from each corner */
 	clip-path: inset(50%);
-	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
 }
+
+#swup-container {
+	transform: translateZ(0);
+	backface-visibility: hidden;
+}
+
+/* Leave: fade out rapido */
+html.is-leaving .transition-swup-slide {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Cascade keyframes */
+@keyframes cascadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Aplicar cascade a hijos del contenido (funciona para ambos layouts).
+   La clase se re-aplica desde el layout para reiniciar la animacion tras cada swap. */
+#swup-container.swup-cascade-enter > main > * > * {
+  animation: cascadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+#swup-container.swup-cascade-enter > main > * > *:nth-child(1) { animation-delay: 0.04s; }
+#swup-container.swup-cascade-enter > main > * > *:nth-child(2) { animation-delay: 0.1s; }
+#swup-container.swup-cascade-enter > main > * > *:nth-child(3) { animation-delay: 0.16s; }
+#swup-container.swup-cascade-enter > main > * > *:nth-child(4) { animation-delay: 0.22s; }
+#swup-container.swup-cascade-enter > main > * > *:nth-child(5) { animation-delay: 0.28s; }
+#swup-container.swup-cascade-enter > main > * > *:nth-child(6) { animation-delay: 0.34s; }
+#swup-container.swup-cascade-enter > main > * > *:nth-child(7) { animation-delay: 0.4s; }
+#swup-container.swup-cascade-enter > main > * > *:nth-child(n+8) { animation-delay: 0.44s; }

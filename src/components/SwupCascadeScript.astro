@@ -1,0 +1,25 @@
+<script is:inline>
+	(() => {
+		const runCascade = () => {
+			const container = document.querySelector("#swup-container");
+			if (!container) return;
+
+			container.classList.remove("swup-cascade-enter");
+			void container.offsetWidth;
+			container.classList.add("swup-cascade-enter");
+		};
+
+		window.__runSwupCascade = runCascade;
+
+		if (!window.__swupCascadeBound) {
+			document.addEventListener("astro:after-swap", () => window.__runSwupCascade?.());
+			window.__swupCascadeBound = true;
+		}
+
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", runCascade, { once: true });
+		} else {
+			runCascade();
+		}
+	})();
+</script>

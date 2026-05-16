@@ -2,6 +2,7 @@
 import BaseHead from "@components/BaseHead.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
+import SwupCascadeScript from "@components/SwupCascadeScript.astro";
 
 interface Props {
 	title: string;
@@ -28,13 +29,19 @@ const {
 		<BaseHead title={title} description={description} />
 		<slot name="head" />
 	</head>
-	<body class="min-h-screen flex flex-col">
+	<body>
 		<Header />
-		<main class:list={["flex flex-1", centerContent && "items-center"]}>
-			<div class={containerClass}>
-				<slot />
-			</div>
-		</main>
-		{showFooter && <Footer />}
+		<div
+			id="swup-container"
+			class="min-h-[calc(100vh-61px)] flex flex-col transition-swup-slide md:min-h-[calc(100vh-72px)]"
+		>
+			<main class:list={["flex flex-1", centerContent && "items-center"]}>
+				<div class={containerClass}>
+					<slot />
+				</div>
+			</main>
+			{showFooter && <Footer />}
+		</div>
+		<SwupCascadeScript />
 	</body>
 </html>
