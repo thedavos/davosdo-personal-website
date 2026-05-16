@@ -14,30 +14,13 @@ const isPageActive =
 <a
 	href={href}
 	aria-current={isPageActive ? "page" : undefined}
-	class:list={["header-link", className, isPageActive && "header-link--active"]}
+	class:list={[
+		"inline-flex items-center rounded-full px-3 py-2 text-sm font-medium no-underline text-body transition-colors whitespace-nowrap hover:bg-[rgba(99,102,241,0.08)] hover:text-primary focus-visible:outline-[2px] focus-visible:outline-[rgba(99,102,241,0.35)] focus-visible:outline-offset-[3px]",
+		className,
+		isPageActive && "text-primary font-700",
+	]}
+	style="letter-spacing: -0.25px;"
 	{...props}
 >
 	<slot />
 </a>
-
-<style>
-	.header-link {
-		@apply inline-flex items-center rounded-full px-3 py-2 no-underline text-sm font-medium text-body transition-colors;
-		letter-spacing: -0.25px;
-	}
-
-	.header-link:hover {
-		background: rgba(99, 102, 241, 0.08);
-		color: var(--color-primary);
-	}
-
-	.header-link:focus-visible {
-		outline: 2px solid rgba(99, 102, 241, 0.35);
-		outline-offset: 3px;
-	}
-
-	.header-link--active {
-		color: var(--color-primary);
-		font-weight: 700;
-	}
-</style>

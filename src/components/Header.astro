@@ -3,59 +3,38 @@ import HeaderLink from "@components/HeaderLink.astro";
 import MobileNav from "@components/commons/MobileNav.vue";
 import Logo from "@components/commons/Logo.astro";
 import LanguageSwitcher from "@components/commons/LanguageSwitcher.vue";
-import { SITE_TITLE } from "@/consts";
-
-const navItems = [
-	{ href: "/", label: "Sobre mi" },
-	{ href: "/services", label: "Servicios" },
-	{ href: "/experience", label: "Experiencia" },
-	{ href: "/projects", label: "Proyectos" },
-	{ href: "/blog", label: "Blog" },
-	{ href: "/contact", label: "Contacto" },
-];
+import { SITE_NAV_ITEMS, SITE_TITLE } from "@/consts";
 
 const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 ---
 
 <header>
-	<div class="header-shell">
-		<nav class="header-inner" aria-label="Principal">
+	<div class="border-b border-border bg-surface/95 px-4 shadow-sm md:px-8">
+		<nav
+			class="mx-auto flex min-h-[61px] w-full max-w-[1180px] items-center justify-between gap-4 md:min-h-[72px] lg:grid lg:grid-cols-[max-content_minmax(0,1fr)_max-content]"
+			aria-label="Principal"
+		>
 			<Logo siteTitle={SITE_TITLE} />
-			<div class="desktop-nav" aria-label="Secciones">
+			<div
+				class="hidden items-center justify-self-center gap-1 p-1 md:flex"
+				aria-label="Secciones"
+			>
 				{
-					navItems.map((item) => (
-						<HeaderLink href={item.href} class="nav-link">
-							{item.label}
+					SITE_NAV_ITEMS.map((item) => (
+						<HeaderLink href={item.url} class="whitespace-nowrap">
+							{item.title}
 						</HeaderLink>
 					))
 				}
 			</div>
-			<div class="desktop-language">
+			<div class="hidden items-center justify-self-end md:flex">
 				<LanguageSwitcher client:load />
 			</div>
-			<MobileNav client:load navItems={navItems} currentPath={currentPath} />
+			<MobileNav
+				client:load
+				navItems={SITE_NAV_ITEMS}
+				currentPath={currentPath}
+			/>
 		</nav>
 	</div>
 </header>
-
-<style>
-	.header-shell {
-		@apply border-b border-border bg-surface/95 px-4 shadow-sm md:px-8;
-	}
-
-	.header-inner {
-		@apply mx-auto flex min-h-[61px] w-full items-center justify-between gap-4 max-w-[1180px] md:min-h-[72px] lg:grid lg:grid-cols-[max-content_minmax(0,1fr)_max-content];
-	}
-
-	.desktop-nav {
-		@apply hidden items-center justify-self-center p-1 gap-1 md:flex;
-	}
-
-	.desktop-language {
-		@apply hidden items-center justify-self-end md:flex;
-	}
-
-	.nav-link {
-		@apply whitespace-nowrap;
-	}
-</style>

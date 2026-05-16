@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import LanguageSwitcher from "@/components/commons/LanguageSwitcher.vue";
-
-interface NavItem {
-	href: string;
-	label: string;
-}
+import type { NavigationItem } from '@/types'
 
 interface Props {
-	navItems: NavItem[];
+	navItems: NavigationItem[];
 	currentPath: string;
 }
 
@@ -124,15 +120,15 @@ onBeforeUnmount(() => {
 						<p class="mobile-nav__eyebrow">Navegación</p>
 						<a
 							v-for="(item, index) in navItems"
-							:key="item.href"
+							:key="item.url"
 							:ref="(element) => { if (index === 0) firstLink = element as HTMLAnchorElement | null; }"
-							:href="item.href"
+							:href="item.url"
 							class="mobile-nav__link"
-							:class="{ 'mobile-nav__link--active': isLinkActive(item.href) }"
-							:aria-current="isLinkActive(item.href) ? 'page' : undefined"
+							:class="{ 'mobile-nav__link--active': isLinkActive(item.url) }"
+							:aria-current="isLinkActive(item.url) ? 'page' : undefined"
 							@click="closeMenu"
 						>
-							{{ item.label }}
+							{{ item.title }}
 						</a>
 					</nav>
 

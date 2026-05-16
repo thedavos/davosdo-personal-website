@@ -6,22 +6,9 @@ interface Props {
 const { siteTitle } = Astro.props;
 ---
 
-<h2 class="site-logo">
-	<a href="/" class="text-logo py-4">{siteTitle}</a>
+<h2 class="m-0 text-xl font-bold">
+	<a href="/" class="flex items-center gap-2 py-4 text-logo">
+		<span>{siteTitle}</span>
+		<span class="mt-[1px] h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true"></span>
+	</a>
 </h2>
-
-<style>
-	.site-logo {
-		@apply m-0 text-xl font-bold relative;
-	}
-
-	.site-logo::after {
-		@apply bg-primary rounded-full absolute;
-		content: "";
-		width: 6px;
-		height: 6px;
-		top: 50%;
-		right: -10px;
-		transform: translateY(-50%);
-	}
-</style>
