@@ -118,18 +118,6 @@ b {
 	font-weight: 700;
 }
 
-a {
-	color: var(--color-primary);
-}
-
-a:hover {
-	color: var(--color-primary-dark);
-}
-
-p {
-	margin-bottom: 1em;
-}
-
 .prose p {
 	margin-bottom: 2em;
 }
