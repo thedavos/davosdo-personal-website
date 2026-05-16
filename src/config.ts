@@ -315,14 +315,14 @@ export const siteConfig: SiteConfig = {
     showMobileMenu: true,
     // [CONFIG:NAVIGATION_PAGES]
     pages: [
-      { title: "Posts", url: "/posts/" },
-      { title: "Projects", url: "/projects/" },
-      { title: "Docs", url: "/docs/" },
-      { title: "About", url: "/about/",
+      { title: "Posts", url: "/posts/", navigationOrder: 1 },
+      { title: "Projects", url: "/projects/", navigationOrder: 2 },
+      { title: "Docs", url: "/docs/", navigationOrder: 3 },
+      { title: "About", url: "/about/", navigationOrder: 4,
         children: [
-          { title: "Privacy Policy", url: "/privacy-policy/" }
+          { title: "Privacy Policy", url: "/privacy-policy/", navigationOrder: 1 }
         ] },
-      { title: "GitHub", url: "https://github.com/davidvkimball/astro-modular" }
+      { title: "GitHub", url: "https://github.com/davidvkimball/astro-modular", navigationOrder: 5 }
     ],
     // [CONFIG:NAVIGATION_SOCIAL]
     social: [
@@ -780,4 +780,3 @@ if (!validation.isValid) {
 
 // Export the configuration as default
 export default siteConfig;
-

@@ -105,7 +105,12 @@ export default defineConfig({
 			'process.env.ASTRO_CONTENT_COLLECTION_CACHE': 'false'
 		},
 		optimizeDeps: {
-			exclude: ['astro:content', 'astro/content/runtime']
+			exclude: [
+				'astro:content',
+				'astro/content',
+				'astro/content/runtime',
+				'astro_content_runtime',
+			]
 		}
 	}
 });

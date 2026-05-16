@@ -1,0 +1,89 @@
+<script>
+	import { SITE_NAV_ITEMS } from "@/consts";
+	import {
+		getCircularNavUrl,
+		getOrderedNavItems,
+		navigateTo,
+	} from "@/utils/navigation";
+
+	const navItems = getOrderedNavItems(SITE_NAV_ITEMS);
+
+	(() => {
+		let touchStartX = 0;
+		let touchStartY = 0;
+		const swipeThreshold = 60;
+		const swipeMaxVerticalDrift = 80;
+
+		const isEditableTarget = (target: EventTarget | null) => {
+			if (!(target instanceof HTMLElement)) return false;
+
+			const tagName = target.tagName.toLowerCase();
+			return (
+				tagName === "input" ||
+				tagName === "textarea" ||
+				tagName === "select" ||
+				target.isContentEditable
+			);
+		};
+
+		const navigateByDirection = (direction: "previous" | "next") => {
+			const nextUrl = getCircularNavUrl(
+				navItems,
+				window.location.pathname,
+				direction,
+			);
+
+			if (!nextUrl) return;
+
+			navigateTo(nextUrl);
+		};
+
+		const onKeydown = (event: KeyboardEvent) => {
+			if (
+				(event.key !== "ArrowLeft" && event.key !== "ArrowRight") ||
+				event.metaKey ||
+				event.ctrlKey ||
+				event.altKey ||
+				isEditableTarget(event.target)
+			) {
+				return;
+			}
+
+			event.preventDefault();
+			navigateByDirection(event.key === "ArrowLeft" ? "previous" : "next");
+		};
+
+		const onTouchStart = (event: TouchEvent) => {
+			const touch = event.touches[0];
+			if (!touch || isEditableTarget(event.target)) return;
+
+			touchStartX = touch.clientX;
+			touchStartY = touch.clientY;
+		};
+
+		const onTouchEnd = (event: TouchEvent) => {
+			const touch = event.changedTouches[0];
+			if (!touch || isEditableTarget(event.target)) return;
+
+			const deltaX = touch.clientX - touchStartX;
+			const deltaY = touch.clientY - touchStartY;
+
+			if (
+				Math.abs(deltaX) < swipeThreshold ||
+				Math.abs(deltaY) > swipeMaxVerticalDrift ||
+				Math.abs(deltaX) < Math.abs(deltaY)
+			) {
+				return;
+			}
+
+			navigateByDirection(deltaX > 0 ? "previous" : "next");
+		};
+
+		if (!document.documentElement.dataset.keyboardPageNavBound) {
+			window.addEventListener("keydown", onKeydown);
+			window.addEventListener("touchstart", onTouchStart, { passive: true });
+			window.addEventListener("touchend", onTouchEnd, { passive: true });
+			document.documentElement.dataset.keyboardPageNavBound = "true";
+		}
+	})();
+</script>

@@ -1,8 +1,11 @@
 ---
 import Button from "@components/commons/Button.astro";
+import KeyboardPageNav from "@components/commons/KeyboardPageNav.astro";
 import SocialLinks from "@components/commons/SocialLinks.astro";
 import PageLayout from "@layouts/PageLayout.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "@/consts";
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_NAV_ITEMS } from "@/consts";
+
+const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 ---
 
 <PageLayout
@@ -10,89 +13,34 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "@/consts";
 	description={SITE_DESCRIPTION}
 	centerContent={true}
 >
-	<p class="hero__eyebrow">Hola, soy</p>
-	<h1 class="hero__name">David Vargas Domínguez</h1>
-	<h2 class="hero__claim">
+	<p class="mb-2 hidden md:block text-base font-medium leading-[1.4]">Hola, soy</p>
+	<h1
+		class="mb-2.5 text-center m-auto md:m-none md:text-left max-w-[12ch] text-[42px] font-bold leading-[0.98] tracking-[-0.03em] md:mb-3 md:text-[72px] md:tracking-[-0.04em]"
+	>
+		David Vargas Domínguez
+	</h1>
+	<h2
+		class="mb-4 hidden max-w-[18ch] text-2xl font-semibold leading-[1.15] tracking-[-0.02em] md:mb-5 md:block md:text-[32px] md:leading-[1.12]"
+	>
 		Tú tienes la idea, yo la hago funcionar
 	</h2>
-	<p class="hero__body">
+	<h2
+		class="mb-4 block text-center m-auto max-w-[18ch] text-2xl font-semibold leading-[1.15] tracking-[-0.02em] md:mb-5 md:hidden md:text-[32px] md:leading-[1.12]"
+	>
+		Full-Stack Software Engineer
+	</h2>
+	<p class="mb-6 text-center m-auto md:m-none md:text-left max-w-[62ch] text-[17px] font-normal leading-[1.6] md:mb-7 md:text-[19px]">
 		Desarrollo productos web completos: la interfaz, la lógica, el servidor y el deploy. Todo lo que necesita una idea para existir en internet, en un solo lugar.
 	</p>
 
-	<div class="hero__actions">
+	<div class="mb-4 flex flex-col items-stretch gap-2.5 md:mb-5 md:flex-row md:flex-wrap md:gap-3">
 		<Button href="/projects" rightIcon="i-lucide-arrow-right">Ver qué construí</Button>
 		<Button href="/services" variant="ghost">Ver servicios</Button>
 	</div>
 
 	<SocialLinks
-		class="flex flex-wrap gap-x-2 gap-y-3 max-w-full md:gap-x-2.5 md:gap-y-3.5 md:max-w-[62ch]"
+		class="flex flex-wrap justify-center gap-x-2 gap-y-3 max-w-full md:justify-initial md:gap-x-2.5 md:gap-y-3.5 md:max-w-[62ch]"
 	/>
+
+	<KeyboardPageNav navItems={SITE_NAV_ITEMS} currentPath={currentPath} />
 </PageLayout>
-
-<style>
-	.hero__eyebrow {
-		font-size: 16px;
-		font-weight: 500;
-		line-height: 1.4;
-		margin-bottom: 8px;
-	}
-
-	.hero__name {
-		font-size: 72px;
-		font-weight: 700;
-		line-height: 0.98;
-		letter-spacing: -0.04em;
-		margin-bottom: 12px;
-		max-width: 12ch;
-	}
-
-	.hero__claim {
-		font-size: 32px;
-		font-weight: 600;
-		line-height: 1.12;
-		letter-spacing: -0.02em;
-		margin-bottom: 20px;
-		max-width: 18ch;
-	}
-
-	.hero__body {
-		font-size: 19px;
-		font-weight: 400;
-		line-height: 1.6;
-		margin-bottom: 28px;
-		max-width: 62ch;
-	}
-
-	.hero__actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 12px;
-		margin-bottom: 20px;
-	}
-
-	@media (max-width: 640px) {
-		.hero__name {
-			font-size: 42px;
-			letter-spacing: -0.03em;
-			margin-bottom: 10px;
-		}
-
-		.hero__claim {
-			font-size: 24px;
-			line-height: 1.15;
-			margin-bottom: 16px;
-		}
-
-		.hero__body {
-			font-size: 17px;
-			margin-bottom: 24px;
-		}
-
-		.hero__actions {
-			flex-direction: column;
-			align-items: stretch;
-			gap: 10px;
-			margin-bottom: 16px;
-		}
-	}
-</style>

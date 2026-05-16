@@ -38,6 +38,7 @@ export interface ReadingTime {
 export interface NavigationItem {
 	title: string;
 	url: string;
+	navigationOrder: number;
 	external?: boolean;
 	icon?: string;
 	children?: NavigationItem[];  // Single level only
@@ -124,4 +125,3 @@ export interface PaginationInfo {
 	nextUrl?: string;
 	prevUrl?: string;
 }
-
