@@ -1,4 +1,4 @@
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import unocss from "@unocss/astro";
@@ -10,6 +10,47 @@ import { siteConfig } from "./src/config.ts";
 
 export default defineConfig({
 	site: siteConfig.site,
+	fonts: [
+		{
+			provider: fontProviders.local(),
+			name: "Geist Sans",
+			cssVariable: "--font-geist-sans",
+			fallbacks: ["sans-serif"],
+			options: {
+				variants: [
+					{
+						src: ["./src/assets/fonts/geist/Geist-Variable.woff2"],
+						weight: "100 900",
+						style: "normal",
+					},
+				],
+			},
+		},
+		{
+			provider: fontProviders.local(),
+			name: "Geist Mono",
+			cssVariable: "--font-geist-mono",
+			fallbacks: [
+				"ui-monospace",
+				"SFMono-Regular",
+				"Menlo",
+				"Monaco",
+				"Consolas",
+				"Liberation Mono",
+				"Courier New",
+				"monospace",
+			],
+			options: {
+				variants: [
+					{
+						src: ["./src/assets/fonts/geist/GeistMono-Variable.woff2"],
+						weight: "100 900",
+						style: "normal",
+					},
+				],
+			},
+		},
+	],
 	devToolbar: {
 		enabled: true,
 	},

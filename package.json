@@ -19,6 +19,7 @@
 		"@astrojs/vue": "^6.0.1",
 		"@swup/astro": "^1.8.0",
 		"astro": "6.1.5",
+		"geist": "^1.7.0",
 		"swup": "^4.8.3",
 		"typescript": "5.9.3",
 		"vue": "^3.5.32"

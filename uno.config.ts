@@ -32,7 +32,8 @@ export default defineConfig({
 			outline: "#C7C4D7",
 		},
 		fontFamily: {
-			sans: "Atkinson, sans-serif",
+			sans: "var(--font-geist-sans), sans-serif",
+			mono: 'var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
 		},
 		boxShadow: {
 			sm: "0px 1px 2px 0px rgba(0, 0, 0, 0.05)",
