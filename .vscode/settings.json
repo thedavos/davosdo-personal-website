@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    "*.vue": "vue"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "vue.server.includeLanguages": [
+    "vue"
+  ],
+  "oxc_language_server.enable": false
+}

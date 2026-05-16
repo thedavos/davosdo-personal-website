@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "Vue.volar",
+    "astro-build.astro-vscode",
+    "antfu.unocss"
+  ],
+  "unwantedRecommendations": [
+    "octref.vetur",
+    "johnsoncodehk.vscode-typescript-vue-plugin",
+    "Vue.vscode-typescript-vue-plugin"
+  ]
+}
