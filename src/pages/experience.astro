@@ -1,31 +1,165 @@
 ---
+import Timeline from "@components/experience/Timeline.astro";
 import PageLayout from "@layouts/PageLayout.astro";
+
+const experienceItems = [
+	{
+		role: "Software Engineer II",
+		company: "Interbank",
+		period: "Ago 2025 - Actualidad",
+		location: "Perú",
+		description:
+			"Desarrollo soluciones frontend para banca por internet, con foco en flujos críticos, seguridad y estabilidad de producto.",
+		highlights: [
+			"Resolví problemas de seguridad de clasificación alta y media en proyectos principales.",
+			"Implementé soluciones de seguridad en flujos bancarios de alta importancia.",
+			"Desarrollé funcionalidades urgentes en flujos de tipo de cambio.",
+		],
+		tags: ["JavaScript", "TypeScript", "Vue.js", "Angular.js", "CSS", "HTML"],
+	},
+	{
+		role: "Senior Frontend Developer",
+		company: "Global66",
+		period: "May 2021 - May 2025",
+		location: "Latam",
+		description:
+			"Construí interfaces web y móviles para una fintech chilena con presencia regional, colaborando con equipos de producto, backend y diseño.",
+		highlights: [
+			"Desarrollé interfaces responsivas optimizadas para UX y performance.",
+			"Creé una biblioteca de componentes UI modulares y reutilizables para escalar el trabajo del equipo.",
+			"Implementé soluciones frontend para sistemas bancarios de Colombia, Chile y Perú considerando regulaciones locales.",
+			"Documenté componentes, procesos técnicos y estándares de desarrollo para el equipo frontend.",
+		],
+		tags: ["JavaScript", "Vue.js", "NativeScript", "Tailwind", "Testing", "APIs"],
+	},
+	{
+		role: "Lead Full-Stack Developer",
+		company: "FractalUp",
+		period: "Ene 2019 - Abr 2021",
+		location: "EdTech",
+		description:
+			"Lideré desarrollo frontend y full-stack en una startup EdTech enfocada en plataformas de educación online.",
+		highlights: [
+			"Lideré un equipo de desarrolladores junior y supervisé la ejecución de proyectos.",
+			"Diseñé arquitectura frontend para aplicaciones de clases grabadas y exámenes.",
+			"Optimicé plataformas existentes, logrando mejoras significativas en velocidad de carga.",
+			"Coordiné integraciones backend y realicé code reviews para asegurar calidad y buenas prácticas.",
+		],
+		tags: ["JavaScript", "TypeScript", "Vue.js", "Node.js", "Quasar", "GraphQL"],
+	},
+];
 ---
 
 <PageLayout
 	title="Experiencia | davosdo.dev"
 	description="Experiencia profesional en desarrollo de productos web y móviles."
+	containerClass="w-full max-w-[980px] mx-auto px-4 py-12"
 >
-	<h1>Experiencia</h1>
-	<p>
-		He trabajado construyendo productos web y móviles, colaborando entre diseño,
-		negocio y tecnología para llevar soluciones a producción.
-	</p>
+	<section class="experience-page" data-cascade-scope>
+		<header
+			class="experience-page__hero"
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
+		>
+			<h1 class="experience-page__title">Experiencia</h1>
+			<p class="experience-page__subtitle">
+				Llevo 7 años construyendo productos web y móviles con JavaScript,
+				React, Vue y Angular. Me enfoco en código que dura, productos que
+				cargan rápido y decisiones técnicas que el equipo entiende.
+			</p>
+		</header>
 
-	<section>
-		<h2>Enfoque de trabajo</h2>
-		<p>
-			Me interesa resolver problemas reales con una base técnica sólida:
-			componentes reutilizables, decisiones de arquitectura claras y atención a
-			los detalles de interacción.
-		</p>
-	</section>
-
-	<section>
-		<h2>Lo que encontrarás aquí</h2>
-		<p>
-			Esta página servirá para resumir mi recorrido profesional, roles, impacto y
-			proyectos destacados en distintos contextos de producto.
-		</p>
+		<Timeline
+			items={experienceItems}
+			ariaLabel="Experiencia laboral de David Vargas"
+			class="experience-page__timeline"
+		/>
 	</section>
 </PageLayout>
+
+<style>
+	.experience-page {
+		display: flex;
+		flex-direction: column;
+		gap: 48px;
+	}
+
+	.experience-page__hero {
+		max-width: 680px;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	.experience-page__title {
+		margin: 0 0 16px;
+		font-size: 64px;
+		line-height: 1;
+		letter-spacing: 0;
+	}
+
+	.experience-page__subtitle {
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 20px;
+		line-height: 1.55;
+		text-wrap: pretty;
+	}
+
+	.experience-page__focus {
+		max-width: 680px;
+		margin: 0 auto;
+		padding: 24px;
+		border: 1px solid rgba(99, 102, 241, 0.14);
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 0.72);
+		box-shadow: 0 1px 2px rgba(71, 85, 105, 0.06);
+	}
+
+	.experience-page__section-title {
+		margin: 0 0 10px;
+		font-size: 28px;
+		line-height: 1.15;
+		letter-spacing: 0;
+	}
+
+	.experience-page__focus p {
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 16px;
+		line-height: 1.65;
+		text-wrap: pretty;
+	}
+
+	.experience-page__timeline {
+		margin-top: 4px;
+	}
+
+	@media (max-width: 760px) {
+		.experience-page {
+			gap: 32px;
+		}
+
+		.experience-page__hero,
+		.experience-page__focus {
+			max-width: none;
+			margin: 0;
+			text-align: left;
+		}
+
+		.experience-page__title {
+			font-size: 42px;
+		}
+
+		.experience-page__subtitle {
+			font-size: 18px;
+		}
+
+		.experience-page__focus {
+			padding: 20px;
+		}
+
+		.experience-page__section-title {
+			font-size: 24px;
+		}
+	}
+</style>

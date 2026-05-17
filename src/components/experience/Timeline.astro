@@ -1,0 +1,328 @@
+---
+import Card from "@components/commons/Card.astro";
+import Chip from "@components/commons/Chip.astro";
+
+type ExperienceTimelineItem = {
+	role: string;
+	company: string;
+	period: string;
+	location?: string;
+	description: string;
+	highlights?: string[];
+	tags?: string[];
+};
+
+type Props = {
+	items: ExperienceTimelineItem[];
+	ariaLabel?: string;
+	class?: string;
+};
+
+const {
+	items,
+	ariaLabel = "Experiencia laboral",
+	class: className,
+} = Astro.props as Props;
+
+const classes = ["timeline", className].filter(Boolean).join(" ");
+---
+
+<section class={classes}>
+	<ol class="timeline__list" aria-label={ariaLabel}>
+		{
+			items.map((item, index) => {
+				const side = index % 2 === 0 ? "start" : "end";
+				const hasHighlights = Boolean(item.highlights?.length);
+				const hasTags = Boolean(item.tags?.length);
+
+				return (
+					<li
+						class:list={["timeline__item", `timeline__item--${side}`]}
+						data-cascade-item
+						style={`--cascade-delay: ${0.22 + index * 0.08}s`}
+					>
+						<div class="timeline__marker" aria-hidden="true">
+							<span class="timeline__dot">
+								<span class="timeline__dot-core" />
+							</span>
+						</div>
+
+						<div class="timeline__content">
+							<Card
+								as="article"
+								variant="outlined"
+								padding="none"
+								class="service-card-surface service-card-surface-hover box-border flex min-w-0 flex-col p-5 md:p-6"
+							>
+								<div class="card__header timeline-card__header" slot="header">
+									<p class="timeline-card__period">{item.period}</p>
+									<h3 class="timeline-card__role">{item.role}</h3>
+									<p class="timeline-card__meta">
+										<span>{item.company}</span>
+										{item.location && (
+											<>
+												<span aria-hidden="true">/</span>
+												<span>{item.location}</span>
+											</>
+										)}
+									</p>
+								</div>
+
+								<div class="timeline-card__body">
+									<p class="timeline-card__description">{item.description}</p>
+
+									{hasHighlights && (
+										<ul class="timeline-card__highlights">
+											{item.highlights?.map((highlight) => (
+												<li>{highlight}</li>
+											))}
+										</ul>
+									)}
+								</div>
+
+								{hasTags && (
+									<div class="card__footer timeline-card__footer" slot="footer">
+										<ul
+											class="timeline-card__tags"
+											aria-label={`Tecnologías usadas en ${item.company}`}
+										>
+											{item.tags?.map((tag) => (
+												<li>
+													<Chip size="sm" variant="muted">{tag}</Chip>
+												</li>
+											))}
+										</ul>
+									</div>
+								)}
+							</Card>
+						</div>
+					</li>
+				);
+			})
+		}
+	</ol>
+</section>
+
+<style>
+	.timeline {
+		width: 100%;
+	}
+
+	.timeline__list {
+		position: relative;
+		box-sizing: border-box;
+		display: grid;
+		gap: 28px;
+		width: 100%;
+		max-width: 920px;
+		margin: 0 auto;
+		padding: 8px 0;
+		list-style: none;
+	}
+
+	.timeline__list::before {
+		content: "";
+		position: absolute;
+		top: 20px;
+		bottom: 20px;
+		left: 50%;
+		width: 2px;
+		transform: translateX(-50%);
+		border-radius: 999px;
+		background: linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--color-primary) 0%, transparent),
+			color-mix(in srgb, var(--color-primary) 38%, transparent) 20%,
+			color-mix(in srgb, var(--color-secondary) 22%, transparent) 80%,
+			color-mix(in srgb, var(--color-secondary) 0%, transparent)
+		);
+	}
+
+	.timeline__item {
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
+		align-items: start;
+		min-width: 0;
+	}
+
+	.timeline__marker {
+		z-index: 1;
+		grid-column: 2;
+		display: flex;
+		justify-content: center;
+		padding-top: 28px;
+	}
+
+	.timeline__dot {
+		display: inline-flex;
+		width: 22px;
+		height: 22px;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid rgba(99, 102, 241, 0.28);
+		border-radius: 999px;
+		background: var(--color-surface);
+		box-shadow: 0 0 0 6px rgba(248, 250, 252, 0.92);
+	}
+
+	.timeline__dot-core {
+		width: 8px;
+		height: 8px;
+		border-radius: 999px;
+		background: var(--color-primary);
+	}
+
+	.timeline__content {
+		position: relative;
+		box-sizing: border-box;
+		min-width: 0;
+	}
+
+	.timeline__content::after {
+		content: "";
+		position: absolute;
+		top: 34px;
+		width: 14px;
+		height: 14px;
+		border-top: 1px solid rgba(99, 102, 241, 0.14);
+		border-right: 1px solid rgba(99, 102, 241, 0.14);
+		background: var(--color-surface);
+		transform: rotate(45deg);
+	}
+
+	.timeline__item--start .timeline__content {
+		grid-column: 1;
+		margin-right: 12px;
+	}
+
+	.timeline__item--start .timeline__content::after {
+		right: -8px;
+	}
+
+	.timeline__item--end .timeline__content {
+		grid-column: 3;
+		margin-left: 12px;
+	}
+
+	.timeline__item--end .timeline__content::after {
+		left: -8px;
+		transform: rotate(225deg);
+	}
+
+	.timeline-card__header {
+		display: grid;
+		gap: 8px;
+	}
+
+	.timeline-card__period {
+		margin: 0;
+		color: var(--color-primary);
+		font-size: 13px;
+		font-weight: 800;
+		line-height: 1.2;
+		text-transform: uppercase;
+	}
+
+	.timeline-card__role {
+		margin: 0;
+		font-size: 22px;
+		line-height: 1.15;
+		letter-spacing: 0;
+	}
+
+	.timeline-card__meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 14px;
+		font-weight: 650;
+		line-height: 1.45;
+	}
+
+	.timeline-card__body {
+		display: grid;
+		gap: 14px;
+		padding: 16px 0;
+	}
+
+	.timeline-card__description {
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 15px;
+		line-height: 1.65;
+		text-wrap: pretty;
+	}
+
+	.timeline-card__highlights {
+		display: grid;
+		gap: 10px;
+		margin: 0;
+		padding-left: 18px;
+		color: var(--color-text-muted);
+		font-size: 14px;
+		line-height: 1.6;
+		list-style-type: "–  ";
+	}
+
+	.timeline-card__highlights li::marker {
+		color: var(--color-primary);
+		font-weight: 600;
+	}
+
+	.timeline-card__footer {
+		justify-content: flex-start;
+	}
+
+	.timeline-card__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	@media (max-width: 760px) {
+		.timeline__list {
+			max-width: none;
+			margin: 0;
+			padding-left: 30px;
+		}
+
+		.timeline__list::before {
+			left: 11px;
+			transform: none;
+		}
+
+		.timeline__item {
+			display: block;
+		}
+
+		.timeline__marker {
+			position: absolute;
+			top: 26px;
+			left: -30px;
+			width: 22px;
+			padding-top: 0;
+		}
+
+		.timeline__content {
+			margin: 0;
+		}
+
+		.timeline__content::after {
+			display: none;
+		}
+
+		.timeline-card__role {
+			font-size: 20px;
+		}
+
+		.timeline-card__description {
+			font-size: 14px;
+		}
+	}
+</style>
