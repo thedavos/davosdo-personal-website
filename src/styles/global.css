@@ -53,8 +53,7 @@ body {
 	font-family: var(--font-geist-sans), sans-serif;
 	margin: 0;
 	padding: 0;
-	background-color: var(--color-background);
-	background: linear-gradient(var(--color-background-gradient)) no-repeat;
+	background: linear-gradient(var(--color-background-gradient)) no-repeat var(--color-background);
 	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
