@@ -1,0 +1,302 @@
+---
+import Button from "@components/commons/Button.astro";
+import Card from "@components/commons/Card.astro";
+import Chip from "@components/commons/Chip.astro";
+
+type ProjectImportance = "high" | "medium" | "low";
+type ProjectCardVariant = "masonry" | "compact";
+
+type Props = {
+	title: string;
+	description: string;
+	tags: string[];
+	importance: ProjectImportance;
+	url: string;
+	colSpan?: 1 | 2;
+	variant?: ProjectCardVariant;
+	style?: string;
+	class?: string;
+};
+
+const {
+	title,
+	description,
+	tags,
+	importance,
+	url,
+	colSpan,
+	variant = "masonry",
+	style,
+	class: className,
+} = Astro.props as Props;
+
+const isCompact = variant === "compact";
+
+const classes = [
+	"project-card",
+	isCompact ? "project-card--compact" : `project-card--${importance}`,
+	!isCompact &&
+		colSpan === 2 &&
+		importance === "low" &&
+		"project-card--span-wide",
+	className,
+]
+	.filter(Boolean)
+	.join(" ");
+---
+
+<div class={classes} style={style} data-cascade-item>
+	<Card
+		as="article"
+		variant="outlined"
+		padding="none"
+		class="service-card-surface service-card-surface-hover h-full flex flex-col"
+	>
+		<div class="project-card__body">
+			<div class="project-card__body-content">
+				<div class="project-card__copy">
+					<h2 class="project-card__title">{title}</h2>
+					<p class="project-card__description">{description}</p>
+				</div>
+
+				<ul
+					class="project-card__tags"
+					aria-label={`Herramientas usadas en ${title}`}
+				>
+					{tags.map((tag) => (
+						<li>
+							<Chip size="xs" variant="muted">
+								{tag}
+							</Chip>
+						</li>
+					))}
+				</ul>
+			</div>
+			<div class="project-card__cta">
+				<Button
+					as="a"
+					href={url}
+					variant="link"
+					size="sm"
+					rightIcon="i-lucide-arrow-right"
+					class="!min-h-0 !p-0 !text-primary"
+				>
+					Ver proyecto
+				</Button>
+			</div>
+		</div>
+	</Card>
+</div>
+
+<style>
+	.project-card {
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		min-width: 0;
+	}
+
+	.project-card--high {
+		grid-column: span 2;
+		grid-row: span 2;
+	}
+
+	.project-card--medium {
+		grid-column: span 2;
+		grid-row: span 1;
+	}
+
+	.project-card--low {
+		grid-column: span 1;
+		grid-row: span 1;
+	}
+
+	.project-card--span-wide {
+		grid-column: span 2;
+	}
+
+	.project-card__body {
+		display: flex;
+		flex: 1;
+		min-height: 0;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 16px;
+		height: 100%;
+	}
+
+	.project-card__copy {
+		display: grid;
+		gap: 8px;
+		min-width: 0;
+	}
+
+	.project-card__title {
+		min-width: 0;
+		margin: 0;
+		font-size: 19px;
+		letter-spacing: 0;
+		line-height: 1.12;
+		text-wrap: balance;
+	}
+
+	.project-card__cta {
+		align-self: flex-end;
+		line-height: 1.2;
+	}
+
+	.project-card__description {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		overflow: hidden;
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 13px;
+		line-height: 1.45;
+		text-wrap: pretty;
+	}
+
+	.project-card__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		margin-top: 16px;
+	}
+
+	.project-card__tags li {
+		display: flex;
+		align-items: center;
+	}
+
+	.project-card--span-wide .project-card__description {
+		-webkit-line-clamp: 3;
+	}
+
+	.project-card--medium .project-card__body {
+		gap: 16px;
+		padding: 20px;
+	}
+
+	.project-card--medium .project-card__title {
+		font-size: 22px;
+	}
+
+	.project-card--medium .project-card__description {
+		max-width: 52ch;
+		-webkit-line-clamp: 3;
+		font-size: 14px;
+		line-height: 1.5;
+	}
+
+	.project-card--high .project-card__body {
+		gap: 20px;
+		padding: 24px;
+	}
+
+	.project-card--high .project-card__copy {
+		gap: 12px;
+	}
+
+	.project-card--high .project-card__title {
+		max-width: 10ch;
+		font-size: 34px;
+		line-height: 1;
+	}
+
+	.project-card--high .project-card__description {
+		max-width: 46ch;
+		-webkit-line-clamp: 4;
+		font-size: 15px;
+		line-height: 1.55;
+	}
+
+	.project-card--compact .project-card__body {
+		min-height: 220px;
+		gap: 16px;
+		padding: 20px;
+	}
+
+	.project-card--compact .project-card__title {
+		font-size: 18px;
+	}
+
+	.project-card--compact .project-card__description {
+		-webkit-line-clamp: 3;
+		font-size: 13px;
+		line-height: 1.5;
+	}
+
+	.project-card--compact .project-card__tags {
+		margin-top: 12px;
+	}
+
+	@media (max-width: 900px) {
+		.project-card--high,
+		.project-card--medium,
+		.project-card--span-wide {
+			grid-column: span 2;
+		}
+
+		.project-card--low {
+			grid-column: span 1;
+		}
+
+		.project-card--high {
+			grid-row: span 1;
+		}
+
+		.project-card--high .project-card__body {
+			gap: 16px;
+			padding: 20px;
+		}
+
+		.project-card--high .project-card__title {
+			max-width: none;
+			font-size: 28px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.project-card--high,
+		.project-card--medium,
+		.project-card--low,
+		.project-card--span-wide {
+			grid-column: span 1;
+			grid-row: span 1;
+		}
+
+		.project-card--high .project-card__body,
+		.project-card--medium .project-card__body,
+		.project-card__body {
+			gap: 16px;
+			padding: 20px;
+		}
+
+		.project-card--high .project-card__copy,
+		.project-card--medium .project-card__copy,
+		.project-card__copy {
+			gap: 8px;
+		}
+
+		.project-card--high .project-card__title,
+		.project-card--medium .project-card__title,
+		.project-card__title {
+			font-size: 22px;
+		}
+
+		.project-card--high .project-card__description,
+		.project-card--medium .project-card__description,
+		.project-card--low .project-card__description,
+		.project-card--compact .project-card__description,
+		.project-card__description {
+			-webkit-line-clamp: unset;
+			overflow: visible;
+			font-size: 13px;
+		}
+	}
+</style>

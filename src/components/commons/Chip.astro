@@ -2,7 +2,7 @@
 import type { HTMLAttributes } from "astro/types";
 
 type ChipVariant = "default" | "primary" | "muted";
-type ChipSize = "sm" | "md";
+type ChipSize = "xs" | "sm" | "md";
 
 type BaseProps = {
 	variant?: ChipVariant;
@@ -38,15 +38,21 @@ const {
 	}
 
 	/* Sizes */
+	.chip--xs {
+		min-height: 20px;
+		padding: 4px 8px;
+		font-size: 10px;
+	}
+
 	.chip--sm {
-		min-height: 26px;
-		padding: 3px 8px;
+		min-height: 24px;
+		padding: 4px 8px;
 		font-size: 12px;
 	}
 
 	.chip--md {
 		min-height: 32px;
-		padding: 5px 10px;
+		padding: 4px 12px;
 		font-size: 14px;
 	}
 

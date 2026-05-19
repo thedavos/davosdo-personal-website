@@ -1,0 +1,114 @@
+---
+import ProjectCard from "@components/projects/ProjectCard.astro";
+import PageLayout from "@layouts/PageLayout.astro";
+import { getVisibleProjects } from "@data/projects";
+
+const visibleProjects = getVisibleProjects();
+---
+
+<PageLayout
+	title="Proyectos | davosdo.dev"
+	description="Selección de proyectos y productos desarrollados por David Vargas."
+	containerClass="w-full max-w-[1080px] mx-auto px-4 py-12"
+>
+	<section class="projects-page" data-cascade-scope>
+		<header
+			class="projects-page__hero"
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
+		>
+			<h1 class="projects-page__title">Proyectos</h1>
+			<p class="projects-page__subtitle">
+				Una selección de productos, experimentos y plataformas donde combino
+				frontend, producto, automatización y despliegue en cloud.
+			</p>
+		</header>
+
+		<div class="projects-grid" aria-label="Proyectos destacados">
+			{
+				visibleProjects.map((project, index) => (
+					<ProjectCard
+						title={project.title}
+						description={project.description}
+						tags={project.tags}
+						importance={project.importance}
+						colSpan={project.colSpan}
+						url={`/projects/${project.slug}`}
+						style={`--cascade-delay: ${0.12 + index * 0.04}s`}
+					/>
+				))
+			}
+		</div>
+	</section>
+</PageLayout>
+
+<style>
+	/* ── Page ── */
+	.projects-page {
+		display: flex;
+		flex-direction: column;
+		gap: 44px;
+	}
+
+	.projects-page__hero {
+		max-width: 720px;
+	}
+
+	.projects-page__title {
+		margin: 0 0 16px;
+		font-size: 64px;
+		letter-spacing: 0;
+		line-height: 1;
+	}
+
+	.projects-page__subtitle {
+		max-width: 58ch;
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 20px;
+		line-height: 1.55;
+		text-wrap: pretty;
+	}
+
+	/* ── Grid ── */
+	.projects-grid {
+		display: grid;
+		grid-auto-flow: dense;
+		grid-auto-rows: minmax(152px, auto);
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 16px;
+		align-items: stretch;
+	}
+
+	/* ══════════════════════════════════
+	   Tablet (≤ 900px)
+	   ══════════════════════════════════ */
+	@media (max-width: 900px) {
+		.projects-grid {
+			grid-auto-rows: minmax(152px, auto);
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	/* ══════════════════════════════════
+	   Mobile (≤ 640px)
+	   ══════════════════════════════════ */
+	@media (max-width: 640px) {
+		.projects-page {
+			gap: 32px;
+		}
+
+		.projects-page__title {
+			font-size: 42px;
+		}
+
+		.projects-page__subtitle {
+			font-size: 18px;
+		}
+
+		.projects-grid {
+			grid-auto-rows: auto;
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

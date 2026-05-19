@@ -1,0 +1,438 @@
+---
+import Button from "@components/commons/Button.astro";
+import Chip from "@components/commons/Chip.astro";
+import RelatedProjectsSection from "@components/projects/RelatedProjectsSection.astro";
+import PageLayout from "@layouts/PageLayout.astro";
+import {
+	projects,
+	getRelatedProjects,
+	getStatusLabel,
+	getStatusVariant,
+	type ProjectDetail,
+} from "@data/projects";
+
+export function getStaticPaths() {
+	return projects
+		.filter((p) => p.show)
+		.map((project) => ({
+			params: { slug: project.slug },
+			props: { project },
+		}));
+}
+
+type Props = { project: ProjectDetail };
+const { project } = Astro.props;
+
+const statusLabel = getStatusLabel(project.status);
+const statusVariant = getStatusVariant(project.status);
+const relatedProjects = getRelatedProjects(project);
+---
+
+<PageLayout
+	title={`${project.title} | davosdo.dev`}
+	description={project.description}
+	containerClass="w-full max-w-[900px] mx-auto px-4 py-12"
+>
+	<article class="project-detail" data-cascade-scope>
+		<!-- ── Back nav ── -->
+		<nav
+			class="project-detail__nav"
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
+		>
+			<Button
+				as="a"
+				href="/projects"
+				variant="ghost"
+				size="sm"
+				leftIcon="i-lucide-arrow-left"
+			>
+				Todos los proyectos
+			</Button>
+		</nav>
+
+		<!-- ── Hero ── -->
+		<header
+			class="project-detail__hero"
+			data-cascade-item
+			style="--cascade-delay: 0.08s"
+		>
+			<div class="project-detail__hero-meta">
+				<Chip size="sm" variant={statusVariant}>{statusLabel}</Chip>
+				<span class="project-detail__year">{project.year}</span>
+			</div>
+
+			<h1 class="project-detail__title">{project.title}</h1>
+			<p class="project-detail__role">{project.role}</p>
+			<p class="project-detail__description">{project.description}</p>
+		</header>
+
+		<!-- ── Hero image ── -->
+		<div
+			class="project-detail__hero-image"
+			data-cascade-item
+			style="--cascade-delay: 0.12s"
+		>
+			<img
+				src={project.images.hero}
+				alt={`Vista principal de ${project.title}`}
+				class="project-detail__img"
+				loading="eager"
+			/>
+		</div>
+
+		<!-- ── Links ── -->
+		{
+			project.links.length > 0 && (
+				<section
+					class="project-detail__section"
+					data-cascade-item
+					style="--cascade-delay: 0.16s"
+				>
+					<h2 class="project-detail__section-title">Enlaces</h2>
+					<div class="project-detail__links">
+						{project.links.map((link) => (
+							<Button
+								as="a"
+								href={link.url}
+								variant={link.live ? 'primary' : 'outline'}
+								size="md"
+								leftIcon={link.icon}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								{link.label}
+							</Button>
+						))}
+					</div>
+				</section>
+			)
+		}
+
+		<!-- ── About ── -->
+		<section
+			class="project-detail__section"
+			data-cascade-item
+			style="--cascade-delay: 0.20s"
+		>
+			<h2 class="project-detail__section-title">Sobre el proyecto</h2>
+			<p class="project-detail__long-description">{project.longDescription}</p>
+		</section>
+
+		<!-- ── Features ── -->
+		<section
+			class="project-detail__section"
+			data-cascade-item
+			style="--cascade-delay: 0.24s"
+		>
+			<h2 class="project-detail__section-title">Features destacadas</h2>
+			<ul class="project-detail__features">
+				{
+					project.features.map((feature) => (
+						<li class="project-detail__feature-item">
+							<span class="project-detail__feature-bullet i-lucide-check" />
+							<span>{feature}</span>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<!-- ── Gallery ── -->
+		{
+			project.images.gallery.length > 0 && (
+				<section
+					class="project-detail__section"
+					data-cascade-item
+					style="--cascade-delay: 0.28s"
+				>
+					<h2 class="project-detail__section-title">Galeria</h2>
+					<div class="project-detail__gallery">
+						{project.images.gallery.map((img, i) => (
+							<img
+								src={img}
+								alt={`Captura ${i + 1} de ${project.title}`}
+								class="project-detail__gallery-img"
+								loading="lazy"
+							/>
+						))}
+					</div>
+				</section>
+			)
+		}
+
+		<!-- ── Stack ── -->
+		<section
+			class="project-detail__section"
+			data-cascade-item
+			style="--cascade-delay: 0.32s"
+		>
+			<h2 class="project-detail__section-title">Stack tecnologico</h2>
+			<div class="project-detail__stack-grid">
+				{
+					project.stack.map((group) => (
+						<div class="project-detail__stack-group">
+							<h3 class="project-detail__stack-category">
+								{group.category}
+							</h3>
+							<ul class="project-detail__stack-items">
+								{group.items.map((item) => (
+									<li>
+										<Chip size="sm" variant="default">
+											{item}
+										</Chip>
+									</li>
+								))}
+							</ul>
+						</div>
+					))
+				}
+			</div>
+		</section>
+
+		<div class="project-detail__postscript">
+			<!-- ── Bottom nav ── -->
+			<nav
+				class="project-detail__bottom-nav"
+				data-cascade-item
+				style="--cascade-delay: 0.36s"
+			>
+				<Button
+					as="a"
+					href="/projects"
+					variant="secondary"
+					size="md"
+					leftIcon="i-lucide-arrow-left"
+				>
+					Ver todos los proyectos
+				</Button>
+			</nav>
+
+			<RelatedProjectsSection projects={relatedProjects} />
+		</div>
+	</article>
+</PageLayout>
+
+<style>
+	/* ── Layout ── */
+	.project-detail {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+	}
+
+	/* ── Nav ── */
+	.project-detail__nav {
+		display: flex;
+	}
+
+	/* ── Hero ── */
+	.project-detail__hero {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.project-detail__hero-meta {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.project-detail__year {
+		color: var(--color-text-muted);
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.project-detail__title {
+		margin: 0;
+		font-size: 48px;
+		letter-spacing: -0.02em;
+		line-height: 1.05;
+	}
+
+	.project-detail__role {
+		margin: 0;
+		color: var(--color-primary);
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	.project-detail__description {
+		max-width: 62ch;
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 18px;
+		line-height: 1.6;
+		text-wrap: pretty;
+	}
+
+	/* ── Hero image ── */
+	.project-detail__hero-image {
+		overflow: hidden;
+		border-radius: 12px;
+		border: 1px solid var(--color-border);
+	}
+
+	.project-detail__img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 2 / 1;
+		object-fit: cover;
+	}
+
+	/* ── Sections ── */
+	.project-detail__section {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.project-detail__section-title {
+		margin: 0;
+		font-size: 22px;
+		letter-spacing: -0.01em;
+		line-height: 1.2;
+	}
+
+	.project-detail__long-description {
+		max-width: 68ch;
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 16px;
+		line-height: 1.7;
+		text-wrap: pretty;
+	}
+
+	/* ── Gallery ── */
+	.project-detail__gallery {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 12px;
+	}
+
+	.project-detail__gallery-img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
+		border-radius: 10px;
+		border: 1px solid var(--color-border);
+	}
+
+	/* ── Features ── */
+	.project-detail__features {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.project-detail__feature-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		color: var(--color-text);
+		font-size: 15px;
+		line-height: 1.5;
+	}
+
+	.project-detail__feature-bullet {
+		flex: 0 0 auto;
+		margin-top: 4px;
+		color: var(--color-primary);
+		font-size: 18px;
+	}
+
+	/* ── Stack ── */
+	.project-detail__stack-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: 12px;
+	}
+
+	.project-detail__stack-category {
+		margin: 0 0 12px;
+		font-size: 14px;
+		font-weight: 700;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	.project-detail__stack-items {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	/* ── Links ── */
+	.project-detail__links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+
+	/* ── Postscript ── */
+	.project-detail__postscript {
+		display: grid;
+		gap: 32px;
+		padding-top: 16px;
+		border-top: 1px solid rgba(71, 85, 105, 0.08);
+	}
+
+	.project-detail__bottom-nav {
+		display: flex;
+		justify-content: center;
+	}
+
+	/* ══════════════════════════════════
+	   Tablet (<=900px)
+	   ══════════════════════════════════ */
+	@media (max-width: 900px) {
+		.project-detail {
+			gap: 32px;
+		}
+
+		.project-detail__title {
+			font-size: 38px;
+		}
+	}
+
+	/* ══════════════════════════════════
+	   Mobile (<=640px)
+	   ══════════════════════════════════ */
+	@media (max-width: 640px) {
+		.project-detail {
+			gap: 32px;
+		}
+
+		.project-detail__title {
+			font-size: 32px;
+		}
+
+		.project-detail__description {
+			font-size: 16px;
+		}
+
+		.project-detail__section-title {
+			font-size: 20px;
+		}
+
+		.project-detail__gallery {
+			grid-template-columns: 1fr;
+		}
+
+		.project-detail__stack-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

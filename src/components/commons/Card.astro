@@ -33,7 +33,7 @@ const variantClasses: Record<CardVariant, string> = {
 	default: "shadow-md",
 	elevated: "shadow-md hover:shadow-lg hover:-translate-y-0.5",
 	outlined: "border border-border shadow-sm",
-	interactive: "shadow-md cursor-pointer hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-3 focus-visible:ring-offset-background",
+	interactive: "shadow-md cursor-pointer hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-4 focus-visible:ring-offset-background",
 };
 
 const paddingClasses: Record<CardPadding, string> = {
@@ -57,44 +57,64 @@ const sharedProps = {
 	class: classes,
 	"data-variant": variant,
 };
+
+const hasHeader = Astro.slots.has("header");
+const hasFooter = Astro.slots.has("footer");
 ---
 
 {
 	Component === "a" ? (
 		<a href={href} {...sharedProps} {...props}>
-			<slot name="header" />
+			{hasHeader && (
+				<div class="card__header">
+					<slot name="header" />
+				</div>
+			)}
 			<slot />
-			<slot name="footer" />
+			{hasFooter && (
+				<div class="card__footer">
+					<slot name="footer" />
+				</div>
+			)}
 		</a>
 	) : Component === "article" ? (
 		<article {...sharedProps} {...props}>
-			<slot name="header" />
+			{hasHeader && (
+				<div class="card__header">
+					<slot name="header" />
+				</div>
+			)}
 			<slot />
-			<slot name="footer" />
+			{hasFooter && (
+				<div class="card__footer">
+					<slot name="footer" />
+				</div>
+			)}
 		</article>
 	) : (
 		<div {...sharedProps} {...props}>
-			<slot name="header" />
+			{hasHeader && (
+				<div class="card__header">
+					<slot name="header" />
+				</div>
+			)}
 			<slot />
-			<slot name="footer" />
+			{hasFooter && (
+				<div class="card__footer">
+					<slot name="footer" />
+				</div>
+			)}
 		</div>
 	)
 }
 
 <style>
-	/* Header slot wrapper — use .card__header inside the slot to get separator */
-	:global(.card__header) {
+	.card__header {
 		padding-bottom: 16px;
 		border-bottom: 1px solid rgba(71, 85, 105, 0.08);
 	}
 
-	/* Content slot wrapper */
-	:global(.card__content) {
-		flex: 1;
-	}
-
-	/* Footer slot wrapper — separator + row layout */
-	:global(.card__footer) {
+	.card__footer {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;

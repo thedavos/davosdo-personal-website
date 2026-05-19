@@ -1,0 +1,77 @@
+---
+import ProjectCard from "@components/projects/ProjectCard.astro";
+import type { ProjectDetail } from "@data/projects";
+
+type Props = {
+	projects: ProjectDetail[];
+};
+
+const { projects } = Astro.props as Props;
+---
+
+{
+	projects.length > 0 && (
+		<section class="related-projects" data-cascade-item style="--cascade-delay: 0.36s">
+			<div class="related-projects__header">
+				<h2 class="related-projects__title">Proyectos relacionados</h2>
+				<p class="related-projects__subtitle">
+					Otros proyectos que comparten tecnologías o decisiones técnicas.
+				</p>
+			</div>
+
+			<div class="related-projects__grid">
+				{projects.map((project) => (
+					<ProjectCard
+						title={project.title}
+						description={project.description}
+						tags={project.tags}
+						importance={project.importance}
+						url={`/projects/${project.slug}`}
+						variant="compact"
+					/>
+				))}
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.related-projects {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.related-projects__header {
+		display: grid;
+		gap: 8px;
+		max-width: 62ch;
+	}
+
+	.related-projects__title {
+		margin: 0;
+		font-size: 22px;
+		letter-spacing: -0.01em;
+		line-height: 1.2;
+	}
+
+	.related-projects__subtitle {
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 15px;
+		line-height: 1.6;
+		text-wrap: pretty;
+	}
+
+	.related-projects__grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 12px;
+	}
+
+	@media (max-width: 760px) {
+		.related-projects__grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
