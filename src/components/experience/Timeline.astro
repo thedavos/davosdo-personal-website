@@ -112,7 +112,7 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 		position: relative;
 		box-sizing: border-box;
 		display: grid;
-		gap: 28px;
+		gap: 32px;
 		width: 100%;
 		max-width: 920px;
 		margin: 0 auto;
@@ -151,13 +151,13 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 		grid-column: 2;
 		display: flex;
 		justify-content: center;
-		padding-top: 28px;
+		padding-top: 32px;
 	}
 
 	.timeline__dot {
 		display: inline-flex;
-		width: 22px;
-		height: 22px;
+		width: 24px;
+		height: 24px;
 		align-items: center;
 		justify-content: center;
 		border: 1px solid rgba(99, 102, 241, 0.28);
@@ -182,9 +182,9 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 	.timeline__content::after {
 		content: "";
 		position: absolute;
-		top: 34px;
-		width: 14px;
-		height: 14px;
+		top: 32px;
+		width: 16px;
+		height: 16px;
 		border-top: 1px solid rgba(99, 102, 241, 0.14);
 		border-right: 1px solid rgba(99, 102, 241, 0.14);
 		background: var(--color-surface);
@@ -234,7 +234,7 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 	.timeline-card__meta {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 6px;
+		gap: 8px;
 		margin: 0;
 		color: var(--color-text-muted);
 		font-size: 14px;
@@ -244,7 +244,7 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 
 	.timeline-card__body {
 		display: grid;
-		gap: 14px;
+		gap: 16px;
 		padding: 16px 0;
 	}
 
@@ -258,9 +258,9 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 
 	.timeline-card__highlights {
 		display: grid;
-		gap: 10px;
+		gap: 12px;
 		margin: 0;
-		padding-left: 18px;
+		padding-left: 20px;
 		color: var(--color-text-muted);
 		font-size: 14px;
 		line-height: 1.6;
@@ -279,7 +279,7 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 	.timeline-card__tags {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 6px;
+		gap: 8px;
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -289,11 +289,11 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 		.timeline__list {
 			max-width: none;
 			margin: 0;
-			padding-left: 30px;
+			padding-left: 32px;
 		}
 
 		.timeline__list::before {
-			left: 11px;
+			left: 12px;
 			transform: none;
 		}
 
@@ -303,9 +303,9 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 
 		.timeline__marker {
 			position: absolute;
-			top: 26px;
-			left: -30px;
-			width: 22px;
+			top: 24px;
+			left: -32px;
+			width: 24px;
 			padding-top: 0;
 		}
 

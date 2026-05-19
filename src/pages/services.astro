@@ -127,16 +127,16 @@ const services = [
 		line-height: 0.98;
 		letter-spacing: -0.03em;
 		margin-bottom: 16px;
-		text-align: center;
+		text-align: left;
 	}
 
 	.services__subtitle {
-		margin: auto auto 48px;
 		max-width: 50ch;
 		color: var(--color-text-muted);
 		font-size: 20px;
 		line-height: 1.5;
-		text-align: center;
+		text-align: left;
+		margin-bottom: 48px;
 	}
 
 	.services__grid {
@@ -180,15 +180,26 @@ const services = [
 	.service-card__chips {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 6px;
+		gap: 8px;
 		padding: 0;
 		margin: 0;
 		list-style: none;
 	}
 
+	@media (min-width: 760px) {
+		.services__title {
+			text-align: center;
+		}
+
+		.services__subtitle {
+			text-align: center;
+			margin: auto auto 48px;
+		}
+	}
+
 	@media (max-width: 760px) {
 		.services {
-			gap: 26px;
+			gap: 24px;
 		}
 
 		.services__title {

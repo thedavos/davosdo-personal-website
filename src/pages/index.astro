@@ -15,7 +15,7 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 >
 	<p class="mb-2 hidden md:block text-base font-medium leading-[1.4]">Hola, soy</p>
 	<h1
-		class="mb-2.5 text-center m-auto md:m-none md:text-left max-w-[12ch] text-[42px] font-bold leading-[0.98] tracking-[-0.03em] md:mb-3 md:text-[72px] md:tracking-[-0.04em]"
+		class="mb-3 text-center m-auto md:m-none md:text-left max-w-[12ch] text-[42px] font-bold leading-[0.98] tracking-[-0.03em] md:mb-3 md:text-[72px] md:tracking-[-0.04em]"
 	>
 		David Vargas Domínguez
 	</h1>
@@ -33,13 +33,13 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 		Desarrollo productos web completos: la interfaz, la lógica, el servidor y el deploy. Todo lo que necesita una idea para existir en internet, en un solo lugar.
 	</p>
 
-	<div class="mb-4 flex flex-col items-stretch gap-2.5 md:mb-5 md:flex-row md:flex-wrap md:gap-3">
+	<div class="mb-4 flex flex-col items-stretch gap-3 md:mb-5 md:flex-row md:flex-wrap md:gap-3">
 		<Button href="/projects" rightIcon="i-lucide-arrow-right">Ver qué construí</Button>
 		<Button href="/services" variant="ghost">Ver servicios</Button>
 	</div>
 
 	<SocialLinks
-		class="flex flex-wrap justify-center gap-x-2 gap-y-3 max-w-full md:justify-initial md:gap-x-2.5 md:gap-y-3.5 md:max-w-[62ch]"
+		class="flex flex-wrap justify-center gap-x-2 gap-y-3 max-w-full md:justify-initial md:gap-x-3 md:gap-y-4 md:max-w-[62ch]"
 	/>
 
 	<KeyboardPageNav navItems={SITE_NAV_ITEMS} currentPath={currentPath} />
