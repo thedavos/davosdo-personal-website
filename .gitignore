@@ -203,3 +203,6 @@ dist
 
 # IDE
 .idea/
+
+# Antigravity
+.antigravitycli/
