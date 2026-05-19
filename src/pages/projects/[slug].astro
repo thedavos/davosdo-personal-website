@@ -191,11 +191,13 @@ const relatedProjects = getRelatedProjects(project);
 		</section>
 
 		<div class="project-detail__postscript">
+			<RelatedProjectsSection projects={relatedProjects} />
+
 			<!-- ── Bottom nav ── -->
 			<nav
 				class="project-detail__bottom-nav"
 				data-cascade-item
-				style="--cascade-delay: 0.36s"
+				style="--cascade-delay: 0.40s"
 			>
 				<Button
 					as="a"
@@ -207,8 +209,6 @@ const relatedProjects = getRelatedProjects(project);
 					Ver todos los proyectos
 				</Button>
 			</nav>
-
-			<RelatedProjectsSection projects={relatedProjects} />
 		</div>
 	</article>
 </PageLayout>
