@@ -12,9 +12,9 @@ const { navItems, currentPath } = Astro.props;
 const { previousItem, nextItem } = getCircularNavItems(navItems, currentPath);
 
 const keyClass =
-	"relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200/80 bg-surface text-muted shadow-[inset_0_-2px_0_rgba(15,23,42,0.08),0_1px_3px_rgba(15,23,42,0.06)] transition-all duration-200";
+	"relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-muted shadow-[inset_0_-2px_0_var(--color-card-border),0_1px_3px_var(--color-card-border)] transition-all duration-200";
 const enabledKeyClass =
-	"cursor-pointer hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary hover:shadow-[inset_0_-2px_0_rgba(99,102,241,0.1),0_2px_6px_rgba(99,102,241,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-1 focus-visible:ring-offset-background active:translate-y-0 active:shadow-[inset_0_1px_2px_rgba(15,23,42,0.1)]";
+	"cursor-pointer hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary hover:shadow-[inset_0_-2px_0_var(--color-primary-soft),0_2px_6px_var(--color-primary-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-1 focus-visible:ring-offset-background active:translate-y-0 active:shadow-[inset_0_1px_2px_var(--color-card-border)]";
 ---
 
 <nav

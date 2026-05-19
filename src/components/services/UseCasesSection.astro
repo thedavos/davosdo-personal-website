@@ -82,7 +82,7 @@ const slotClasses = [
 				<Card
 					as="article"
 					variant="outlined"
-					padding="none"
+					padding="lg"
 					class:list={[
 						"use-case-card",
 						"service-card-surface",
@@ -113,7 +113,7 @@ const slotClasses = [
 	.use-cases {
 		display: flex;
 		flex-direction: column;
-		gap: 24px;
+		gap: 1.5rem;
 	}
 
 	.use-cases__intro {
@@ -121,16 +121,16 @@ const slotClasses = [
 	}
 
 	.use-cases__title {
-		margin: 0 0 10px;
-		font-size: 30px;
-		line-height: 1.05;
+		margin: 0 0 0.5rem;
+		font-size: var(--font-size-xl, 1.875rem);
+		line-height: 1.1;
 		letter-spacing: -0.02em;
 	}
 
 	.use-cases__subtitle {
 		margin: 0;
 		color: var(--color-text-muted);
-		font-size: 16px;
+		font-size: var(--font-size-sm, 0.875rem);
 		line-height: 1.6;
 	}
 
@@ -142,13 +142,12 @@ const slotClasses = [
 			"bottom-first wide-end wide-end bottom-second";
 		grid-template-rows: repeat(2, minmax(240px, 1fr));
 		align-items: stretch;
-		gap: 16px;
+		gap: 1rem;
 	}
 
 	.use-case-card {
 		display: flex;
 		flex-direction: column;
-		padding: 24px;
 	}
 
 	.use-case-card--wide-start {
@@ -180,21 +179,21 @@ const slotClasses = [
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		gap: 20px;
-		padding: 16px 0;
+		gap: 1.25rem;
+		padding: 1rem 0;
 	}
 
 	.use-case-card__quote {
 		margin: 0;
 		color: var(--color-text);
-		font-size: 15px;
+		font-size: var(--font-size-sm, 0.875rem);
 		line-height: 1.7;
 		text-wrap: pretty;
 	}
 
 	.use-case-card__quote-mark {
-		color: rgba(15, 23, 42, 0.82);
-		font-size: 28px;
+		color: var(--color-primary-border);
+		font-size: 1.75rem;
 		line-height: 0;
 	}
 
@@ -213,12 +212,8 @@ const slotClasses = [
 			grid-template-rows: repeat(4, minmax(220px, auto));
 		}
 
-		.use-case-card {
-			padding: 20px;
-		}
-
 		.use-case-card__quote {
-			font-size: 17px;
+			font-size: 1.0625rem;
 		}
 	}
 
@@ -238,11 +233,11 @@ const slotClasses = [
 
 	@media (max-width: 767px) {
 		.use-cases__title {
-			font-size: 24px;
+			font-size: 1.5rem;
 		}
 
 		.use-cases__subtitle {
-			font-size: 15px;
+			font-size: 0.9375rem;
 		}
 	}
 </style>

@@ -211,7 +211,7 @@ onBeforeUnmount(() => {
 		padding: 0.45rem 0.65rem;
 		border: 1px solid var(--color-border);
 		border-radius: 1rem;
-		background: rgba(255, 255, 255, 0.88);
+		background: rgb(var(--color-surface) / 0.88);
 		color: var(--color-text);
 		cursor: pointer;
 		transition:
@@ -222,14 +222,14 @@ onBeforeUnmount(() => {
 	}
 
 	.language-switcher__trigger:hover {
-		border-color: rgba(99, 102, 241, 0.22);
-		background: rgba(255, 255, 255, 0.96);
-		box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+		border-color: var(--color-primary-border);
+		background: rgb(var(--color-surface) / 0.96);
+		box-shadow: 0 8px 20px var(--color-card-border);
 		color: var(--color-primary);
 	}
 
 	.language-switcher__trigger:focus-visible {
-		outline: 2px solid rgba(99, 102, 241, 0.35);
+		outline: 2px solid var(--color-primary-hover);
 		outline-offset: 3px;
 	}
 
@@ -273,7 +273,7 @@ onBeforeUnmount(() => {
 		padding: 0.75rem;
 		border: 1px solid var(--color-border);
 		border-radius: 1rem;
-		background: rgba(255, 255, 255, 0.98);
+		background: rgb(var(--color-surface) / 0.98);
 		box-shadow: var(--box-shadow);
 	}
 
@@ -303,7 +303,7 @@ onBeforeUnmount(() => {
 	}
 
 	.language-switcher__option:focus-visible {
-		outline: 2px solid rgba(99, 102, 241, 0.35);
+		outline: 2px solid var(--color-primary-hover);
 		outline-offset: 3px;
 	}
 
@@ -329,7 +329,7 @@ onBeforeUnmount(() => {
 		padding: 0.875rem 1rem;
 		border: 1px solid var(--color-border);
 		border-radius: 1rem;
-		background: rgba(255, 255, 255, 0.92);
+		background: rgb(var(--color-surface) / 0.92);
 		box-shadow: none;
 	}
 

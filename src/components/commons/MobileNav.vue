@@ -157,7 +157,7 @@ onBeforeUnmount(() => {
 		padding: 0;
 		border: 1px solid var(--color-border);
 		border-radius: 14px;
-		background: rgba(255, 255, 255, 0.92);
+		background: rgb(var(--color-surface) / 0.92);
 		color: var(--color-text);
 		cursor: pointer;
 		transition:
@@ -168,12 +168,12 @@ onBeforeUnmount(() => {
 	}
 
 	.menu-trigger:hover {
-		border-color: rgba(99, 102, 241, 0.28);
+		border-color: var(--color-primary-border);
 		color: var(--color-primary);
 	}
 
 	.menu-trigger:focus-visible {
-		outline: 2px solid rgba(99, 102, 241, 0.35);
+		outline: 2px solid var(--color-primary-hover);
 		outline-offset: 3px;
 	}
 
@@ -188,7 +188,7 @@ onBeforeUnmount(() => {
 		position: fixed;
 		inset: 0;
 		z-index: 29;
-		background: rgba(15, 23, 42, 0.42);
+		background: rgba(var(--color-body), 0.42);
 		backdrop-filter: blur(4px);
 	}
 
@@ -200,8 +200,8 @@ onBeforeUnmount(() => {
 		z-index: 30;
 		width: min(24rem, calc(100vw - 1.25rem));
 		border-left: 1px solid var(--color-border);
-		background: rgba(255, 255, 255, 0.98);
-		box-shadow: -24px 0 48px rgba(15, 23, 42, 0.14);
+		background: rgb(var(--color-surface) / 0.98);
+		box-shadow: -24px 0 48px var(--color-card-border);
 	}
 
 	.mobile-nav__content {
@@ -226,7 +226,7 @@ onBeforeUnmount(() => {
 		padding: 0;
 		border: 1px solid var(--color-border);
 		border-radius: 14px;
-		background: rgba(255, 255, 255, 0.92);
+		background: rgb(var(--color-surface) / 0.92);
 		color: var(--color-text);
 		cursor: pointer;
 		transition:
@@ -237,12 +237,12 @@ onBeforeUnmount(() => {
 	}
 
 	.mobile-nav__close:hover {
-		border-color: rgba(99, 102, 241, 0.28);
+		border-color: var(--color-primary-border);
 		color: var(--color-primary);
 	}
 
 	.mobile-nav__close:focus-visible {
-		outline: 2px solid rgba(99, 102, 241, 0.35);
+		outline: 2px solid var(--color-primary-hover);
 		outline-offset: 3px;
 	}
 
@@ -290,18 +290,18 @@ onBeforeUnmount(() => {
 	}
 
 	.mobile-nav__link:hover {
-		background: rgba(99, 102, 241, 0.08);
+		background: var(--color-primary-soft);
 		color: var(--color-primary);
 	}
 
 	.mobile-nav__link:focus-visible {
-		outline: 2px solid rgba(99, 102, 241, 0.35);
+		outline: 2px solid var(--color-primary-hover);
 		outline-offset: 3px;
 	}
 
 	.mobile-nav__link--active {
 		font-weight: 700;
-		background: rgba(99, 102, 241, 0.1);
+		background: var(--color-primary-soft);
 		color: var(--color-primary);
 	}
 

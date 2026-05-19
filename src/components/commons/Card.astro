@@ -38,9 +38,9 @@ const variantClasses: Record<CardVariant, string> = {
 
 const paddingClasses: Record<CardPadding, string> = {
 	none: "",
-	sm: "p-3",
-	md: "p-5",
-	lg: "p-7",
+	sm: "p-3", // 0.75rem (12px)
+	md: "p-6", // 1.5rem (24px)
+	lg: "p-8", // 2rem (32px)
 };
 
 const classes = [
@@ -111,7 +111,7 @@ const hasFooter = Astro.slots.has("footer");
 <style>
 	.card__header {
 		padding-bottom: 16px;
-		border-bottom: 1px solid rgba(71, 85, 105, 0.08);
+		border-bottom: 1px solid var(--color-card-border);
 	}
 
 	.card__footer {
@@ -121,6 +121,6 @@ const hasFooter = Astro.slots.has("footer");
 		flex-wrap: wrap;
 		gap: 12px;
 		padding-top: 16px;
-		border-top: 1px solid rgba(71, 85, 105, 0.08);
+		border-top: 1px solid var(--color-card-border);
 	}
 </style>
