@@ -8,6 +8,8 @@ export default defineConfig({
 		"i-lucide-play",
 		"i-lucide-sun",
 		"i-lucide-moon",
+		"i-lucide-arrow-right",
+		"i-lucide-arrow-left",
 	],
 	presets: [
 		presetMini(),

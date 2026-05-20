@@ -1,55 +1,7 @@
 ---
-import Card from "@components/commons/Card.astro";
-import Chip from "@components/commons/Chip.astro";
-import Button from "@components/commons/Button.astro";
-import UseCasesSection from "@components/services/UseCasesSection.astro";
+import ServicesExplorer from "@components/services/ServicesExplorer.astro";
 import PageLayout from "@layouts/PageLayout.astro";
-
-const services = [
-	{
-		title: "Web Apps",
-		slug: "web-apps",
-		description:
-			"De la idea al producto. Construyo SaaS, dashboards y portales con arquitectura sólida, rendimiento de edge y código que dura.",
-		chips: ["Vue", "React", "Angular", "JS/TS"],
-	},
-	{
-		title: "Mobile Apps",
-		slug: "mobile-apps",
-		description:
-			"Tu app en iOS y Android sin doblar el presupuesto. Experiencias nativas con Flutter, lista para escalar desde el día uno.",
-		chips: ["React Native", "Flutter"],
-	},
-	{
-		title: "Ecommerce",
-		slug: "ecommerce",
-		description:
-			"Tiendas que convierten. Diseño, catálogo, checkout y pasarela de pagos optimizados para que vendas más con menos fricción.",
-		chips: ["Shopify", "Astro", "CMS"],
-	},
-	{
-		title: "Automation Bots",
-		slug: "automation-bots",
-		description:
-			"Elimina el trabajo repetitivo. Bots y pipelines que rastrean, notifican y atienden clientes mientras tú duermes.",
-		chips: ["n8n", "Python"],
-	},
-	{
-		title: "CLI",
-		slug: "cli",
-		description:
-			"Herramientas que entienden tu flujo. Scripts y CLIs a medida para que tu equipo técnico trabaje el doble de rápido.",
-		chips: ["Node.js", "Typescript", "Golang"],
-	},
-	{
-		title: "AI Apps",
-		slug: "ai-apps",
-		description:
-			"IA que resuelve problemas reales. Asistentes, búsqueda semántica y agentes entrenados sobre tu negocio, no sobre demos genéricas.",
-		chips: ["OpenAI", "Vercel AI SDK", "Kapso.ai"],
-	},
-];
-
+import { services } from "@data/services";
 ---
 
 <PageLayout
@@ -75,49 +27,7 @@ const services = [
 			Desde la idea hasta el deploy. Trabajo con startups, negocios y emprendedores para construir productos digitales que escalan.
 		</p>
 
-		<div class="services__grid" aria-label="Servicios">
-			{
-				services.map(({ title, slug, description, chips }, index) => (
-					<Card
-						as="article"
-						variant="outlined"
-						padding="none"
-						class="service-card service-card-surface service-card-surface-hover"
-						data-cascade-item
-						style={`--cascade-delay: ${0.1 + index * 0.06}s`}
-					>
-						<div class="card__header" slot="header">
-							<h2 class="service-card__title">{title}</h2>
-						</div>
-
-						<div class="service-card__body">
-							<p class="service-card__description">{description}</p>
-							<ul class="service-card__chips" aria-label={`Tecnologías para ${title}`}>
-								{chips.map((chip) => (
-									<li>
-										<Chip size="sm">{chip}</Chip>
-									</li>
-								))}
-							</ul>
-						</div>
-
-						<div class="card__footer" slot="footer">
-							<Button
-								as="a"
-								href={`/contact?service=${slug}`}
-								variant="ghost"
-								size="sm"
-								rightIcon="i-lucide-arrow-right"
-							>
-								Hablemos de esto
-							</Button>
-						</div>
-					</Card>
-				))
-			}
-		</div>
-
-		<UseCasesSection />
+		<ServicesExplorer services={services} />
 	</section>
 </PageLayout>
 
@@ -137,53 +47,6 @@ const services = [
 		line-height: 1.5;
 		text-align: left;
 		margin-bottom: 48px;
-	}
-
-	.services__grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 16px;
-		margin-bottom: 48px;
-	}
-
-	.service-card {
-		display: flex;
-		min-height: 260px;
-		flex-direction: column;
-		padding: 24px;
-	}
-
-	.service-card__title {
-		font-size: 22px;
-		line-height: 1.1;
-		letter-spacing: -0.015em;
-		margin: 0;
-	}
-
-	.service-card__body {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		gap: 20px;
-		padding: 16px 0;
-	}
-
-	.service-card__description {
-		max-width: 35ch;
-		margin: 0;
-		color: var(--color-text-muted);
-		font-size: 15px;
-		line-height: 1.6;
-	}
-
-	.service-card__chips {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-		padding: 0;
-		margin: 0;
-		list-style: none;
 	}
 
 	@media (min-width: 760px) {
@@ -209,19 +72,6 @@ const services = [
 
 		.services__subtitle {
 			font-size: 18px;
-		}
-
-		.service-card {
-			min-height: auto;
-			padding: 20px;
-		}
-
-		.service-card__title {
-			font-size: 20px;
-		}
-
-		.service-card__description {
-			font-size: 14px;
 		}
 	}
 </style>

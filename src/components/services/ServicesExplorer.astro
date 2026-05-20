@@ -1,0 +1,572 @@
+---
+import Card from "@components/commons/Card.astro";
+import Chip from "@components/commons/Chip.astro";
+import Button from "@components/commons/Button.astro";
+import type { Service } from "@data/services";
+
+type Props = {
+	services: Service[];
+};
+
+const { services } = Astro.props as Props;
+
+const labelClass =
+	"text-[0.6875rem] font-bold tracking-[0.08em] text-muted uppercase";
+---
+
+<div class="services-explorer" data-services-explorer>
+	<div
+		id="services-view"
+		class="services-explorer__view services-explorer__view--active"
+		data-view="services"
+	>
+		<div class="services__grid" aria-label="Servicios">
+			{
+				services.map(({ title, slug, description, chips }, index) => (
+					<Card
+						as="article"
+						variant="outlined"
+						padding="none"
+						class="service-card service-card-surface service-card-surface-hover"
+						data-cascade-item
+						style={`--cascade-delay: ${0.1 + index * 0.06}s`}
+					>
+						<div class="card__header" slot="header">
+							<h2 class="service-card__title">{title}</h2>
+						</div>
+
+						<div class="service-card__body">
+							<p class="service-card__description">{description}</p>
+							<ul
+								class="service-card__chips"
+								aria-label={`Tecnologías para ${title}`}
+							>
+								{chips.map((chip) => (
+									<li>
+										<Chip size="sm">{chip}</Chip>
+									</li>
+								))}
+							</ul>
+						</div>
+
+						<div class="service-card__actions" slot="footer">
+							<Button
+								fullWidth={true}
+								as="button"
+								type="button"
+								variant="ghost"
+								size="sm"
+								data-action="show-use-cases"
+								data-service={slug}
+								class="service-card__action-secondary"
+							>
+								Ver casos de uso
+							</Button>
+							<Button
+								fullWidth={true}
+								as="a"
+								href={`/contact?service=${slug}`}
+								variant="primary"
+								size="sm"
+								class="service-card__action-primary"
+							>
+								Hablemos
+							</Button>
+						</div>
+					</Card>
+				))
+			}
+		</div>
+	</div>
+
+	<div
+		id="use-cases-view"
+		class="services-explorer__view"
+		data-view="use-cases"
+		hidden
+		aria-hidden="true"
+	>
+		{
+			services.map(({ title, slug, useCases }) => (
+				<div
+					class="use-cases-panel"
+					data-use-cases-panel={slug}
+					role="region"
+					aria-labelledby={`use-cases-heading-${slug}`}
+					hidden
+				>
+					<nav class="use-cases-panel__nav">
+						<Button
+							as="button"
+							type="button"
+							variant="ghost"
+							size="sm"
+							leftIcon="i-lucide-arrow-left"
+							data-action="back-to-services"
+						>
+							Volver a servicios
+						</Button>
+					</nav>
+
+					<header class="use-cases-panel__header">
+						<p class={`m-0 mb-2 ${labelClass}`}>Casos de uso</p>
+						<h2
+							id={`use-cases-heading-${slug}`}
+							class="use-cases-panel__title"
+						>
+							{title}
+						</h2>
+					</header>
+
+					<ul class="use-cases-panel__list" role="list">
+						{
+							useCases.map(({ quote, outcome }) => (
+								<li>
+									<Card
+										as="article"
+										variant="outlined"
+										padding="none"
+										class="use-case-card service-card-surface"
+									>
+										<div class="use-case-card__body">
+											<blockquote class="use-case-card__quote">{quote}</blockquote>
+											{outcome && (
+												<p class="use-case-card__outcome">
+													<span class="use-case-card__arrow" aria-hidden="true">
+														→
+													</span>
+													{outcome}
+												</p>
+											)}
+										</div>
+									</Card>
+								</li>
+							))
+						}
+					</ul>
+
+					<div class="use-cases-panel__cta">
+						<Button
+							as="a"
+							href={`/contact?service=${slug}`}
+							variant="ghost"
+							size="sm"
+							rightIcon="i-lucide-arrow-right"
+						>
+							Hablemos de esto
+						</Button>
+					</div>
+				</div>
+			))
+		}
+	</div>
+</div>
+
+<style>
+	.services-explorer {
+		position: relative;
+		min-height: 320px;
+	}
+
+	.services-explorer__view {
+		transition:
+			opacity 220ms ease,
+			transform 220ms ease;
+	}
+
+	.services-explorer__view--active {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.services-explorer__view.is-exiting {
+		opacity: 0;
+		transform: translateY(-12px);
+		pointer-events: none;
+	}
+
+	.services-explorer__view.is-entering {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+
+	.services-explorer__view.is-entering.services-explorer__view--active {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.services__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 16px;
+		margin-bottom: 48px;
+	}
+
+	.service-card {
+		display: flex;
+		min-height: 260px;
+		flex-direction: column;
+		padding: 24px;
+	}
+
+	.service-card__title {
+		font-size: 22px;
+		line-height: 1.1;
+		letter-spacing: -0.015em;
+		margin: 0;
+	}
+
+	.service-card__body {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.service-card__description {
+		max-width: 35ch;
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 15px;
+		line-height: 1.6;
+	}
+
+	.service-card__chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
+
+	.service-card__footer {
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;
+		gap: 0;
+	}
+
+	.service-card__actions {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		width: 100%;
+	}
+
+	@media (min-width: 761px) {
+		.service-card__actions {
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+		}
+	}
+
+	.use-cases-panel__nav {
+		margin-bottom: 24px;
+	}
+
+	.use-cases-panel__header {
+		margin-bottom: 20px;
+		max-width: 50ch;
+	}
+
+	.use-cases-panel__title {
+		margin: 0;
+		font-size: 28px;
+		line-height: 1.1;
+		letter-spacing: -0.02em;
+	}
+
+	.use-cases-panel__list {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 16px;
+		padding: 0;
+		margin: 0 0 32px;
+		list-style: none;
+	}
+
+	.use-case-card {
+		padding: 22px;
+	}
+
+	.use-case-card__body {
+		display: grid;
+		gap: 18px;
+	}
+
+	.use-case-card__quote {
+		position: relative;
+		margin: 0;
+		padding: 0.25rem 2.25rem 0;
+		color: var(--color-text);
+		font-size: 16px;
+		line-height: 1.65;
+		text-wrap: pretty;
+	}
+
+	.use-case-card__quote::before,
+	.use-case-card__quote::after {
+		position: absolute;
+		color: rgb(var(--color-primary));
+		font-family: var(--font-geist-mono), ui-monospace, monospace;
+		font-size: 2.5rem;
+		font-weight: 700;
+		line-height: 1;
+		opacity: 0.42;
+	}
+
+	.use-case-card__quote::before {
+		top: -0.1rem;
+		left: 0;
+		content: "“";
+	}
+
+	.use-case-card__quote::after {
+		right: 0.25rem;
+		bottom: -0.6rem;
+		content: "”";
+	}
+
+	.use-case-card__outcome {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		margin: 0;
+		padding-top: 18px;
+		border-top: 1px solid var(--color-primary-border);
+		color: var(--color-text-muted);
+		font-size: 15px;
+		line-height: 1.6;
+	}
+
+	.use-case-card__arrow {
+		flex: 0 0 auto;
+		color: rgb(var(--color-primary));
+		font-weight: 700;
+		line-height: 1.6;
+	}
+
+	.use-cases-panel__cta {
+		display: flex;
+		justify-content: flex-start;
+	}
+
+	@media (max-width: 760px) {
+		.service-card {
+			min-height: auto;
+			padding: 20px;
+		}
+
+		.service-card__title {
+			font-size: 20px;
+		}
+
+		.service-card__description {
+			font-size: 14px;
+		}
+
+		.use-cases-panel__title {
+			font-size: 24px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.services-explorer__view {
+			transition: none;
+		}
+
+		.services-explorer__view.is-exiting,
+		.services-explorer__view.is-entering {
+			transform: none;
+		}
+	}
+</style>
+
+<script>
+	const ANIMATION_MS = 220;
+
+	function prefersReducedMotion() {
+		return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	}
+
+	function setInert(element: HTMLElement | null, inert: boolean) {
+		if (!element) return;
+		if (inert) {
+			element.setAttribute("inert", "");
+		} else {
+			element.removeAttribute("inert");
+		}
+	}
+
+	function initServicesExplorer(root: HTMLElement) {
+		if (root.dataset.initialized === "true") return;
+		root.dataset.initialized = "true";
+
+		const servicesView = root.querySelector<HTMLElement>("#services-view");
+		const useCasesView = root.querySelector<HTMLElement>("#use-cases-view");
+		const panels = root.querySelectorAll<HTMLElement>("[data-use-cases-panel]");
+
+		if (!servicesView || !useCasesView) return;
+
+		let activeSlug: string | null = null;
+		let lastTrigger: HTMLButtonElement | null = null;
+		let isAnimating = false;
+
+		const getPanel = (slug: string) =>
+			root.querySelector<HTMLElement>(`[data-use-cases-panel="${slug}"]`);
+
+		const hideAllPanels = () => {
+			panels.forEach((panel) => {
+				panel.hidden = true;
+			});
+		};
+
+		const showPanel = (slug: string) => {
+			hideAllPanels();
+			const panel = getPanel(slug);
+			if (panel) panel.hidden = false;
+		};
+
+		const swapViews = (
+			hideView: HTMLElement,
+			showView: HTMLElement,
+			onComplete: () => void,
+		) => {
+			if (prefersReducedMotion()) {
+				hideView.hidden = true;
+				hideView.classList.remove("services-explorer__view--active");
+				hideView.setAttribute("aria-hidden", "true");
+				setInert(hideView, true);
+
+				showView.hidden = false;
+				showView.classList.add("services-explorer__view--active");
+				showView.removeAttribute("aria-hidden");
+				setInert(showView, false);
+
+				onComplete();
+				return;
+			}
+
+			isAnimating = true;
+			hideView.classList.add("is-exiting");
+
+			window.setTimeout(() => {
+				hideView.classList.remove("is-exiting", "services-explorer__view--active");
+				hideView.hidden = true;
+				hideView.setAttribute("aria-hidden", "true");
+				setInert(hideView, true);
+
+				showView.hidden = false;
+				showView.removeAttribute("aria-hidden");
+				setInert(showView, false);
+				showView.classList.add("is-entering");
+
+				requestAnimationFrame(() => {
+					showView.classList.add("services-explorer__view--active");
+					showView.classList.remove("is-entering");
+				});
+
+				window.setTimeout(() => {
+					isAnimating = false;
+					onComplete();
+				}, ANIMATION_MS);
+			}, ANIMATION_MS);
+		};
+
+		const openUseCases = (
+			slug: string,
+			trigger?: HTMLButtonElement | null,
+			options: { animate?: boolean } = {},
+		) => {
+			if (isAnimating || activeSlug === slug) return;
+
+			const panel = getPanel(slug);
+			if (!panel) return;
+
+			const shouldAnimate = options.animate !== false && !prefersReducedMotion();
+
+			lastTrigger = trigger ?? lastTrigger;
+			activeSlug = slug;
+			showPanel(slug);
+
+			if (!shouldAnimate) {
+				servicesView.hidden = true;
+				servicesView.classList.remove("services-explorer__view--active");
+				servicesView.setAttribute("aria-hidden", "true");
+				setInert(servicesView, true);
+
+				useCasesView.hidden = false;
+				useCasesView.classList.add("services-explorer__view--active");
+				useCasesView.removeAttribute("aria-hidden");
+				setInert(useCasesView, false);
+
+				const backButton = useCasesView.querySelector<HTMLButtonElement>(
+					'[data-action="back-to-services"]',
+				);
+				backButton?.focus();
+				return;
+			}
+
+			swapViews(servicesView, useCasesView, () => {
+				const backButton = useCasesView.querySelector<HTMLButtonElement>(
+					'[data-action="back-to-services"]',
+				);
+				backButton?.focus();
+			});
+
+			history.replaceState(null, "", `#${slug}`);
+		};
+
+		const closeUseCases = () => {
+			if (isAnimating || !activeSlug) return;
+
+			activeSlug = null;
+			hideAllPanels();
+
+			swapViews(useCasesView, servicesView, () => {
+				lastTrigger?.focus();
+				lastTrigger = null;
+			});
+
+			history.replaceState(null, "", window.location.pathname);
+		};
+
+		root.addEventListener("click", (event) => {
+			const target = event.target as HTMLElement;
+			const showButton = target.closest<HTMLButtonElement>(
+				'[data-action="show-use-cases"]',
+			);
+			const backButton = target.closest('[data-action="back-to-services"]');
+
+			if (showButton) {
+				event.preventDefault();
+				const slug = showButton.dataset.service;
+				if (slug) openUseCases(slug, showButton);
+				return;
+			}
+
+			if (backButton) {
+				event.preventDefault();
+				closeUseCases();
+			}
+		});
+
+		const hash = window.location.hash.slice(1);
+		if (hash && getPanel(hash)) {
+			openUseCases(hash, null, { animate: false });
+		}
+	}
+
+	function setupServicesExplorers() {
+		document
+			.querySelectorAll<HTMLElement>("[data-services-explorer]")
+			.forEach(initServicesExplorer);
+	}
+
+	setupServicesExplorers();
+	document.addEventListener("astro:page-load", setupServicesExplorers);
+</script>
