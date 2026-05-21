@@ -52,6 +52,8 @@ const visibleProjects = getVisibleProjects();
 
 	.projects-page__hero {
 		max-width: 720px;
+		margin: 0 auto;
+		text-align: center;
 	}
 
 	.projects-page__title {
@@ -63,7 +65,7 @@ const visibleProjects = getVisibleProjects();
 
 	.projects-page__subtitle {
 		max-width: 58ch;
-		margin: 0;
+		margin: 0 auto;
 		color: var(--color-text-muted);
 		font-size: 20px;
 		line-height: 1.55;
@@ -76,7 +78,7 @@ const visibleProjects = getVisibleProjects();
 		grid-auto-flow: dense;
 		grid-auto-rows: minmax(152px, auto);
 		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 16px;
+		gap: 20px;
 		align-items: stretch;
 	}
 
@@ -87,6 +89,18 @@ const visibleProjects = getVisibleProjects();
 		.projects-grid {
 			grid-auto-rows: minmax(152px, auto);
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 760px) {
+		.projects-page__hero {
+			max-width: none;
+			margin: 0;
+			text-align: left;
+		}
+
+		.projects-page__subtitle {
+			margin: 0;
 		}
 	}
 
