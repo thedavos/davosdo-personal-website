@@ -1,0 +1,45 @@
+:root {
+	--form-field-border: rgb(226 232 240);
+	--form-field-border-hover: rgb(203 213 225);
+	--form-field-border-focus: rgb(var(--color-primary));
+	--form-panel-border: rgba(var(--color-secondary), 0.12);
+}
+
+.form-panel {
+	box-sizing: border-box;
+	max-width: 100%;
+}
+
+.form-panel input,
+.form-panel select,
+.form-panel textarea {
+	box-sizing: border-box;
+	max-width: 100%;
+}
+
+.form-panel input::placeholder,
+.form-panel textarea::placeholder {
+	color: rgb(var(--color-secondary) / 0.55);
+}
+
+.form-panel input:not(:disabled):not(:focus-visible):hover,
+.form-panel select:not(:disabled):not(:focus-visible):hover,
+.form-panel textarea:not(:disabled):not(:focus-visible):hover {
+	border-color: var(--form-field-border-hover);
+}
+
+.form-panel select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
+.form-panel select option {
+	background: rgb(var(--color-surface));
+	color: rgb(var(--color-body));
+}
+
+.form-panel .form-field {
+	width: 100%;
+	min-width: 0;
+}

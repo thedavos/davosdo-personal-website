@@ -1,0 +1,21 @@
+---
+type AlertVariant = "success" | "error";
+
+type Props = {
+	variant: AlertVariant;
+	class?: string;
+};
+
+const { variant, class: className } = Astro.props;
+
+const variantClasses: Record<AlertVariant, string> = {
+	success: "form-alert form-alert-success",
+	error: "form-alert form-alert-error",
+};
+
+const classes = [variantClasses[variant], className].filter(Boolean).join(" ");
+---
+
+<div class={classes} role="status" aria-live="polite">
+	<slot />
+</div>

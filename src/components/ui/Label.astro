@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"label"> & {
+	required?: boolean;
+};
+
+const { required = false, class: className, ...props } = Astro.props;
+
+const classes = ["form-label", className].filter(Boolean).join(" ");
+---
+
+<label class={classes} {...props}>
+	<slot />
+	{required && (
+		<span class="ml-0.5 text-primary" aria-hidden="true">
+			*
+		</span>
+	)}
+</label>

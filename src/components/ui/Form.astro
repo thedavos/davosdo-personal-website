@@ -1,0 +1,13 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"form">;
+
+const { class: className, ...props } = Astro.props;
+
+const classes = ["flex flex-col", className].filter(Boolean).join(" ");
+---
+
+<form class={classes} {...props}>
+	<slot />
+</form>

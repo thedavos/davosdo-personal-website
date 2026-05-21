@@ -1,0 +1,53 @@
+---
+type Props = {
+	id: string;
+	label: string;
+	description?: string;
+	error?: string;
+	required?: boolean;
+	compact?: boolean;
+	class?: string;
+};
+
+const {
+	id,
+	label,
+	description,
+	error,
+	required = false,
+	compact = false,
+	class: className,
+} = Astro.props;
+
+const descriptionId = description ? `${id}-description` : undefined;
+const errorId = error ? `${id}-error` : undefined;
+
+const labelClass = compact ? "form-label-compact" : "form-label";
+const itemGap = compact ? "gap-2" : "gap-2.5";
+---
+
+<div class:list={["form-field flex flex-col", itemGap, className]}>
+	<label class={labelClass} for={id}>
+		{label}
+		{required && (
+			<span class="ml-0.5 text-muted/70" aria-hidden="true">
+				*
+			</span>
+		)}
+	</label>
+	<slot />
+	{
+		description && (
+			<p id={descriptionId} class="form-description">
+				{description}
+			</p>
+		)
+	}
+	{
+		error && (
+			<p id={errorId} class="form-message" role="alert">
+				{error}
+			</p>
+		)
+	}
+</div>

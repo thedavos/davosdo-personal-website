@@ -1,0 +1,58 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type SelectSize = "compact" | "sm" | "md";
+
+type Props = HTMLAttributes<"select"> & {
+	size?: SelectSize;
+	invalid?: boolean;
+};
+
+const {
+	size = "md",
+	invalid = false,
+	class: className,
+	...props
+} = Astro.props;
+
+const controlClass = size === "compact" ? "form-control-compact" : "form-control";
+
+const sizeClasses: Record<SelectSize, string> = {
+	compact: "pr-9",
+	sm: "h-9 pr-10",
+	md: "pr-10",
+};
+
+const iconClasses: Record<SelectSize, string> = {
+	compact: "right-2.5 text-base",
+	sm: "right-3 text-lg",
+	md: "right-3 text-lg",
+};
+
+const classes = [
+	controlClass,
+	"appearance-none",
+	sizeClasses[size],
+	invalid && "form-control-error",
+	className,
+]
+	.filter(Boolean)
+	.join(" ");
+---
+
+<div class="form-field relative">
+	<select
+		class={classes}
+		aria-invalid={invalid || undefined}
+		{...props}
+	>
+		<slot />
+	</select>
+	<span
+		class:list={[
+			"pointer-events-none absolute top-1/2 i-lucide-chevron-down text-muted/60 -translate-y-1/2",
+			iconClasses[size],
+		]}
+		aria-hidden="true"
+	/>
+</div>

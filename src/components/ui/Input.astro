@@ -1,0 +1,40 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type InputSize = "compact" | "sm" | "md";
+
+type Props = HTMLAttributes<"input"> & {
+	size?: InputSize;
+	invalid?: boolean;
+};
+
+const {
+	size = "md",
+	invalid = false,
+	class: className,
+	...props
+} = Astro.props;
+
+const controlClass = size === "compact" ? "form-control-compact" : "form-control";
+
+const sizeClasses: Record<InputSize, string> = {
+	compact: "",
+	sm: "h-9 px-3",
+	md: "",
+};
+
+const classes = [
+	controlClass,
+	sizeClasses[size],
+	invalid && "form-control-error",
+	className,
+]
+	.filter(Boolean)
+	.join(" ");
+---
+
+<input
+	class={classes}
+	aria-invalid={invalid || undefined}
+	{...props}
+/>

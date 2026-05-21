@@ -1,0 +1,29 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type TextareaSize = "compact" | "md";
+
+type Props = HTMLAttributes<"textarea"> & {
+	size?: TextareaSize;
+	invalid?: boolean;
+};
+
+const { size = "md", invalid = false, class: className, ...props } = Astro.props;
+
+const controlClass =
+	size === "compact" ? "form-textarea-compact" : "form-textarea";
+
+const classes = [
+	controlClass,
+	invalid && "form-control-error",
+	className,
+]
+	.filter(Boolean)
+	.join(" ");
+---
+
+<textarea
+	class={classes}
+	aria-invalid={invalid || undefined}
+	{...props}
+></textarea>

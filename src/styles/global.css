@@ -4,6 +4,8 @@
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
 
+@import "./form.css";
+
 :root {
 	/* Brand colors */
 	--color-primary: 99 102 241; /* #6366f1 */
