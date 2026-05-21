@@ -10,6 +10,16 @@
 	"observability": {
 		"enabled": true
 	},
+	"send_email": [
+		{
+			"name": "SEND_EMAIL",
+			"destination_address": "hola@davosdo.dev"
+		}
+	],
+	"vars": {
+		"CONTACT_FROM_EMAIL": "contacto@davosdo.dev",
+		"CONTACT_TO_EMAIL": "hola@davosdo.dev"
+	},
 	"upload_source_maps": true,
 	"workers_dev": false,
 	"routes": [

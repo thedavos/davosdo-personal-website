@@ -1,17 +1,20 @@
 /// <reference types="astro/client" />
+/// <reference path="../worker-configuration.d.ts" />
 
 declare global {
 	const __SITE_CONFIG__: any;
 }
 
-type Runtime = import("@astrojs/cloudflare").Runtime<Env>;
+type Runtime = import("@astrojs/cloudflare").Runtime;
 
 declare namespace App {
-	interface Locals extends Runtime { }
+	interface Locals extends Runtime {}
 }
 
 interface ImportMetaEnv {
 	readonly BASE_URL: string;
+	readonly CONTACT_FROM_EMAIL?: string;
+	readonly CONTACT_TO_EMAIL?: string;
 }
 
 interface ImportMeta {
