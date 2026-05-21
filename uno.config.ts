@@ -10,6 +10,8 @@ export default defineConfig({
 		"i-lucide-moon",
 		"i-lucide-arrow-right",
 		"i-lucide-arrow-left",
+		"i-lucide-send",
+		"i-lucide-chevron-down",
 	],
 	presets: [
 		presetMini(),
@@ -24,6 +26,7 @@ export default defineConfig({
 	],
 	rules: [
 		["object-cover", { "object-fit": "cover" }],
+		["uppercase", { "text-transform": "uppercase" }],
 	],
 	theme: {
 		colors: {
@@ -81,9 +84,34 @@ export default defineConfig({
 		"section-title": "mb-2 text-body leading-tight",
 		"link-primary": "text-primary hover:text-primary-dark transition-colors",
 		"text-logo": "text-body text-lg no-underline transition-colors hover:text-primary",
+		"card-surface":
+			"border border-[var(--form-panel-border)] rounded-2xl bg-surface shadow-[0_1px_2px_rgb(var(--color-secondary)/0.06),0_4px_14px_rgb(var(--color-secondary)/0.05)]",
 		"service-card-surface":
-			"!border !border-primary-border !rounded-md bg-surface bg-[linear-gradient(135deg,rgba(255,255,255,0.96),rgba(248,250,252,0.82))] !shadow-[0_1px_2px_rgba(71,85,105,0.06),0_18px_42px_rgba(71,85,105,0.10)] transition-[transform,border-color,box-shadow] duration-[180ms] ease-[ease]",
+			"!border !border-[var(--form-panel-border)] !rounded-2xl !bg-surface !shadow-[0_1px_2px_rgb(var(--color-secondary)/0.06),0_4px_14px_rgb(var(--color-secondary)/0.05)] transition-[border-color,box-shadow,background-color] duration-150 ease-out",
 		"service-card-surface-hover":
-			"hover:translate-y-[-3px] hover:!border-primary-hover hover:!shadow-[0_3px_8px_rgba(71,85,105,0.08),0_24px_58px_rgba(71,85,105,0.15)]",
+			"hover:!border-primary/25 hover:!shadow-[0_2px_6px_rgb(var(--color-secondary)/0.08),0_8px_20px_rgb(var(--color-secondary)/0.07)]",
+		"form-panel":
+			"rounded-2xl border border-[var(--form-panel-border)] bg-surface shadow-[0_1px_2px_rgb(var(--color-secondary)/0.04)]",
+		"form-label":
+			"block text-[13px] font-medium text-muted leading-snug tracking-[0.01em]",
+		"form-label-compact":
+			"block text-xs font-medium text-muted leading-snug tracking-[0.02em]",
+		"form-control":
+			"box-border w-full min-w-0 h-10 rounded-md border border-[var(--form-field-border)] bg-background px-3.5 text-sm text-body leading-none shadow-none transition-[border-color,background-color] duration-150 ease-out focus-visible:outline-none focus-visible:border-[var(--form-field-border-focus)] focus-visible:ring-2 focus-visible:ring-primary/15 focus-visible:ring-inset disabled:cursor-not-allowed disabled:opacity-50",
+		"form-control-compact":
+			"box-border w-full min-w-0 h-9 rounded-md border border-[var(--form-field-border)] bg-background px-3 text-sm text-body leading-none shadow-none transition-[border-color,background-color] duration-150 ease-out focus-visible:outline-none focus-visible:border-[var(--form-field-border-focus)] focus-visible:ring-2 focus-visible:ring-primary/15 focus-visible:ring-inset disabled:cursor-not-allowed disabled:opacity-50",
+		"form-textarea":
+			"box-border w-full min-w-0 min-h-[120px] rounded-md border border-[var(--form-field-border)] bg-background px-3.5 py-2.5 text-sm text-body leading-normal shadow-none resize-y transition-[border-color,background-color] duration-150 ease-out focus-visible:outline-none focus-visible:border-[var(--form-field-border-focus)] focus-visible:ring-2 focus-visible:ring-primary/15 focus-visible:ring-inset disabled:cursor-not-allowed disabled:opacity-50",
+		"form-textarea-compact":
+			"box-border w-full min-w-0 min-h-[100px] rounded-md border border-[var(--form-field-border)] bg-background px-3 py-2.5 text-sm text-body leading-normal shadow-none resize-y transition-[border-color,background-color] duration-150 ease-out focus-visible:outline-none focus-visible:border-[var(--form-field-border-focus)] focus-visible:ring-2 focus-visible:ring-primary/15 focus-visible:ring-inset disabled:cursor-not-allowed disabled:opacity-50",
+		"form-control-error":
+			"!border-red-400/70 focus-visible:!border-red-500 focus-visible:ring-red-500/15",
+		"form-description": "mt-1 text-xs text-muted leading-relaxed",
+		"form-message": "mt-1 text-xs font-medium text-red-600/90",
+		"form-alert": "rounded-lg px-3.5 py-3 text-sm leading-normal",
+		"form-alert-success":
+			"border border-primary/12 bg-primary-soft/70 text-body",
+		"form-alert-error":
+			"border border-red-200/80 bg-red-50/90 text-red-700",
 	},
 })

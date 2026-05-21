@@ -121,14 +121,21 @@ const classes = [
 		min-height: 0;
 		flex-direction: column;
 		justify-content: space-between;
-		gap: 16px;
-		padding: 16px;
+		gap: 20px;
+		padding: 20px;
 		height: 100%;
+	}
+
+	.project-card__body-content {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		min-width: 0;
 	}
 
 	.project-card__copy {
 		display: grid;
-		gap: 8px;
+		gap: 10px;
 		min-width: 0;
 	}
 
@@ -165,7 +172,6 @@ const classes = [
 		margin: 0;
 		padding: 0;
 		list-style: none;
-		margin-top: 16px;
 	}
 
 	.project-card__tags li {
@@ -178,8 +184,8 @@ const classes = [
 	}
 
 	.project-card--medium .project-card__body {
-		gap: 16px;
-		padding: 20px;
+		gap: 22px;
+		padding: 22px;
 	}
 
 	.project-card--medium .project-card__title {
@@ -194,8 +200,12 @@ const classes = [
 	}
 
 	.project-card--high .project-card__body {
-		gap: 20px;
+		gap: 24px;
 		padding: 24px;
+	}
+
+	.project-card--high .project-card__body-content {
+		gap: 18px;
 	}
 
 	.project-card--high .project-card__copy {
@@ -217,7 +227,7 @@ const classes = [
 
 	.project-card--compact .project-card__body {
 		min-height: 220px;
-		gap: 16px;
+		gap: 20px;
 		padding: 20px;
 	}
 
@@ -231,9 +241,6 @@ const classes = [
 		line-height: 1.5;
 	}
 
-	.project-card--compact .project-card__tags {
-		margin-top: 12px;
-	}
 
 	@media (max-width: 900px) {
 		.project-card--high,

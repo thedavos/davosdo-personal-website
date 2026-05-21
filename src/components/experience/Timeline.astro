@@ -52,7 +52,7 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 								as="article"
 								variant="outlined"
 								padding="none"
-								class="service-card-surface service-card-surface-hover box-border flex min-w-0 flex-col p-5 md:p-6"
+								class="service-card-surface service-card-surface-hover box-border min-w-0 p-6 md:p-7"
 							>
 								<div class="card__header timeline-card__header" slot="header">
 									<p class="timeline-card__period">{item.period}</p>
@@ -212,7 +212,7 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 
 	.timeline-card__header {
 		display: grid;
-		gap: 8px;
+		gap: 10px;
 	}
 
 	.timeline-card__period {
@@ -245,7 +245,7 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 	.timeline-card__body {
 		display: grid;
 		gap: 16px;
-		padding: 16px 0;
+		min-width: 0;
 	}
 
 	.timeline-card__description {
