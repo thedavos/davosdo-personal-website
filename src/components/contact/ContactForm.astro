@@ -26,6 +26,9 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 					name="name"
 					size="compact"
 					autocomplete="name"
+					minlength="2"
+					maxlength="80"
+					pattern="[A-Za-zÀ-ÖØ-öø-ÿĀ-žḀ-ỿ'’ .-]+"
 					required
 				/>
 			</FormItem>
@@ -37,6 +40,8 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 					name="email"
 					size="compact"
 					autocomplete="email"
+					inputmode="email"
+					maxlength="254"
 					required
 				/>
 			</FormItem>
@@ -80,6 +85,8 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 						id="contact-message"
 						name="message"
 						size="compact"
+						minlength="10"
+						maxlength="2000"
 						required
 					/>
 				</FormItem>

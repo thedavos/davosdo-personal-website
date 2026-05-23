@@ -1,4 +1,5 @@
 import { getContactBudgetLabel, isValidContactBudget } from "@/data/contact-budgets";
+import { escapeHtml, normalizeInput } from "@/utils/security";
 import { getServiceBySlug } from "@data/services";
 import { EmailMessage } from "cloudflare:email";
 
@@ -25,9 +26,17 @@ export type ContactMailResult =
 	| { ok: false; error: string; status: number };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const STRICT_EMAIL_PATTERN = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+const NAME_PATTERN = /^[\p{L}\p{M}'’ .-]+$/u;
+
+const NAME_MIN_LENGTH = 2;
+const NAME_MAX_LENGTH = 80;
+const EMAIL_MAX_LENGTH = 254;
+const MESSAGE_MIN_LENGTH = 10;
+const MESSAGE_MAX_LENGTH = 2000;
 
 function encodeMimeHeader(value: string): string {
-	return value.replace(/[\r\n]+/g, " ").trim();
+	return escapeHtml(value.replace(/[\r\n]+/g, " ").trim());
 }
 
 function buildPlainTextEmail({
@@ -59,11 +68,11 @@ function buildPlainTextEmail({
 export function validateContactPayload(
 	payload: Partial<ContactPayload>,
 ): ContactValidationResult {
-	const name = payload.name?.trim() ?? "";
-	const email = payload.email?.trim() ?? "";
-	const service = payload.service?.trim() ?? "";
-	const budget = payload.budget?.trim() ?? "";
-	const message = payload.message?.trim() ?? "";
+	const name = normalizeInput(payload.name ?? "");
+	const email = normalizeInput(payload.email ?? "");
+	const service = normalizeInput(payload.service ?? "");
+	const budget = normalizeInput(payload.budget ?? "");
+	const message = normalizeInput(payload.message ?? "", { multiline: true });
 
 	if (!name || !email || !service || !budget || !message) {
 		return {
@@ -73,7 +82,23 @@ export function validateContactPayload(
 		};
 	}
 
-	if (!EMAIL_PATTERN.test(email)) {
+	if (
+		name.length < NAME_MIN_LENGTH ||
+		name.length > NAME_MAX_LENGTH ||
+		!NAME_PATTERN.test(name)
+	) {
+		return {
+			ok: false,
+			error: "Introduce un nombre válido.",
+			status: 400,
+		};
+	}
+
+	if (
+		email.length > EMAIL_MAX_LENGTH ||
+		!EMAIL_PATTERN.test(email) ||
+		!STRICT_EMAIL_PATTERN.test(email)
+	) {
 		return {
 			ok: false,
 			error: "Introduce un email válido.",
@@ -97,6 +122,17 @@ export function validateContactPayload(
 		};
 	}
 
+	if (
+		message.length < MESSAGE_MIN_LENGTH ||
+		message.length > MESSAGE_MAX_LENGTH
+	) {
+		return {
+			ok: false,
+			error: "El mensaje debe tener entre 10 y 2000 caracteres.",
+			status: 400,
+		};
+	}
+
 	return {
 		ok: true,
 		data: { name, email, service, budget, message },
@@ -109,16 +145,21 @@ export async function sendContactEmail(
 ): Promise<ContactMailResult> {
 	const serviceTitle = getServiceBySlug(payload.service)?.title ?? payload.service;
 	const budgetLabel = getContactBudgetLabel(payload.budget) ?? payload.budget;
+	const safeName = escapeHtml(payload.name);
+	const safeEmail = escapeHtml(payload.email);
+	const safeServiceTitle = escapeHtml(serviceTitle);
+	const safeBudgetLabel = escapeHtml(budgetLabel);
+	const safeMessage = escapeHtml(payload.message);
 
 	const subject = `[Contacto] ${serviceTitle} — ${payload.name}`;
 	const body = [
-		`Nombre: ${payload.name}`,
-		`Email: ${payload.email}`,
-		`Servicio: ${serviceTitle}`,
-		`Presupuesto: ${budgetLabel}`,
+		`Nombre: ${safeName}`,
+		`Email: ${safeEmail}`,
+		`Servicio: ${safeServiceTitle}`,
+		`Presupuesto: ${safeBudgetLabel}`,
 		"",
 		"Mensaje:",
-		payload.message,
+		safeMessage,
 	].join("\n");
 
 	const raw = buildPlainTextEmail({
