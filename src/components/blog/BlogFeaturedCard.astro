@@ -1,0 +1,223 @@
+---
+import Button from "@components/commons/Button.astro";
+import Card from "@components/commons/Card.astro";
+import Chip from "@components/commons/Chip.astro";
+import BlogPostMeta from "@components/blog/BlogPostMeta.astro";
+import { siteConfig } from "@/config";
+import type { BlogPost } from "@/lib/blog";
+
+type Layout = "vertical" | "horizontal";
+
+type Props = {
+	post: BlogPost;
+	readingTimeLabel: string;
+	url: string;
+	layout?: Layout;
+	class?: string;
+	style?: string;
+};
+
+const {
+	post,
+	readingTimeLabel,
+	url,
+	layout = "vertical",
+	class: className,
+	style,
+} = Astro.props;
+
+const { title, category, pubDate, heroImage } = post.data;
+const isHorizontal = layout === "horizontal";
+---
+
+<article
+	class:list={["blog-featured", isHorizontal && "blog-featured--horizontal", className]}
+	style={style}
+	data-cascade-item
+>
+	<Card
+		as="article"
+		variant="outlined"
+		padding="none"
+		class="service-card-surface service-card-surface-hover blog-featured__card h-full"
+	>
+		<div class="blog-featured__inner">
+			{
+				heroImage && (
+					<div class="blog-featured__media">
+						<img
+							src={heroImage}
+							alt=""
+							width={720}
+							height={360}
+							loading="eager"
+							decoding="async"
+							class="blog-featured__image"
+						/>
+					</div>
+				)
+			}
+
+			<div class="blog-featured__content">
+				<div class="blog-featured__tags">
+					<Chip size="sm" variant="muted">{category}</Chip>
+				</div>
+
+				<h2 class="blog-featured__title">
+					<a href={url} class="blog-featured__title-link">
+						{title}
+					</a>
+				</h2>
+
+				<BlogPostMeta
+					category={category}
+					readingTimeLabel={readingTimeLabel}
+					pubDate={pubDate}
+					variant="inline"
+					hideCategory
+					showAuthor
+					author={siteConfig.author}
+				/>
+
+				<div class="blog-featured__cta">
+					<Button
+						as="a"
+						href={url}
+						variant="link"
+						size="sm"
+						rightIcon="i-lucide-arrow-right"
+						class="!min-h-0 !p-0 !text-primary"
+					>
+						Leer artículo
+					</Button>
+				</div>
+			</div>
+		</div>
+	</Card>
+</article>
+
+<style>
+	.blog-featured {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		min-height: 0;
+		height: 100%;
+	}
+
+	.blog-featured__card {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	.blog-featured__inner {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-height: 0;
+		height: 100%;
+	}
+
+	.blog-featured__media {
+		flex-shrink: 0;
+		overflow: hidden;
+		border-radius: 16px 16px 0 0;
+	}
+
+	.blog-featured__image {
+		display: block;
+		width: 100%;
+		height: 100%;
+		min-height: 180px;
+		max-height: 280px;
+		object-fit: cover;
+	}
+
+	.blog-featured__content {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 12px;
+		min-height: 0;
+		padding: 20px;
+	}
+
+	.blog-featured__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.blog-featured__title {
+		margin: 0;
+		font-size: 28px;
+		letter-spacing: 0;
+		line-height: 1.08;
+		text-wrap: balance;
+	}
+
+	.blog-featured__title-link {
+		color: inherit;
+		text-decoration: none;
+		transition: color 0.15s ease;
+	}
+
+	.blog-featured__title-link:hover {
+		color: var(--color-primary);
+	}
+
+	.blog-featured__cta {
+		margin-top: auto;
+		padding-top: 4px;
+	}
+
+	.blog-featured--horizontal .blog-featured__inner {
+		flex-direction: row;
+		align-items: stretch;
+	}
+
+	.blog-featured--horizontal .blog-featured__media {
+		flex: 0 0 42%;
+		max-width: 420px;
+		border-radius: 16px 0 0 16px;
+	}
+
+	.blog-featured--horizontal .blog-featured__image {
+		min-height: 100%;
+		max-height: none;
+	}
+
+	.blog-featured--horizontal .blog-featured__content {
+		flex: 1;
+		padding: 24px;
+	}
+
+	.blog-featured--horizontal .blog-featured__title {
+		font-size: 32px;
+	}
+
+	@media (max-width: 720px) {
+		.blog-featured--horizontal .blog-featured__inner {
+			flex-direction: column;
+		}
+
+		.blog-featured--horizontal .blog-featured__media {
+			flex: none;
+			max-width: none;
+			width: 100%;
+			border-radius: 16px 16px 0 0;
+		}
+
+		.blog-featured--horizontal .blog-featured__image {
+			min-height: 180px;
+			max-height: 240px;
+		}
+
+		.blog-featured--horizontal .blog-featured__title {
+			font-size: 26px;
+		}
+	}
+</style>

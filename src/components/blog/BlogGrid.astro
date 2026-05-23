@@ -1,0 +1,113 @@
+---
+import BlogFeaturedCard from "@components/blog/BlogFeaturedCard.astro";
+import BlogCompactCard from "@components/blog/BlogCompactCard.astro";
+import { enrichPost } from "@/lib/blog";
+import type { BlogPost } from "@/lib/blog";
+
+type Props = {
+	featured?: BlogPost;
+	recent: BlogPost[];
+};
+
+const { featured, recent } = Astro.props;
+
+const featuredEnriched = featured ? enrichPost(featured) : undefined;
+const recentEnriched = recent.map(enrichPost);
+const rowCount = Math.max(recentEnriched.length, 1);
+---
+
+<div
+	class="blog-grid"
+	style={`--blog-grid-rows: ${rowCount}`}
+	aria-label="Artículos recientes"
+>
+	{
+		featuredEnriched && (
+			<div class="blog-grid__featured">
+				<BlogFeaturedCard
+					post={featuredEnriched.post}
+					readingTimeLabel={featuredEnriched.readingTimeLabel}
+					url={featuredEnriched.url}
+				/>
+			</div>
+		)
+	}
+
+	{
+		recentEnriched.map((item, index) => (
+			<div
+				class="blog-grid__compact"
+				style={`--blog-compact-row: ${index + 1}`}
+			>
+				<BlogCompactCard
+					post={item.post}
+					readingTimeLabel={item.readingTimeLabel}
+					url={item.url}
+				/>
+			</div>
+		))
+	}
+</div>
+
+<style>
+	.blog-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-rows: repeat(var(--blog-grid-rows, 4), minmax(96px, 1fr));
+		gap: 20px;
+		align-items: stretch;
+	}
+
+	.blog-grid__featured,
+	.blog-grid__compact {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		min-height: 0;
+	}
+
+	.blog-grid__featured {
+		grid-column: 1;
+		grid-row: 1 / span var(--blog-grid-rows, 4);
+	}
+
+	.blog-grid__compact {
+		grid-column: 2;
+		grid-row: var(--blog-compact-row);
+	}
+
+	.blog-grid__featured > :global(*),
+	.blog-grid__compact > :global(*) {
+		flex: 1;
+		min-height: 0;
+	}
+
+	@media (max-width: 900px) {
+		.blog-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-rows: auto;
+		}
+
+		.blog-grid__featured {
+			grid-column: 1 / -1;
+			grid-row: auto;
+		}
+
+		.blog-grid__compact {
+			grid-column: auto;
+			grid-row: auto;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.blog-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.blog-grid__featured,
+		.blog-grid__compact {
+			grid-column: 1;
+			grid-row: auto;
+		}
+	}
+</style>

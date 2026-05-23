@@ -1,0 +1,112 @@
+---
+import Card from "@components/commons/Card.astro";
+import Chip from "@components/commons/Chip.astro";
+import BlogPostMeta from "@components/blog/BlogPostMeta.astro";
+import type { BlogPost } from "@/lib/blog";
+
+type Props = {
+	post: BlogPost;
+	readingTimeLabel: string;
+	url: string;
+	class?: string;
+	style?: string;
+};
+
+const { post, readingTimeLabel, url, class: className, style } = Astro.props;
+const { title, category, pubDate, heroImage } = post.data;
+const imageSrc = heroImage ?? "/blog-placeholder-1.jpg";
+---
+
+<article class:list={["blog-archive-card", className]} style={style}>
+	<Card
+		as="a"
+		href={url}
+		variant="interactive"
+		padding="none"
+		class="service-card-surface service-card-surface-hover blog-archive-card__card h-full"
+	>
+		<div class="blog-archive-card__media">
+			<img
+				src={imageSrc}
+				alt=""
+				width={400}
+				height={225}
+				loading="lazy"
+				decoding="async"
+				class="blog-archive-card__image"
+			/>
+		</div>
+		<div class="blog-archive-card__body">
+			<div class="blog-archive-card__tags">
+				<Chip size="xs" variant="muted">{category}</Chip>
+			</div>
+			<h3 class="blog-archive-card__title">{title}</h3>
+			<BlogPostMeta
+				category={category}
+				readingTimeLabel={readingTimeLabel}
+				pubDate={pubDate}
+				variant="inline"
+				size="compact"
+				hideCategory
+			/>
+		</div>
+	</Card>
+</article>
+
+<style>
+	.blog-archive-card {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		height: 100%;
+	}
+
+	.blog-archive-card__card {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-height: 0;
+		overflow: hidden;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.blog-archive-card__media {
+		aspect-ratio: 16 / 9;
+		overflow: hidden;
+	}
+
+	.blog-archive-card__image {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.blog-archive-card__body {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		gap: 8px;
+		padding: 14px 16px 16px;
+	}
+
+	.blog-archive-card__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.blog-archive-card__title {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		overflow: hidden;
+		margin: 0;
+		font-size: 17px;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		line-height: 1.2;
+		text-wrap: balance;
+	}
+</style>

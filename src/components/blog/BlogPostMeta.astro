@@ -1,0 +1,134 @@
+---
+import Chip from "@components/commons/Chip.astro";
+import FormattedDate from "@components/FormattedDate.astro";
+
+type MetaVariant = "chip" | "inline";
+type MetaSize = "default" | "compact";
+
+type Props = {
+	category: string;
+	readingTimeLabel: string;
+	pubDate: Date;
+	showAuthor?: boolean;
+	author?: string;
+	variant?: MetaVariant;
+	hideCategory?: boolean;
+	size?: MetaSize;
+};
+
+const {
+	category,
+	readingTimeLabel,
+	pubDate,
+	showAuthor = false,
+	author,
+	variant = "chip",
+	hideCategory = false,
+	size = "default",
+} = Astro.props;
+
+const isInline = variant === "inline";
+const isCompact = size === "compact";
+---
+
+<div
+	class:list={[
+		"blog-post-meta",
+		isInline && "blog-post-meta--inline",
+		isCompact && "blog-post-meta--compact",
+	]}
+>
+	{
+		isInline ? (
+			<>
+				{!hideCategory && (
+					<>
+						<span>{category}</span>
+						<span class="blog-post-meta__dot" aria-hidden="true">
+							·
+						</span>
+					</>
+				)}
+				{showAuthor && author && (
+					<>
+						<span>{author}</span>
+						<span class="blog-post-meta__dot" aria-hidden="true">
+							·
+						</span>
+					</>
+				)}
+				<span>{readingTimeLabel}</span>
+				<span class="blog-post-meta__dot" aria-hidden="true">
+					·
+				</span>
+				<span class="blog-post-meta__date">
+					<FormattedDate date={pubDate} />
+				</span>
+			</>
+		) : (
+			<>
+				<Chip size="sm" variant="muted">
+					{category}
+				</Chip>
+				{showAuthor && author && (
+					<>
+						<span class="blog-post-meta__sep" aria-hidden="true" />
+						<span class="blog-post-meta__author">{author}</span>
+					</>
+				)}
+				<span class="blog-post-meta__sep" aria-hidden="true" />
+				<span class="blog-post-meta__reading">{readingTimeLabel}</span>
+				<span class="blog-post-meta__sep" aria-hidden="true" />
+				<span class="blog-post-meta__date">
+					<FormattedDate date={pubDate} />
+				</span>
+			</>
+		)
+	}
+</div>
+
+<style>
+	.blog-post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+		color: var(--color-text-muted);
+		font-size: 12px;
+		line-height: 1.35;
+		font-weight: 400;
+	}
+
+	.blog-post-meta__sep {
+		width: 3px;
+		height: 3px;
+		border-radius: 50%;
+		background: var(--color-text-muted);
+		opacity: 0.55;
+		flex-shrink: 0;
+	}
+
+	.blog-post-meta__author,
+	.blog-post-meta__reading,
+	.blog-post-meta__date {
+		white-space: nowrap;
+	}
+
+	.blog-post-meta--inline {
+		gap: 0;
+	}
+
+	.blog-post-meta__dot {
+		margin: 0 6px;
+		opacity: 0.65;
+	}
+
+	.blog-post-meta--compact {
+		font-size: 11px;
+		line-height: 1.25;
+	}
+
+	.blog-post-meta--compact .blog-post-meta__dot {
+		margin: 0 4px;
+	}
+</style>

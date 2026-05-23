@@ -1,0 +1,30 @@
+---
+import BlogArchiveCard from "@components/blog/BlogArchiveCard.astro";
+import { enrichPosts } from "@/lib/blog";
+import type { BlogPost } from "@/lib/blog";
+
+type Props = {
+	posts: BlogPost[];
+};
+
+const { posts } = Astro.props;
+const items = enrichPosts(posts);
+---
+
+{
+	items.length > 0 && (
+		<ul class="blog-archive-grid" aria-label="Artículos anteriores">
+			{items.map((item, index) => (
+				<li class="blog-archive-grid__item">
+					<BlogArchiveCard
+						post={item.post}
+						readingTimeLabel={item.readingTimeLabel}
+						url={item.url}
+						data-cascade-item
+						style={`--cascade-delay: ${0.18 + index * 0.04}s`}
+					/>
+				</li>
+			))}
+		</ul>
+	)
+}
