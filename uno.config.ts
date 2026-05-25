@@ -6,18 +6,26 @@ export default defineConfig({
 		"i-lucide-rocket",
 		"i-lucide-github",
 		"i-lucide-play",
+		"i-simple-icons-android",
+		"i-simple-icons-apple",
 		"i-lucide-sun",
 		"i-lucide-moon",
 		"i-lucide-arrow-right",
 		"i-lucide-arrow-left",
 		"i-lucide-send",
 		"i-lucide-chevron-down",
+		"i-lucide-x",
+		"i-lucide-chevron-left",
+		"i-lucide-chevron-right",
+		"i-lucide-zoom-in",
+		"i-lucide-check",
 	],
 	presets: [
 		presetMini(),
 		presetIcons({
 			collections: {
-				lucide: () => import("@iconify-json/lucide/icons.json").then(i => i.default)
+				lucide: () => import("@iconify-json/lucide/icons.json").then(i => i.default),
+				"simple-icons": () => import("@iconify-json/simple-icons/icons.json").then(i => i.default),
 			}
 		})
 	],
