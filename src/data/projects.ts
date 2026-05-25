@@ -153,7 +153,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"Scheduler con AI para convertir una idea en contenido listo para LinkedIn, X y Bluesky, con edición, calendario y publicación.",
 		tags: ["TypeScript", "AI", "Scheduling", "Social APIs"],
-		show: true,
+		show: false,
 		importance: "medium",
 		status: "development",
 		longDescription:
@@ -192,7 +192,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"SaaS multi-dominio para centralizar inbox, threading y respuestas siempre desde la identidad correcta.",
 		tags: ["Cloudflare", "Email", "D1", "R2"],
-		show: true,
+		show: false,
 		importance: "low",
 		status: "concept",
 		longDescription:
@@ -230,7 +230,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"Workspace personal para links cortos con analytics y snippets privados reutilizables, construido mientras aprendo Go.",
 		tags: ["Go", "Short Links", "Snippets", "Learning"],
-		show: true,
+		show: false,
 		importance: "low",
 		status: "development",
 		longDescription:
@@ -267,7 +267,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"Asistente de gastos por WhatsApp para registrar movimientos con lenguaje natural y validar hábito antes de evolucionar hacia LukaApp.",
 		tags: ["WhatsApp", "Cloudflare", "Workers AI", "D1"],
-		show: true,
+		show: false,
 		importance: "medium",
 		status: "beta",
 		longDescription:
@@ -305,7 +305,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"Auto battler web-first y server-authoritative sobre Cloudflare, con Match Durable Objects para partidas y D1 para metajuego.",
 		tags: ["TypeScript", "Cloudflare", "Durable Objects", "D1"],
-		show: true,
+		show: false,
 		importance: "low",
 		colSpan: 2,
 		status: "concept",
@@ -344,7 +344,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"Sitio personal para davosdo.dev con Astro, contenido real, branding propio, SEO técnico y despliegue en Cloudflare.",
 		tags: ["Astro", "SEO", "RSS", "Cloudflare"],
-		show: true,
+		show: false,
 		importance: "low",
 		status: "concept",
 		longDescription:
@@ -382,7 +382,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"Plataforma conversacional multi-tenant y multicanal para lanzar verticales sin reconstruir la infraestructura base.",
 		tags: ["Cloudflare", "Multi-tenant", "Messaging", "Automation"],
-		show: true,
+		show: false,
 		importance: "medium",
 		status: "development",
 		longDescription:
@@ -419,7 +419,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"Producto web para fans de Kings League con hub SEO, lineup builder y capa de comunidad, sobre TanStack Start + Supabase.",
 		tags: ["TanStack Start", "Supabase", "SEO", "Community"],
-		show: true,
+		show: false,
 		importance: "low",
 		status: "development",
 		longDescription:
@@ -456,7 +456,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"CLI developer-first para gamificación programable sobre Habitica, con foco en un núcleo operativo claro desde terminal.",
 		tags: ["TypeScript", "Node.js", "CLI", "Habitica"],
-		show: true,
+		show: false,
 		importance: "low",
 		status: "concept",
 		longDescription:
@@ -492,7 +492,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"App Flutter para mejorar adherencia a tratamientos con recordatorios confiables, fallback por WhatsApp y personalización controlada.",
 		tags: ["Flutter", "WhatsApp", "Reminders", "Health"],
-		show: true,
+		show: false,
 		importance: "low",
 		status: "concept",
 		longDescription:
@@ -529,7 +529,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"Plataforma web para aprender ciberseguridad con recursos curados, rutas claras y progreso personal medible.",
 		tags: ["Astro", "Cloudflare", "Content", "Better Auth"],
-		show: true,
+		show: false,
 		importance: "low",
 		status: "concept",
 		longDescription:
@@ -566,7 +566,7 @@ export const projects: ProjectDetail[] = [
 		description:
 			"Companion app para Guild Wars 2 que convierte datos de cuenta y objetivos del jugador en una siguiente acción clara.",
 		tags: ["Nuxt", "Cloudflare", "GW2 API", "MVP"],
-		show: true,
+		show: false,
 		importance: "low",
 		status: "concept",
 		longDescription:
