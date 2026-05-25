@@ -145,21 +145,16 @@ export async function sendContactEmail(
 ): Promise<ContactMailResult> {
 	const serviceTitle = getServiceBySlug(payload.service)?.title ?? payload.service;
 	const budgetLabel = getContactBudgetLabel(payload.budget) ?? payload.budget;
-	const safeName = escapeHtml(payload.name);
-	const safeEmail = escapeHtml(payload.email);
-	const safeServiceTitle = escapeHtml(serviceTitle);
-	const safeBudgetLabel = escapeHtml(budgetLabel);
-	const safeMessage = escapeHtml(payload.message);
 
 	const subject = `[Contacto] ${serviceTitle} — ${payload.name}`;
 	const body = [
-		`Nombre: ${safeName}`,
-		`Email: ${safeEmail}`,
-		`Servicio: ${safeServiceTitle}`,
-		`Presupuesto: ${safeBudgetLabel}`,
+		`Nombre: ${payload.name}`,
+		`Email: ${payload.email}`,
+		`Servicio: ${serviceTitle}`,
+		`Presupuesto: ${budgetLabel}`,
 		"",
 		"Mensaje:",
-		safeMessage,
+		payload.message,
 	].join("\n");
 
 	const raw = buildPlainTextEmail({
