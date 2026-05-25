@@ -1,0 +1,213 @@
+---
+import PageLayout from "@layouts/PageLayout.astro";
+
+const lastUpdated = "25 de mayo de 2026";
+const contactEmail = "hola@davosdo.dev";
+---
+
+<PageLayout
+	showFooter
+	title="Política de privacidad | davosdo.dev"
+	description="Información sobre el tratamiento de datos personales en davosdo.dev y el formulario de contacto."
+	containerClass="w-full max-w-[720px] mx-auto px-4 py-12"
+>
+	<article class="legal-page prose">
+		<header class="legal-page__header">
+			<h1 class="legal-page__title">Política de privacidad</h1>
+			<p class="legal-page__meta">Última actualización: {lastUpdated}</p>
+		</header>
+
+		<p>
+			En <strong>davosdo.dev</strong> (en adelante, el «Sitio») tratamos tus datos
+			personales con responsabilidad y solo para los fines descritos en este documento.
+			Al usar el formulario de contacto, aceptas esta política en la medida aplicable a
+			ese tratamiento.
+		</p>
+
+		<h2>1. Responsable del tratamiento</h2>
+		<p>
+			Responsable: David Vargas (davosdo.dev).<br />
+			Contacto para privacidad:{" "}
+			<a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+		</p>
+
+		<h2>2. Datos que recopilamos</h2>
+		<p>Según cómo interactúes con el Sitio, podemos tratar:</p>
+		<ul>
+			<li>
+				<strong>Formulario de contacto:</strong> nombre, correo electrónico, servicio de
+				interés, rango de presupuesto y mensaje que nos envíes voluntariamente.
+			</li>
+			<li>
+				<strong>Datos técnicos de navegación:</strong> información que tu navegador o
+				Cloudflare (proveedor de hosting y seguridad) puedan registrar de forma automática,
+				como dirección IP, tipo de dispositivo o peticiones al servidor, con fines de
+				seguridad y funcionamiento del Sitio.
+			</li>
+		</ul>
+		<p>
+			No solicitamos datos sensibles (salud, origen, creencias, etc.) a través del
+			formulario. Te pedimos que no los incluyas en tu mensaje salvo que sea estrictamente
+			necesario para tu consulta.
+		</p>
+
+		<h2>3. Finalidad y base legal</h2>
+		<p>Usamos tus datos para:</p>
+		<ul>
+			<li>Leer y responder tu solicitud de contacto o presupuesto.</li>
+			<li>Gestionar la comunicación comercial o profesional derivada de tu mensaje.</li>
+			<li>
+				Proteger el formulario frente a abuso (medidas técnicas como honeypot,
+				límites de tamaño e identificadores anti-duplicado).
+			</li>
+		</ul>
+		<p>
+			La base legal principal es tu <strong>consentimiento</strong> al enviar el
+			formulario, junto con el <strong>interés legítimo</strong> en atender consultas
+			profesionales y mantener la seguridad del Sitio.
+		</p>
+
+		<h2>4. Destinatarios y encargados</h2>
+		<p>
+			Tus datos pueden ser tratados por proveedores que nos ayudan a operar el Sitio,
+			entre ellos:
+		</p>
+		<ul>
+			<li>
+				<strong>Cloudflare</strong> (alojamiento, Worker, protección y envío de correo
+				asociado al formulario).
+			</li>
+		</ul>
+		<p>
+			Estos proveedores actúan como encargados del tratamiento dentro de sus servicios y
+			según sus propias políticas de privacidad. No vendemos ni alquilamos tus datos
+			personales a terceros.
+		</p>
+
+		<h2>5. Plazo de conservación</h2>
+		<p>
+			Conservamos los mensajes del formulario el tiempo necesario para responder tu
+			consulta y, si procede, mantener un historial razonable de comunicaciones
+			profesionales. En general, no superará <strong>24 meses</strong> desde el último
+			contacto, salvo obligación legal distinta o que solicites su supresión antes.
+		</p>
+
+		<h2>6. Transferencias internacionales</h2>
+		<p>
+			Cloudflare y servicios relacionados pueden procesar datos fuera de tu país de
+			residencia. Cuando aplique, dichas transferencias se realizan con las garantías que
+			ofrecen estos proveedores (cláusulas contractuales u otros mecanismos reconocidos).
+		</p>
+
+		<h2>7. Tus derechos</h2>
+		<p>
+			Según la normativa aplicable (por ejemplo, el RGPD si resides en la UE, o leyes
+			locales de protección de datos), puedes solicitar:
+		</p>
+		<ul>
+			<li>Acceso, rectificación o supresión de tus datos.</li>
+			<li>Limitación u oposición al tratamiento.</li>
+			<li>Portabilidad, cuando corresponda.</li>
+			<li>Retirar tu consentimiento en cualquier momento (sin afectar al tratamiento
+				previo lícito).</li>
+		</ul>
+		<p>
+			Para ejercerlos, escribe a{" "}
+			<a href={`mailto:${contactEmail}`}>{contactEmail}</a> indicando tu petición y un
+			medio para identificarte. También puedes presentar reclamación ante la autoridad de
+			protección de datos de tu país.
+		</p>
+
+		<h2>8. Cookies y analítica</h2>
+		<p>
+			El Sitio no utiliza cookies de analítica o publicidad propias en el momento de esta
+			actualización. Cloudflare puede emplear cookies o tecnologías similares estrictamente
+			necesarias para seguridad y entrega del contenido. Consulta la documentación de
+			Cloudflare si deseas más detalle.
+		</p>
+
+		<h2>9. Seguridad</h2>
+		<p>
+			Aplicamos medidas técnicas razonables (validación en servidor, controles anti-spam
+			básicos, comunicación cifrada HTTPS). Ningún sistema en Internet es 100 % seguro; si
+			detectas un problema relacionado con tus datos, contáctanos de inmediato.
+		</p>
+
+		<h2>10. Cambios en esta política</h2>
+		<p>
+			Podemos actualizar este texto para reflejar cambios legales o del Sitio. Publicaremos
+			la versión vigente en esta URL con la fecha de revisión al inicio. El uso continuado
+			del formulario tras un cambio relevante implicará la aceptación de la versión
+			actualizada.
+		</p>
+
+		<p class="legal-page__footer">
+			¿Dudas? <a href="/contact">Formulario de contacto</a> o{" "}
+			<a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+		</p>
+	</article>
+</PageLayout>
+
+<style>
+	.legal-page__header {
+		margin-bottom: 2rem;
+	}
+
+	.legal-page__title {
+		margin: 0 0 0.5rem;
+		font-size: 2.5rem;
+		line-height: 1.1;
+		letter-spacing: -0.03em;
+	}
+
+	.legal-page__meta {
+		margin: 0;
+		font-size: 0.875rem;
+		color: rgb(var(--color-secondary) / 0.75);
+	}
+
+	.legal-page h2 {
+		margin-top: 2rem;
+		margin-bottom: 0.75rem;
+		font-size: 1.25rem;
+		letter-spacing: -0.02em;
+	}
+
+	.legal-page p,
+	.legal-page ul {
+		margin-bottom: 1.25rem;
+		font-size: 1rem;
+		line-height: 1.65;
+		color: rgb(var(--color-secondary));
+	}
+
+	.legal-page ul {
+		padding-left: 1.25rem;
+	}
+
+	.legal-page li {
+		margin-bottom: 0.5rem;
+	}
+
+	.legal-page a {
+		color: rgb(var(--color-primary));
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.legal-page a:hover {
+		color: rgb(var(--color-primary-dark));
+	}
+
+	.legal-page__footer {
+		margin-top: 2.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid rgb(var(--color-border));
+	}
+
+	@media (max-width: 760px) {
+		.legal-page__title {
+			font-size: 2rem;
+		}
+	}
+</style>
