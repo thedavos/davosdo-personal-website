@@ -2,16 +2,20 @@
 import Button from "@components/commons/Button.astro";
 import Card from "@components/commons/Card.astro";
 import Chip from "@components/commons/Chip.astro";
+import ProjectHeroImage from "@components/projects/ProjectHeroImage.astro";
 
 type ProjectImportance = "high" | "medium" | "low";
 type ProjectCardVariant = "masonry" | "compact";
 
 type Props = {
+	slug: string;
 	title: string;
 	description: string;
 	tags: string[];
 	importance: ProjectImportance;
 	url: string;
+	heroSrc?: string;
+	priority?: boolean;
 	colSpan?: 1 | 2;
 	variant?: ProjectCardVariant;
 	style?: string;
@@ -19,11 +23,14 @@ type Props = {
 };
 
 const {
+	slug,
 	title,
 	description,
 	tags,
 	importance,
 	url,
+	heroSrc,
+	priority = false,
 	colSpan,
 	variant = "masonry",
 	style,
@@ -31,6 +38,8 @@ const {
 } = Astro.props as Props;
 
 const isCompact = variant === "compact";
+const showHeroImage =
+	importance === "high" && variant === "masonry" && Boolean(heroSrc);
 
 const classes = [
 	"project-card",
@@ -52,37 +61,56 @@ const classes = [
 		padding="none"
 		class="service-card-surface service-card-surface-hover h-full flex flex-col"
 	>
-		<div class="project-card__body">
-			<div class="project-card__body-content">
-				<div class="project-card__copy">
-					<h2 class="project-card__title">{title}</h2>
-					<p class="project-card__description">{description}</p>
-				</div>
+		<div class="project-card__inner">
+			{
+				showHeroImage && heroSrc && (
+					<a href={url} class="project-card__media" tabindex="-1">
+						<ProjectHeroImage
+							slug={slug}
+							src={heroSrc}
+							alt={`Vista principal de ${title}`}
+							layout="card"
+							loading={priority ? "eager" : "lazy"}
+							fetchpriority={priority ? "high" : undefined}
+							class="project-card__image"
+						/>
+					</a>
+				)
+			}
+			<div class="project-card__body">
+				<div class="project-card__body-content">
+					<div class="project-card__copy">
+						<h2 class="project-card__title">
+							<a href={url} class="project-card__title-link">{title}</a>
+						</h2>
+						<p class="project-card__description">{description}</p>
+					</div>
 
-				<ul
-					class="project-card__tags"
-					aria-label={`Herramientas usadas en ${title}`}
-				>
-					{tags.map((tag) => (
-						<li>
-							<Chip size="xs" variant="muted">
-								{tag}
-							</Chip>
-						</li>
-					))}
-				</ul>
-			</div>
-			<div class="project-card__cta">
-				<Button
-					as="a"
-					href={url}
-					variant="link"
-					size="sm"
-					rightIcon="i-lucide-arrow-right"
-					class="!min-h-0 !p-0 !text-primary"
-				>
-					Ver proyecto
-				</Button>
+					<ul
+						class="project-card__tags"
+						aria-label={`Herramientas usadas en ${title}`}
+					>
+						{tags.map((tag) => (
+							<li>
+								<Chip size="xs" variant="muted">
+									{tag}
+								</Chip>
+							</li>
+						))}
+					</ul>
+				</div>
+				<div class="project-card__cta">
+					<Button
+						as="a"
+						href={url}
+						variant="link"
+						size="sm"
+						rightIcon="i-lucide-arrow-right"
+						class="!min-h-0 !p-0 !text-primary"
+					>
+						Ver proyecto
+					</Button>
+				</div>
 			</div>
 		</div>
 	</Card>
@@ -115,15 +143,51 @@ const classes = [
 		grid-column: span 2;
 	}
 
+	.project-card__inner {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-height: 0;
+		height: 100%;
+	}
+
+	.project-card__media {
+		display: block;
+		flex: 1;
+		min-height: 0;
+		max-height: min(52vh, 420px);
+		overflow: hidden;
+		border-radius: 16px 16px 0 0;
+		aspect-ratio: 2 / 1;
+		text-decoration: none;
+	}
+
+	.project-card__media:focus-visible {
+		outline: 2px solid rgb(var(--color-primary));
+		outline-offset: -2px;
+	}
+
+	.project-card__image {
+		display: block;
+		width: 100%;
+		height: 100%;
+		min-height: 100%;
+	}
+
 	.project-card__body {
 		display: flex;
 		flex: 1;
-		min-height: 0;
 		flex-direction: column;
 		justify-content: space-between;
 		gap: 20px;
 		padding: 20px;
 		height: 100%;
+	}
+
+	.project-card--medium .project-card__body,
+	.project-card--low .project-card__body,
+	.project-card--compact .project-card__body {
+		min-height: 0;
 	}
 
 	.project-card__body-content {
@@ -146,6 +210,16 @@ const classes = [
 		letter-spacing: 0;
 		line-height: 1.12;
 		text-wrap: balance;
+	}
+
+	.project-card__title-link {
+		color: inherit;
+		text-decoration: none;
+		transition: color 0.15s ease;
+	}
+
+	.project-card__title-link:hover {
+		color: var(--color-primary);
 	}
 
 	.project-card__cta {
@@ -200,8 +274,10 @@ const classes = [
 	}
 
 	.project-card--high .project-card__body {
-		gap: 24px;
-		padding: 24px;
+		flex: 0 0 auto;
+		height: auto;
+		gap: 20px;
+		padding: 20px 24px 24px;
 	}
 
 	.project-card--high .project-card__body-content {
@@ -241,7 +317,6 @@ const classes = [
 		line-height: 1.5;
 	}
 
-
 	@media (max-width: 900px) {
 		.project-card--high,
 		.project-card--medium,
@@ -255,6 +330,15 @@ const classes = [
 
 		.project-card--high {
 			grid-row: span 1;
+		}
+
+		.project-card--high .project-card__inner {
+			height: auto;
+		}
+
+		.project-card--high .project-card__media {
+			flex: 0 0 auto;
+			max-height: min(44vh, 320px);
 		}
 
 		.project-card--high .project-card__body {
@@ -275,6 +359,15 @@ const classes = [
 		.project-card--span-wide {
 			grid-column: span 1;
 			grid-row: span 1;
+		}
+
+		.project-card--high .project-card__inner {
+			height: auto;
+		}
+
+		.project-card--high .project-card__media {
+			flex: 0 0 auto;
+			max-height: 280px;
 		}
 
 		.project-card--high .project-card__body,

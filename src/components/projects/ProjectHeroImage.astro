@@ -1,0 +1,78 @@
+---
+import { Image } from "astro:assets";
+import {
+	isRemoteImageSrc,
+	resolveProjectHero,
+} from "@/lib/project-images";
+
+type Layout = "card" | "detail";
+
+type Props = {
+	slug: string;
+	src: string;
+	alt: string;
+	loading?: "eager" | "lazy";
+	fetchpriority?: "high" | "low" | "auto";
+	layout?: Layout;
+	class?: string;
+};
+
+const {
+	slug,
+	src,
+	alt,
+	loading = "lazy",
+	fetchpriority,
+	layout = "detail",
+	class: className,
+} = Astro.props;
+
+const resolved = resolveProjectHero(slug, src);
+const remote =
+	typeof resolved === "string" && isRemoteImageSrc(resolved);
+
+const sizes =
+	layout === "card"
+		? "(max-width: 640px) 100vw, (max-width: 900px) 50vw, 50vw"
+		: "(max-width: 900px) 100vw, min(900px, 100vw)";
+
+const widths = [400, 640, 800, 1200];
+---
+
+<Image
+	src={resolved}
+	alt={alt}
+	loading={loading}
+	decoding="async"
+	fetchpriority={fetchpriority}
+	widths={widths}
+	sizes={sizes}
+	inferSize={remote}
+	class:list={[
+		"project-hero-image",
+		layout === "card" && "project-hero-image--card",
+		layout === "detail" && "project-hero-image--detail",
+		className,
+	]}
+/>
+
+<style>
+	.project-hero-image {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	.project-hero-image--card {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.project-hero-image--detail {
+		width: 100%;
+		height: 100%;
+		aspect-ratio: 2 / 1;
+		object-fit: cover;
+	}
+</style>

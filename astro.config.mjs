@@ -10,6 +10,9 @@ import { siteConfig } from "./src/config.ts";
 
 export default defineConfig({
 	site: siteConfig.site,
+	image: {
+		remotePatterns: [{ protocol: "https", hostname: "placehold.co" }],
+	},
 	fonts: [
 		{
 			provider: fontProviders.local(),

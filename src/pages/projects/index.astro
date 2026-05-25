@@ -28,10 +28,17 @@ const visibleProjects = getVisibleProjects();
 			{
 				visibleProjects.map((project, index) => (
 					<ProjectCard
+						slug={project.slug}
 						title={project.title}
 						description={project.description}
 						tags={project.tags}
 						importance={project.importance}
+						heroSrc={
+							project.importance === "high"
+								? project.images.hero
+								: undefined
+						}
+						priority={project.importance === "high" && index === 0}
 						colSpan={project.colSpan}
 						url={`/projects/${project.slug}`}
 						style={`--cascade-delay: ${0.12 + index * 0.04}s`}
