@@ -17,88 +17,113 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 ---
 
 <div class="form-panel">
-	<Form class="contact-form gap-8" data-contact-form novalidate>
-		<div class="grid min-w-0 gap-6 md:grid-cols-2 md:gap-6">
-			<FormItem id="contact-name" label="Nombre" required compact>
-				<Input
-					id="contact-name"
-					type="text"
-					name="name"
-					size="compact"
-					autocomplete="name"
-					minlength="2"
-					maxlength="80"
-					pattern="[A-Za-zÀ-ÖØ-öø-ÿĀ-žḀ-ỿ'’ .-]+"
-					required
-				/>
-			</FormItem>
+	<Form
+		class="contact-form gap-8"
+		data-contact-form
+		data-initial-service={validService}
+		novalidate
+	>
+		<input
+			type="text"
+			name="company_website"
+			class="sr-only"
+			tabindex="-1"
+			autocomplete="off"
+			aria-hidden="true"
+		/>
+		<input type="hidden" name="submit_id" value="" data-submit-id />
 
-			<FormItem id="contact-email" label="Email" required compact>
-				<Input
-					id="contact-email"
-					type="email"
-					name="email"
-					size="compact"
-					autocomplete="email"
-					inputmode="email"
-					maxlength="254"
-					required
-				/>
-			</FormItem>
-
-			<FormItem
-				id="contact-service"
-				label="¿En qué te puedo ayudar?"
-				required
-				compact
-			>
-				<Select id="contact-service" name="service" size="compact" required>
-					<option value="" disabled selected={!validService}>
-						Selecciona un servicio
-					</option>
-					{
-						services.map(({ slug, title }) => (
-							<option value={slug} selected={slug === validService}>
-								{title}
-							</option>
-						))
-					}
-				</Select>
-			</FormItem>
-
-			<FormItem id="contact-budget" label="¿Qué presupuesto tienes?" required compact>
-				<Select id="contact-budget" name="budget" size="compact" required>
-					<option value="" disabled selected>
-						Selecciona un rango
-					</option>
-					{
-						contactBudgetOptions.map(({ value, label }) => (
-							<option value={value}>{label}</option>
-						))
-					}
-				</Select>
-			</FormItem>
-
-			<div class="md:col-span-2">
-				<FormItem id="contact-message" label="Tu mensaje" required compact>
-					<Textarea
-						id="contact-message"
-						name="message"
+		<div class="flex flex-col gap-4">
+			<div class="grid min-w-0 gap-6 md:grid-cols-2 md:gap-6">
+				<FormItem id="contact-name" label="Nombre" required compact>
+					<Input
+						id="contact-name"
+						type="text"
+						name="name"
 						size="compact"
-						minlength="10"
-						maxlength="2000"
+						autocomplete="name"
+						minlength="2"
+						maxlength="80"
+						pattern="[A-Za-zÀ-ÖØ-öø-ÿĀ-žḀ-ỿ'’ .-]+"
 						required
 					/>
 				</FormItem>
+
+				<FormItem id="contact-email" label="Email" required compact>
+					<Input
+						id="contact-email"
+						type="email"
+						name="email"
+						size="compact"
+						autocomplete="email"
+						inputmode="email"
+						maxlength="254"
+						required
+					/>
+				</FormItem>
+
+				<FormItem
+					id="contact-service"
+					label="¿En qué te puedo ayudar?"
+					required
+					compact
+				>
+					<Select id="contact-service" name="service" size="compact" required>
+						<option value="" disabled selected={!validService}>
+							Selecciona un servicio
+						</option>
+						{
+							services.map(({ slug, title }) => (
+								<option value={slug} selected={slug === validService}>
+									{title}
+								</option>
+							))
+						}
+					</Select>
+				</FormItem>
+
+				<FormItem id="contact-budget" label="¿Qué presupuesto tienes?" required compact>
+					<Select id="contact-budget" name="budget" size="compact" required>
+						<option value="" disabled selected>
+							Selecciona un rango
+						</option>
+						{
+							contactBudgetOptions.map(({ value, label }) => (
+								<option value={value}>{label}</option>
+							))
+						}
+					</Select>
+				</FormItem>
+
+				<div class="md:col-span-2">
+					<FormItem id="contact-message" label="Tu mensaje" required compact>
+						<Textarea
+							id="contact-message"
+							name="message"
+							size="compact"
+							minlength="10"
+							maxlength="2000"
+							required
+						/>
+					</FormItem>
+				</div>
 			</div>
+
+			<div
+				class="form-alert hidden"
+				data-form-feedback
+				role="status"
+				aria-live="polite"
+			></div>
 		</div>
 
-		<div
-			class="form-alert hidden"
-			data-form-feedback
-			role="status"
-			aria-live="polite"
-		></div>
+		<p class="contact-form__legal">
+			Al enviar este formulario, aceptas que trate tus datos para responder a tu
+			consulta. Consulta la
+			<a href="/privacy-policy/" class="contact-form__legal-link"
+				>política de privacidad</a
+			>.
+		</p>
 
 		<Button
 			type="submit"
@@ -106,11 +131,59 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 			fullWidth
 			rightIcon="i-lucide-send"
 			data-form-submit
+			data-default-label="Enviar mensaje"
 		>
 			Enviar mensaje
 		</Button>
 	</Form>
 </div>
+
+<style>
+	.contact-form__legal {
+		margin: 0;
+		font-size: 0.8125rem;
+		line-height: 1.5;
+		color: rgb(var(--color-secondary) / 0.85);
+	}
+
+	.contact-form__legal-link {
+		color: rgb(var(--color-primary));
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.contact-form__legal-link:hover {
+		color: rgb(var(--color-primary-dark));
+	}
+
+	.contact-form [data-form-submit].is-loading .button__icon {
+		display: none;
+	}
+
+	.contact-form [data-form-submit].is-loading::before {
+		content: "";
+		display: inline-block;
+		width: 1em;
+		height: 1em;
+		flex-shrink: 0;
+		border: 2px solid currentColor;
+		border-right-color: transparent;
+		border-radius: 999px;
+		animation: contact-form-spin 0.7s linear infinite;
+	}
+
+	@keyframes contact-form-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.contact-form [data-form-submit].is-loading::before {
+			animation-duration: 1.4s;
+		}
+	}
+</style>
 
 <script>
 	function initContactForm(root: HTMLFormElement) {
@@ -119,6 +192,37 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 
 		const feedback = root.querySelector<HTMLElement>("[data-form-feedback]");
 		const submitButton = root.querySelector<HTMLButtonElement>("[data-form-submit]");
+		const submitIdInput = root.querySelector<HTMLInputElement>("[data-submit-id]");
+		const serviceSelectCandidate = root.querySelector('select[name="service"]');
+		const serviceSelect =
+			serviceSelectCandidate instanceof HTMLSelectElement
+				? serviceSelectCandidate
+				: null;
+		const submitLabel = submitButton?.querySelector<HTMLElement>(".button__label");
+		const defaultLabel =
+			submitButton?.dataset.defaultLabel ??
+			submitLabel?.textContent?.trim() ??
+			"Enviar mensaje";
+
+		let isSubmitting = false;
+
+		const setSubmitId = () => {
+			if (!submitIdInput) return;
+			submitIdInput.value = crypto.randomUUID();
+		};
+
+		const restoreInitialService = () => {
+			const initialService = root.dataset.initialService?.trim();
+			if (!initialService || !serviceSelect) return;
+
+			if (
+				serviceSelect.querySelector(`option[value="${initialService}"]`) !== null
+			) {
+				serviceSelect.value = initialService;
+			}
+		};
+
+		setSubmitId();
 
 		const clearFeedbackClasses = () => {
 			if (!feedback) return;
@@ -151,10 +255,20 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 			submitButton.disabled = loading;
 			submitButton.setAttribute("aria-busy", loading ? "true" : "false");
 			submitButton.classList.toggle("pointer-events-none", loading);
+			submitButton.classList.toggle("is-loading", loading);
+
+			if (submitLabel) {
+				submitLabel.textContent = loading ? "Enviando…" : defaultLabel;
+			}
 		};
 
 		root.addEventListener("submit", async (event) => {
 			event.preventDefault();
+
+			if (isSubmitting) {
+				return;
+			}
+
 			setFeedback(null);
 
 			if (!root.checkValidity()) {
@@ -162,6 +276,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 				return;
 			}
 
+			isSubmitting = true;
 			const formData = new FormData(root);
 			setLoading(true);
 
@@ -185,6 +300,8 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 				}
 
 				root.reset();
+				restoreInitialService();
+				setSubmitId();
 				setFeedback(
 					"success",
 					"¡Mensaje enviado! Te responderé en menos de 24 horas.",
@@ -195,6 +312,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 					"No se pudo enviar el mensaje. Revisa tu conexión e inténtalo de nuevo.",
 				);
 			} finally {
+				isSubmitting = false;
 				setLoading(false);
 			}
 		});
