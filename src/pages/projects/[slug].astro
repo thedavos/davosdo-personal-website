@@ -2,6 +2,9 @@
 import Button from "@components/commons/Button.astro";
 import Chip from "@components/commons/Chip.astro";
 import RelatedProjectsSection from "@components/projects/RelatedProjectsSection.astro";
+import ProjectImageLightbox, {
+	type LightboxImage,
+} from "@components/projects/ProjectImageLightbox.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import {
 	projects,
@@ -10,6 +13,7 @@ import {
 	getStatusVariant,
 	type ProjectDetail,
 } from "@data/projects";
+import { getProjectHeroUrl } from "@/lib/project-images";
 
 export function getStaticPaths() {
 	return projects
@@ -26,6 +30,14 @@ const { project } = Astro.props;
 const statusLabel = getStatusLabel(project.status);
 const statusVariant = getStatusVariant(project.status);
 const relatedProjects = getRelatedProjects(project);
+
+const lightboxImages: LightboxImage[] = project.images.gallery.map(
+	(src, i): LightboxImage => ({
+		src,
+		alt: `Captura ${i + 1} de ${project.title}`,
+		variant: "gallery",
+	}),
+);
 ---
 
 <PageLayout
@@ -68,15 +80,12 @@ const relatedProjects = getRelatedProjects(project);
 		</header>
 
 		<!-- ── Hero image ── -->
-		<div
-			class="project-detail__hero-image"
-			data-cascade-item
-			style="--cascade-delay: 0.12s"
-		>
-			<img
+		<div data-cascade-item style="--cascade-delay: 0.12s">
+			<ProjectImageLightbox
+				mode="hero"
+				slug={project.slug}
 				src={project.images.hero}
 				alt={`Vista principal de ${project.title}`}
-				class="project-detail__img"
 				loading="eager"
 			/>
 		</div>
@@ -115,7 +124,7 @@ const relatedProjects = getRelatedProjects(project);
 			data-cascade-item
 			style="--cascade-delay: 0.20s"
 		>
-			<h2 class="project-detail__section-title">Sobre el proyecto</h2>
+			<h2 class="project-detail__section-title">Resumen</h2>
 			<p class="project-detail__long-description">{project.longDescription}</p>
 		</section>
 
@@ -146,16 +155,9 @@ const relatedProjects = getRelatedProjects(project);
 					data-cascade-item
 					style="--cascade-delay: 0.28s"
 				>
-					<h2 class="project-detail__section-title">Galeria</h2>
+					<h2 class="project-detail__section-title">Interfaces y flujos</h2>
 					<div class="project-detail__gallery">
-						{project.images.gallery.map((img, i) => (
-							<img
-								src={img}
-								alt={`Captura ${i + 1} de ${project.title}`}
-								class="project-detail__gallery-img"
-								loading="lazy"
-							/>
-						))}
+						<ProjectImageLightbox mode="gallery" images={lightboxImages} />
 					</div>
 				</section>
 			)
@@ -189,6 +191,12 @@ const relatedProjects = getRelatedProjects(project);
 				}
 			</div>
 		</section>
+
+		{
+			lightboxImages.length > 0 && (
+				<ProjectImageLightbox mode="dialog" images={lightboxImages} />
+			)
+		}
 
 		<div class="project-detail__postscript">
 			<RelatedProjectsSection projects={relatedProjects} />
@@ -268,21 +276,6 @@ const relatedProjects = getRelatedProjects(project);
 		text-wrap: pretty;
 	}
 
-	/* ── Hero image ── */
-	.project-detail__hero-image {
-		overflow: hidden;
-		border-radius: 12px;
-		border: 1px solid var(--color-border);
-	}
-
-	.project-detail__img {
-		display: block;
-		width: 100%;
-		height: auto;
-		aspect-ratio: 2 / 1;
-		object-fit: cover;
-	}
-
 	/* ── Sections ── */
 	.project-detail__section {
 		display: flex;
@@ -310,17 +303,7 @@ const relatedProjects = getRelatedProjects(project);
 	.project-detail__gallery {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-		gap: 12px;
-	}
-
-	.project-detail__gallery-img {
-		display: block;
-		width: 100%;
-		height: auto;
-		aspect-ratio: 16 / 10;
-		object-fit: cover;
-		border-radius: 10px;
-		border: 1px solid var(--color-border);
+		gap: 16px;
 	}
 
 	/* ── Features ── */
@@ -353,7 +336,7 @@ const relatedProjects = getRelatedProjects(project);
 	.project-detail__stack-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-		gap: 12px;
+		gap: 20px;
 	}
 
 	.project-detail__stack-category {

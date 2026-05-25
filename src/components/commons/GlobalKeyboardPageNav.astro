@@ -5,6 +5,7 @@
 		getOrderedNavItems,
 		navigateTo,
 	} from "@/utils/navigation";
+	import { isProjectLightboxOpen } from "@/utils/project-lightbox";
 
 	const navItems = getOrderedNavItems(SITE_NAV_ITEMS);
 
@@ -27,6 +28,8 @@
 		};
 
 		const navigateByDirection = (direction: "previous" | "next") => {
+			if (isProjectLightboxOpen()) return;
+
 			const nextUrl = getCircularNavUrl(
 				navItems,
 				window.location.pathname,

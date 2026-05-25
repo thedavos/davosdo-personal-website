@@ -1,0 +1,645 @@
+---
+import ProjectHeroImage from "@components/projects/ProjectHeroImage.astro";
+
+export interface LightboxImage {
+	src: string;
+	alt: string;
+	variant?: "hero" | "gallery";
+}
+
+interface Props {
+	mode: "hero" | "gallery" | "dialog";
+	images?: LightboxImage[];
+	index?: number;
+	slug?: string;
+	src?: string;
+	alt?: string;
+	loading?: "eager" | "lazy";
+}
+
+const {
+	mode,
+	images = [],
+	index = 0,
+	slug = "",
+	src = "",
+	alt = "",
+	loading = "lazy",
+} = Astro.props;
+
+const totalCount = images.length;
+---
+
+{
+	mode === "hero" && (
+		<div class="project-lightbox__hero-wrap">
+			<ProjectHeroImage
+				slug={slug}
+				src={src}
+				alt={alt}
+				layout="detail"
+				loading={loading}
+				fetchpriority={loading === "eager" ? "high" : undefined}
+				class="project-lightbox__thumb project-lightbox__thumb--hero"
+			/>
+		</div>
+	)
+}
+
+{
+	mode === "gallery" &&
+		images.map((img, imageIndex) => {
+			if (img.variant !== "gallery") return null;
+			return (
+				<button
+					type="button"
+					class="project-lightbox__trigger project-lightbox__trigger--gallery"
+					data-lightbox-trigger
+					data-index={imageIndex}
+					aria-label={`Ver ${img.alt} en grande`}
+				>
+					<img
+						src={img.src}
+						alt={img.alt}
+						class="project-lightbox__thumb project-lightbox__thumb--gallery"
+						loading="lazy"
+					/>
+					<span class="project-lightbox__zoom-badge" aria-hidden="true">
+						<span class="project-lightbox__zoom-icon i-lucide-zoom-in" />
+					</span>
+				</button>
+			);
+		})
+}
+
+{
+	mode === "dialog" && totalCount > 0 && (
+		<dialog
+			class="project-lightbox__dialog"
+			data-project-lightbox-dialog
+			aria-modal="true"
+			aria-label="Vista ampliada de captura"
+		>
+			<div class="project-lightbox__dialog-inner">
+				<div class="project-lightbox__toolbar">
+					<button
+						type="button"
+						class="project-lightbox__close"
+						data-lightbox-close
+						aria-label="Cerrar vista ampliada"
+					>
+						<span class="project-lightbox__close-icon i-lucide-x" aria-hidden="true" />
+					</button>
+				</div>
+
+				<div class="project-lightbox__stage">
+					<figure class="project-lightbox__figure">
+						<img
+							class="project-lightbox__preview"
+							data-lightbox-preview
+							src=""
+							alt=""
+							decoding="async"
+						/>
+					</figure>
+				</div>
+			</div>
+		</dialog>
+	)
+}
+
+{
+	mode === "dialog" && totalCount > 0 && (
+		<script define:vars={{ images }}>
+			const lightboxMediaQuery = "(min-width: 641px)";
+
+			const LIGHTBOX_OPEN_ATTR = "data-lightbox-open";
+
+			function isProjectLightboxOpen() {
+				return document.documentElement.hasAttribute(LIGHTBOX_OPEN_ATTR);
+			}
+
+			function setProjectLightboxOpen(open) {
+				document.documentElement.toggleAttribute(LIGHTBOX_OPEN_ATTR, open);
+			}
+
+			function canOpenLightbox() {
+				return window.matchMedia(lightboxMediaQuery).matches;
+			}
+
+			function patchSwupIgnoreVisit() {
+				const swup = window.swup;
+				if (!swup?.options || swup.__projectLightboxIgnorePatched) return;
+
+				const baseIgnore = swup.options.ignoreVisit;
+				swup.options.ignoreVisit = (url, ctx = {}) => {
+					if (isProjectLightboxOpen()) return true;
+					if (typeof baseIgnore === "function") {
+						return Boolean(baseIgnore(url, ctx));
+					}
+					return Boolean(baseIgnore);
+				};
+				swup.__projectLightboxIgnorePatched = true;
+			}
+
+			function bindSwupLightboxGuard() {
+				if (window.__projectLightboxSwupGuardBound) return;
+				window.__projectLightboxSwupGuardBound = true;
+
+				patchSwupIgnoreVisit();
+				document.addEventListener("swup:enable", patchSwupIgnoreVisit);
+				document.addEventListener("astro:page-load", patchSwupIgnoreVisit);
+			}
+
+			function bindLightboxHistoryGuard() {
+				if (window.__projectLightboxHistoryBound) return;
+				window.__projectLightboxHistoryBound = true;
+
+				document.addEventListener("swup:history:popstate", () => {
+					if (!isProjectLightboxOpen()) return;
+
+					const dialog = document.querySelector("[data-project-lightbox-dialog]");
+					const api = dialog && dialog.__projectLightboxApi;
+					if (api) api.close();
+
+					history.go(1);
+				});
+			}
+
+			function bindProjectLightboxDocument() {
+				if (window.__projectLightboxDocBound) return;
+				window.__projectLightboxDocBound = true;
+
+				document.addEventListener("click", (event) => {
+					const target = event.target;
+					if (!(target instanceof Element)) return;
+
+					const trigger = target.closest("[data-lightbox-trigger]");
+					if (!trigger) return;
+
+					if (!canOpenLightbox()) return;
+
+					const dialog = document.querySelector("[data-project-lightbox-dialog]");
+					const api = dialog && dialog.__projectLightboxApi;
+					if (!api) return;
+
+					const index = Number(trigger.dataset.index);
+					if (Number.isNaN(index)) return;
+
+					event.preventDefault();
+					api.open(index, trigger);
+				});
+			}
+
+			const LIGHTBOX_ANIMATION_MS = 240;
+
+			function prefersReducedMotion() {
+				return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+			}
+
+			function initProjectLightbox() {
+				const dialog = document.querySelector("[data-project-lightbox-dialog]");
+				if (!dialog || dialog.dataset.lightboxInit === "true") return;
+				dialog.dataset.lightboxInit = "true";
+
+				const preview = dialog.querySelector("[data-lightbox-preview]");
+				const closeBtn = dialog.querySelector("[data-lightbox-close]");
+				const dialogInner = dialog.querySelector(".project-lightbox__dialog-inner");
+				const total = images.length;
+
+				if (!preview || total === 0) return;
+
+				let activeIndex = 0;
+				let lastTrigger = null;
+				let previousBodyOverflow = "";
+				let closeAnimationTimer = null;
+				let closeAnimations = [];
+				let closeFinishPending = false;
+
+				const preload = (index) => {
+					if (index < 0 || index >= total) return;
+					const img = new Image();
+					img.src = images[index].src;
+				};
+
+				const updateView = () => {
+					const current = images[activeIndex];
+					preview.src = current.src;
+					preview.alt = current.alt;
+					preload(activeIndex - 1);
+					preload(activeIndex + 1);
+				};
+
+				const cancelCloseAnimationEffects = () => {
+					if (closeAnimationTimer) {
+						clearTimeout(closeAnimationTimer);
+						closeAnimationTimer = null;
+					}
+
+					closeAnimations.forEach((animation) => animation.cancel());
+					closeAnimations = [];
+
+					if (dialogInner) {
+						dialogInner.style.opacity = "";
+						dialogInner.style.transform = "";
+					}
+
+					dialog.classList.remove("project-lightbox__dialog--closing");
+				};
+
+				const clearCloseAnimation = () => {
+					cancelCloseAnimationEffects();
+					closeFinishPending = false;
+				};
+
+				const finishClose = () => {
+					if (closeFinishPending) return;
+					closeFinishPending = true;
+
+					cancelCloseAnimationEffects();
+
+					if (!dialog.open) return;
+
+					dialog.close();
+					setProjectLightboxOpen(false);
+					document.body.style.overflow = previousBodyOverflow;
+					if (lastTrigger) lastTrigger.focus();
+				};
+
+				const open = (index, trigger) => {
+					if (!canOpenLightbox()) return;
+
+					clearCloseAnimation();
+					activeIndex = ((index % total) + total) % total;
+					lastTrigger = trigger;
+					updateView();
+					previousBodyOverflow = document.body.style.overflow;
+					document.body.style.overflow = "hidden";
+					setProjectLightboxOpen(true);
+					dialog.showModal();
+					if (closeBtn) closeBtn.focus();
+				};
+
+				const close = () => {
+					if (!dialog.open || dialog.classList.contains("project-lightbox__dialog--closing")) {
+						return;
+					}
+
+					if (prefersReducedMotion()) {
+						finishClose();
+						return;
+					}
+
+					closeFinishPending = false;
+					dialog.classList.add("project-lightbox__dialog--closing");
+					dialog.getBoundingClientRect();
+
+					if (dialogInner) {
+						const animation = dialogInner.animate(
+							[
+								{ opacity: 1, transform: "scale(1)" },
+								{ opacity: 0, transform: "scale(0.94)" },
+							],
+							{
+								duration: LIGHTBOX_ANIMATION_MS,
+								easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+								fill: "forwards",
+							},
+						);
+						closeAnimations.push(animation);
+						animation.finished.then(finishClose).catch(finishClose);
+					}
+
+					closeAnimationTimer = setTimeout(finishClose, LIGHTBOX_ANIMATION_MS + 80);
+				};
+
+				const go = (delta) => {
+					const nextIndex = activeIndex + delta;
+
+					if (nextIndex < 0 || nextIndex >= total) {
+						close();
+						return;
+					}
+
+					activeIndex = nextIndex;
+					updateView();
+				};
+
+				dialog.__projectLightboxApi = { open, close, go };
+
+				if (closeBtn) closeBtn.addEventListener("click", () => close());
+
+				dialog.addEventListener("click", (event) => {
+					if (event.target === dialog) close();
+				});
+
+				dialog.addEventListener("cancel", (event) => {
+					event.preventDefault();
+					close();
+				});
+
+				dialog.addEventListener("close", () => {
+					clearCloseAnimation();
+					setProjectLightboxOpen(false);
+					document.body.style.overflow = previousBodyOverflow;
+					preview.removeAttribute("src");
+				});
+
+				dialog.addEventListener("keydown", (event) => {
+					if (!dialog.open) return;
+					if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+
+					event.preventDefault();
+					event.stopPropagation();
+
+					if (event.key === "ArrowLeft") {
+						go(-1);
+						return;
+					}
+
+					go(1);
+				});
+
+				bindProjectLightboxDocument();
+				bindSwupLightboxGuard();
+				bindLightboxHistoryGuard();
+			}
+
+			function teardownProjectLightbox() {
+				const dialog = document.querySelector("[data-project-lightbox-dialog]");
+				if (dialog && dialog.open) {
+					dialog.close();
+				}
+				setProjectLightboxOpen(false);
+				document.body.style.overflow = "";
+			}
+
+			initProjectLightbox();
+			bindSwupLightboxGuard();
+			bindLightboxHistoryGuard();
+			document.addEventListener("astro:page-load", initProjectLightbox);
+			document.addEventListener("astro:before-swap", teardownProjectLightbox);
+		</script>
+	)
+}
+
+{(mode === "hero" || mode === "gallery") && (
+<style>
+	/* ── Thumbnail triggers ── */
+	.project-lightbox__hero-wrap {
+		overflow: hidden;
+		border-radius: 12px;
+		border: 1px solid var(--color-border);
+		aspect-ratio: 2 / 1;
+	}
+
+	.project-lightbox__trigger {
+		position: relative;
+		display: block;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: zoom-in;
+		text-align: left;
+	}
+
+	.project-lightbox__trigger:focus-visible {
+		outline: 2px solid rgb(var(--color-primary));
+		outline-offset: 2px;
+	}
+
+	.project-lightbox__trigger--gallery {
+		border-radius: 10px;
+		border: 1px solid var(--color-border);
+		transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	}
+
+	.project-lightbox__trigger--gallery:hover,
+	.project-lightbox__trigger--gallery:focus-visible {
+		border-color: var(--color-primary-border);
+		box-shadow: 0 4px 16px rgba(var(--color-secondary), 0.12);
+	}
+
+	.project-lightbox__thumb {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	.project-lightbox__thumb--hero {
+		width: 100%;
+		height: 100%;
+		aspect-ratio: 2 / 1;
+		object-fit: cover;
+	}
+
+	.project-lightbox__thumb--gallery {
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
+		border-radius: 10px;
+	}
+
+	.project-lightbox__zoom-badge {
+		position: absolute;
+		right: 10px;
+		bottom: 10px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		border-radius: 999px;
+		background: rgba(var(--color-body), 0.72);
+		color: rgb(var(--color-surface));
+		pointer-events: none;
+	}
+
+	.project-lightbox__zoom-icon {
+		font-size: 16px;
+	}
+
+	@media (max-width: 640px) {
+		.project-lightbox__zoom-badge {
+			display: none;
+		}
+
+		.project-lightbox__trigger {
+			cursor: default;
+		}
+
+		.project-lightbox__trigger--gallery:hover,
+		.project-lightbox__trigger--gallery:focus-visible {
+			border-color: var(--color-border);
+			box-shadow: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.project-lightbox__trigger--gallery {
+			transition: none;
+		}
+	}
+</style>
+)}
+
+{mode === "dialog" && (
+<style>
+	/* ── Dialog ── */
+	.project-lightbox__dialog {
+		width: min(96vw, 900px);
+		max-width: none;
+		margin: auto;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		overflow: visible;
+	}
+
+	.project-lightbox__dialog::backdrop {
+		background: rgba(var(--color-body), 0.82);
+		backdrop-filter: blur(4px);
+		opacity: 0;
+		transition:
+			opacity 240ms ease,
+			overlay 240ms allow-discrete,
+			display 240ms allow-discrete;
+	}
+
+	.project-lightbox__dialog[open]::backdrop {
+		opacity: 1;
+	}
+
+	@starting-style {
+		.project-lightbox__dialog[open]::backdrop {
+			opacity: 0;
+		}
+	}
+
+	.project-lightbox__dialog[open].project-lightbox__dialog--closing::backdrop {
+		opacity: 0;
+	}
+
+	.project-lightbox__dialog-inner {
+		position: relative;
+		opacity: 0;
+		transform: scale(0.94);
+		transition:
+			opacity 240ms cubic-bezier(0.22, 1, 0.36, 1),
+			transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.project-lightbox__dialog[open] .project-lightbox__dialog-inner {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	@starting-style {
+		.project-lightbox__dialog[open] .project-lightbox__dialog-inner {
+			opacity: 0;
+			transform: scale(0.94);
+		}
+	}
+
+	.project-lightbox__dialog[open].project-lightbox__dialog--closing .project-lightbox__dialog-inner {
+		opacity: 0;
+		transform: scale(0.94);
+	}
+
+	.project-lightbox__toolbar {
+		position: absolute;
+		top: -32px;
+		right: 0;
+	}
+
+	.project-lightbox__close {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		border: 1px solid rgba(var(--color-surface), 0.2);
+		border-radius: 999px;
+		background: rgb(var(--color-body));
+		color: rgb(var(--color-surface));
+		cursor: pointer;
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease,
+			box-shadow 0.15s ease;
+	}
+
+	.project-lightbox__close:hover {
+		background: rgb(var(--color-secondary));
+		border-color: rgba(var(--color-surface), 0.45);
+		box-shadow: 0 4px 14px rgba(var(--color-secondary), 0.35);
+	}
+
+	.project-lightbox__close:focus-visible {
+		background: rgb(var(--color-secondary));
+		border-color: rgba(var(--color-surface), 0.45);
+		outline: 2px solid rgb(var(--color-primary));
+		outline-offset: 2px;
+	}
+
+	.project-lightbox__close-icon {
+		display: flex;
+		width: 1rem;
+		height: 1rem;
+		flex-shrink: 0;
+		color: inherit;
+	}
+
+	.project-lightbox__stage {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.project-lightbox__figure {
+		display: block;
+		width: min(96vw, 900px);
+		max-height: calc(100vh - 8rem);
+		margin: 0;
+		aspect-ratio: 1 / 1;
+		overflow: hidden;
+		border-radius: 10px;
+	}
+
+	.project-lightbox__preview {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		box-shadow: 0 12px 40px rgba(var(--color-secondary), 0.35);
+	}
+
+	@media (max-width: 640px) {
+		.project-lightbox__figure {
+			width: 100%;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.project-lightbox__close {
+			transition: none;
+		}
+
+		.project-lightbox__dialog::backdrop {
+			backdrop-filter: none;
+			transition: none;
+		}
+
+		.project-lightbox__dialog-inner {
+			transition: none;
+		}
+
+		.project-lightbox__dialog[open] .project-lightbox__dialog-inner,
+		.project-lightbox__dialog--closing .project-lightbox__dialog-inner {
+			opacity: 1;
+			transform: none;
+		}
+	}
+</style>
+)}
