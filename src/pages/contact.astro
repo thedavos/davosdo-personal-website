@@ -1,9 +1,9 @@
 ---
+import { env } from "cloudflare:workers";
 import ContactFaq from "@components/contact/ContactFaq.astro";
 import ContactForm from "@components/contact/ContactForm.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import { getServiceBySlug } from "@data/services";
-import { env } from "cloudflare:workers";
 
 export const prerender = false;
 
@@ -64,7 +64,7 @@ const turnstileSiteKey = env.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
 	.contact-page {
 		display: flex;
 		flex-direction: column;
-		gap: 48px;
+		gap: 64px;
 	}
 
 	.contact-page__layout {
