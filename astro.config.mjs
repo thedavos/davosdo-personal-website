@@ -87,6 +87,13 @@ export default defineConfig({
 	],
 	adapter: cloudflare(),
 	vite: {
+		build: {
+			rollupOptions: {
+				output: {
+					assetFileNames: "_astro/[hash][extname]",
+				},
+			},
+		},
 		assetsInclude: ['**/*.base', '**/*.home', '**/*.base'],
 		server: {
 			host: 'localhost',
