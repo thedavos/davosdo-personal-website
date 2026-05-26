@@ -10,6 +10,6 @@ export const SITE_NAV_ITEMS: NavigationItem[] = [
 	{ url: "/services", title: "Servicios", navigationOrder: 2 },
 	{ url: "/experience", title: "Experiencia", navigationOrder: 3 },
 	{ url: "/projects", title: "Proyectos", navigationOrder: 4 },
-	{ url: "/blog", title: "Blog", navigationOrder: 5 },
+	// { url: "/blog", title: "Blog", navigationOrder: 5 },
 	{ url: "/contact", title: "Contacto", navigationOrder: 6 },
 ] as const;
