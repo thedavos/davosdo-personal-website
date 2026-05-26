@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import LanguageSwitcher from "@/components/commons/LanguageSwitcher.vue";
+// import LanguageSwitcher from "@/components/commons/LanguageSwitcher.vue";
 import type { NavigationItem } from '@/types'
 
 interface Props {
@@ -132,10 +132,12 @@ onBeforeUnmount(() => {
 						</a>
 					</nav>
 
+					<!-- Multilenguaje pendiente
 					<div class="mobile-nav__language">
 						<p class="mobile-nav__eyebrow">Idioma</p>
 						<LanguageSwitcher variant="panel" />
 					</div>
+					-->
 				</div>
 			</aside>
 		</Transition>

@@ -2,7 +2,7 @@
 import HeaderLink from "@components/HeaderLink.astro";
 import MobileNav from "@components/commons/MobileNav.vue";
 import Logo from "@components/commons/Logo.astro";
-import LanguageSwitcher from "@components/commons/LanguageSwitcher.vue";
+// import LanguageSwitcher from "@components/commons/LanguageSwitcher.vue";
 import ThemeToggle from "@components/commons/ThemeToggle.astro";
 import { SITE_NAV_ITEMS, SITE_TITLE } from "@/consts";
 
@@ -30,9 +30,11 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 			</div>
 			<div class="hidden items-center justify-self-end gap-3 md:flex">
 				{/* <ThemeToggle /> */}
+				{/* Multilenguaje pendiente
 				<div data-morph-persist="desktop-language-switcher">
 					<LanguageSwitcher client:load />
 				</div>
+				*/}
 			</div>
 			<MobileNav
 				client:load
