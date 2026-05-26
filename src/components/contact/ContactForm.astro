@@ -14,6 +14,7 @@ type Props = {
 
 const { selectedService = "" } = Astro.props;
 const validService = getServiceBySlug(selectedService)?.slug ?? "";
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 ---
 
 <div class="form-panel">
@@ -117,6 +118,13 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 			></div>
 		</div>
 
+		<div
+			class="contact-form__turnstile"
+			data-turnstile-container
+			aria-label="Verificación de seguridad"
+		>
+		</div>
+
 		<p class="contact-form__legal">
 			Al enviar este formulario, aceptas que trate tus datos para responder a tu
 			consulta. Consulta la
@@ -139,6 +147,10 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 </div>
 
 <style>
+	.contact-form__turnstile {
+		min-height: 65px;
+	}
+
 	.contact-form__legal {
 		margin: 0;
 		font-size: 0.8125rem;
@@ -185,26 +197,100 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 	}
 </style>
 
-<script>
-	function initContactForm(root: HTMLFormElement) {
+<script define:vars={{ turnstileSiteKey }}>
+	const TURNSTILE_SCRIPT_ID = "cf-turnstile-api";
+
+	function ensureTurnstileScript() {
+		if (document.getElementById(TURNSTILE_SCRIPT_ID)) {
+			return;
+		}
+
+		const script = document.createElement("script");
+		script.id = TURNSTILE_SCRIPT_ID;
+		script.src =
+			"https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+		script.defer = true;
+		document.head.appendChild(script);
+	}
+
+	function whenTurnstileReady(callback) {
+		if (typeof turnstile !== "undefined") {
+			turnstile.ready(callback);
+			return;
+		}
+
+		const script = document.getElementById(TURNSTILE_SCRIPT_ID);
+		if (!script) {
+			callback();
+			return;
+		}
+
+		script.addEventListener("load", () => {
+			if (typeof turnstile !== "undefined") {
+				turnstile.ready(callback);
+			}
+		});
+	}
+
+	function initContactForm(root) {
 		if (root.dataset.formInitialized === "true") return;
 		root.dataset.formInitialized = "true";
 
-		const feedback = root.querySelector<HTMLElement>("[data-form-feedback]");
-		const submitButton = root.querySelector<HTMLButtonElement>("[data-form-submit]");
-		const submitIdInput = root.querySelector<HTMLInputElement>("[data-submit-id]");
+		ensureTurnstileScript();
+
+		const feedback = root.querySelector("[data-form-feedback]");
+		const submitButton = root.querySelector("[data-form-submit]");
+		const submitIdInput = root.querySelector("[data-submit-id]");
+		const turnstileContainer = root.querySelector("[data-turnstile-container]");
 		const serviceSelectCandidate = root.querySelector('select[name="service"]');
 		const serviceSelect =
 			serviceSelectCandidate instanceof HTMLSelectElement
 				? serviceSelectCandidate
 				: null;
-		const submitLabel = submitButton?.querySelector<HTMLElement>(".button__label");
+		const submitLabel = submitButton?.querySelector(".button__label");
 		const defaultLabel =
 			submitButton?.dataset.defaultLabel ??
 			submitLabel?.textContent?.trim() ??
 			"Enviar mensaje";
 
 		let isSubmitting = false;
+		let turnstileWidgetId = null;
+
+		const resetTurnstile = () => {
+			if (turnstileWidgetId === null || typeof turnstile === "undefined") {
+				return;
+			}
+
+			turnstile.reset(turnstileWidgetId);
+		};
+
+		const initTurnstile = () => {
+			if (!turnstileContainer || !turnstileSiteKey) {
+				return;
+			}
+
+			whenTurnstileReady(() => {
+				if (typeof turnstile === "undefined") {
+					return;
+				}
+
+				if (turnstileWidgetId !== null) {
+					turnstile.remove(turnstileWidgetId);
+					turnstileWidgetId = null;
+				}
+
+				turnstileContainer.replaceChildren();
+
+				turnstileWidgetId = turnstile.render(turnstileContainer, {
+					sitekey: turnstileSiteKey,
+					theme: "auto",
+					size: "flexible",
+					action: "contact",
+				});
+			});
+		};
+
+		initTurnstile();
 
 		const setSubmitId = () => {
 			if (!submitIdInput) return;
@@ -276,6 +362,18 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 				return;
 			}
 
+			if (
+				turnstileWidgetId !== null &&
+				typeof turnstile !== "undefined" &&
+				!turnstile.getResponse(turnstileWidgetId)
+			) {
+				setFeedback(
+					"error",
+					"Completa la verificación de seguridad antes de enviar.",
+				);
+				return;
+			}
+
 			isSubmitting = true;
 			const formData = new FormData(root);
 			setLoading(true);
@@ -296,12 +394,14 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 						"error",
 						result.error ?? "No se pudo enviar el mensaje. Inténtalo de nuevo.",
 					);
+					resetTurnstile();
 					return;
 				}
 
 				root.reset();
 				restoreInitialService();
 				setSubmitId();
+				resetTurnstile();
 				setFeedback(
 					"success",
 					"¡Mensaje enviado! Te responderé en menos de 24 horas.",
@@ -311,6 +411,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 					"error",
 					"No se pudo enviar el mensaje. Revisa tu conexión e inténtalo de nuevo.",
 				);
+				resetTurnstile();
 			} finally {
 				isSubmitting = false;
 				setLoading(false);
@@ -320,7 +421,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 
 	function setupContactForms() {
 		document
-			.querySelectorAll<HTMLFormElement>("[data-contact-form]")
+			.querySelectorAll("[data-contact-form]")
 			.forEach(initContactForm);
 	}
 

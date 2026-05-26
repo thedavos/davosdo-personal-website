@@ -1,7 +1,15 @@
 export const MAX_CONTACT_BODY_BYTES = 16_384;
 export const CONTACT_HONEYPOT_FIELD = "company_website";
 export const CONTACT_SUBMIT_ID_FIELD = "submit_id";
+export const CONTACT_TURNSTILE_FIELD = "cf-turnstile-response";
 export const IDEMPOTENCY_CACHE_TTL_SECONDS = 300;
+
+const TURNSTILE_VERIFY_URL =
+	"https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
+export type TurnstileVerifyResult =
+	| { ok: true }
+	| { ok: false; error: string; status: number };
 
 const UUID_V4_PATTERN =
 	/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -90,6 +98,61 @@ export async function parseContactRequestBody(
 		return Object.fromEntries(formData.entries());
 	} catch {
 		return null;
+	}
+}
+
+export async function verifyTurnstileToken(
+	token: unknown,
+	secret: string | undefined,
+	remoteip?: string | null,
+): Promise<TurnstileVerifyResult> {
+	if (!secret?.trim()) {
+		console.error("TURNSTILE_SECRET_KEY is not configured.");
+		return {
+			ok: false,
+			error: "El formulario no está configurado todavía. Escríbeme a hola@davosdo.dev.",
+			status: 503,
+		};
+	}
+
+	const response = String(token ?? "").trim();
+	if (!response) {
+		return {
+			ok: false,
+			error: "Completa la verificación de seguridad.",
+			status: 400,
+		};
+	}
+
+	try {
+		const verifyResponse = await fetch(TURNSTILE_VERIFY_URL, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				secret: secret.trim(),
+				response,
+				...(remoteip ? { remoteip } : {}),
+			}),
+		});
+
+		const result = (await verifyResponse.json()) as { success?: boolean };
+
+		if (!result.success) {
+			return {
+				ok: false,
+				error: "Verificación de seguridad fallida. Inténtalo de nuevo.",
+				status: 400,
+			};
+		}
+
+		return { ok: true };
+	} catch (error) {
+		console.error("Turnstile siteverify error:", error);
+		return {
+			ok: false,
+			error: "No se pudo validar la verificación. Inténtalo de nuevo.",
+			status: 502,
+		};
 	}
 }
 

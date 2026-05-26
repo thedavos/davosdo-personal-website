@@ -7,6 +7,7 @@ declare namespace Cloudflare {
 		ASSETS: Fetcher;
 		CONTACT_FROM_EMAIL: "contacto@davosdo.dev";
 		CONTACT_TO_EMAIL: "hola@davosdo.dev";
+		TURNSTILE_SECRET_KEY: string;
 	}
 }
 interface Env extends Cloudflare.Env {}

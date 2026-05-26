@@ -3,6 +3,7 @@ import { env } from "cloudflare:workers";
 import {
 	CONTACT_HONEYPOT_FIELD,
 	CONTACT_SUBMIT_ID_FIELD,
+	CONTACT_TURNSTILE_FIELD,
 	cacheIdempotentResponse,
 	contactJsonResponse,
 	contactSuccessResponse,
@@ -12,6 +13,7 @@ import {
 	isValidSubmitId,
 	parseContactRequestBody,
 	toContactFields,
+	verifyTurnstileToken,
 } from "@/lib/contact-api";
 import {
 	getContactMailConfig,
@@ -33,6 +35,19 @@ export const POST: APIRoute = async ({ request }) => {
 
 	if (!body) {
 		return contactJsonResponse({ ok: false, error: "Solicitud inválida." }, 400);
+	}
+
+	const turnstileResult = await verifyTurnstileToken(
+		body[CONTACT_TURNSTILE_FIELD],
+		env.TURNSTILE_SECRET_KEY,
+		request.headers.get("CF-Connecting-IP"),
+	);
+
+	if (!turnstileResult.ok) {
+		return contactJsonResponse(
+			{ ok: false, error: turnstileResult.error },
+			turnstileResult.status,
+		);
 	}
 
 	if (isHoneypotTriggered(body[CONTACT_HONEYPOT_FIELD])) {
