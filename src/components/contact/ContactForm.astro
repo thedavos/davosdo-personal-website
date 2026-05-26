@@ -22,6 +22,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 		class="contact-form gap-8"
 		data-contact-form
 		data-initial-service={validService}
+		data-turnstile-site-key={turnstileSiteKey}
 		novalidate
 	>
 		<input
@@ -197,7 +198,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 	}
 </style>
 
-<script define:vars={{ turnstileSiteKey }}>
+<script>
 	const TURNSTILE_SCRIPT_ID = "cf-turnstile-api";
 
 	function ensureTurnstileScript() {
@@ -213,7 +214,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 		document.head.appendChild(script);
 	}
 
-	function whenTurnstileReady(callback) {
+	function whenTurnstileReady(callback: () => void) {
 		if (typeof turnstile !== "undefined") {
 			turnstile.ready(callback);
 			return;
@@ -232,16 +233,32 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 		});
 	}
 
-	function initContactForm(root) {
+	function initContactForm(root: HTMLFormElement) {
 		if (root.dataset.formInitialized === "true") return;
 		root.dataset.formInitialized = "true";
+
+		const turnstileSiteKey = root.dataset.turnstileSiteKey?.trim() ?? "";
 
 		ensureTurnstileScript();
 
 		const feedback = root.querySelector("[data-form-feedback]");
-		const submitButton = root.querySelector("[data-form-submit]");
-		const submitIdInput = root.querySelector("[data-submit-id]");
-		const turnstileContainer = root.querySelector("[data-turnstile-container]");
+		const submitButtonCandidate = root.querySelector("[data-form-submit]");
+		const submitButton =
+			submitButtonCandidate instanceof HTMLButtonElement
+				? submitButtonCandidate
+				: null;
+		const submitIdInputCandidate = root.querySelector("[data-submit-id]");
+		const submitIdInput =
+			submitIdInputCandidate instanceof HTMLInputElement
+				? submitIdInputCandidate
+				: null;
+		const turnstileContainerCandidate = root.querySelector(
+			"[data-turnstile-container]",
+		);
+		const turnstileContainer =
+			turnstileContainerCandidate instanceof HTMLElement
+				? turnstileContainerCandidate
+				: null;
 		const serviceSelectCandidate = root.querySelector('select[name="service"]');
 		const serviceSelect =
 			serviceSelectCandidate instanceof HTMLSelectElement
@@ -254,7 +271,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 			"Enviar mensaje";
 
 		let isSubmitting = false;
-		let turnstileWidgetId = null;
+		let turnstileWidgetId: string | null = null;
 
 		const resetTurnstile = () => {
 			if (turnstileWidgetId === null || typeof turnstile === "undefined") {
@@ -311,12 +328,12 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 		setSubmitId();
 
 		const clearFeedbackClasses = () => {
-			if (!feedback) return;
+			if (!(feedback instanceof HTMLElement)) return;
 			feedback.classList.remove("form-alert-success", "form-alert-error");
 		};
 
-		const setFeedback = (state: "success" | "error" | null, message = "") => {
-			if (!feedback) return;
+		const setFeedback = (state: "success" | "error" | null, message = ""): void => {
+			if (!(feedback instanceof HTMLElement)) return;
 
 			clearFeedbackClasses();
 
@@ -335,7 +352,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 			);
 		};
 
-		const setLoading = (loading: boolean) => {
+		const setLoading = (loading: boolean): void => {
 			if (!submitButton) return;
 
 			submitButton.disabled = loading;
@@ -384,15 +401,13 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 					body: formData,
 				});
 
-				const result = (await response.json()) as {
-					ok?: boolean;
-					error?: string;
-				};
+				const result = await response.json() as { ok?: boolean; error?: string };
 
 				if (!response.ok || !result.ok) {
 					setFeedback(
 						"error",
-						result.error ?? "No se pudo enviar el mensaje. Inténtalo de nuevo.",
+						result.error ??
+							"No se pudo enviar el mensaje. Inténtalo de nuevo.",
 					);
 					resetTurnstile();
 					return;
@@ -420,9 +435,11 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 	}
 
 	function setupContactForms() {
-		document
-			.querySelectorAll("[data-contact-form]")
-			.forEach(initContactForm);
+		for (const node of document.querySelectorAll("[data-contact-form]")) {
+			if (node instanceof HTMLFormElement) {
+				initContactForm(node);
+			}
+		}
 	}
 
 	setupContactForms();
