@@ -15,6 +15,7 @@ interface ImportMetaEnv {
 	readonly BASE_URL: string;
 	readonly CONTACT_FROM_EMAIL?: string;
 	readonly CONTACT_TO_EMAIL?: string;
+	readonly PUBLIC_TURNSTILE_SITE_KEY: string;
 }
 
 interface ImportMeta {

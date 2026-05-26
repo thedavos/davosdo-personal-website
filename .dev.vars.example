@@ -1,0 +1,4 @@
+# Copy to .dev.vars for local preview (wrangler dev). Do not commit .dev.vars.
+# Test keys always pass: https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
