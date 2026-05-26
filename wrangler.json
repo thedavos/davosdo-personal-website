@@ -18,7 +18,8 @@
 	],
 	"vars": {
 		"CONTACT_FROM_EMAIL": "contacto@davosdo.dev",
-		"CONTACT_TO_EMAIL": "hola@davosdo.dev"
+		"CONTACT_TO_EMAIL": "hola@davosdo.dev",
+		"PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAADWPq4baKHGPGw1Z"
 	},
 	"upload_source_maps": true,
 	"workers_dev": false,

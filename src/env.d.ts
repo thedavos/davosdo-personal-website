@@ -21,3 +21,9 @@ interface ImportMetaEnv {
 interface ImportMeta {
 	readonly env: ImportMetaEnv;
 }
+
+declare namespace Cloudflare {
+	interface Env {
+		TURNSTILE_SECRET_KEY: string;
+	}
+}

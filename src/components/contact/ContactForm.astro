@@ -1,5 +1,4 @@
 ---
-import { PUBLIC_TURNSTILE_SITE_KEY } from "astro:env/client";
 import Button from "@components/commons/Button.astro";
 import Form from "@components/ui/Form.astro";
 import FormItem from "@components/ui/FormItem.astro";
@@ -11,11 +10,11 @@ import { services, getServiceBySlug } from "@data/services";
 
 type Props = {
 	selectedService?: string;
+	turnstileSiteKey?: string;
 };
 
-const { selectedService = "" } = Astro.props;
+const { selectedService = "", turnstileSiteKey = "" } = Astro.props;
 const validService = getServiceBySlug(selectedService)?.slug ?? "";
-const turnstileSiteKey = PUBLIC_TURNSTILE_SITE_KEY;
 ---
 
 <div class="form-panel">
