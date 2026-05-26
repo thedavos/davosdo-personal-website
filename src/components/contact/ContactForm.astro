@@ -211,7 +211,7 @@ const turnstileSiteKey = PUBLIC_TURNSTILE_SITE_KEY;
 		script.id = TURNSTILE_SCRIPT_ID;
 		script.src =
 			"https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-		script.defer = true;
+		script.async = false;
 		document.head.appendChild(script);
 	}
 
