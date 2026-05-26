@@ -3,7 +3,6 @@ import ContactFaq from "@components/contact/ContactFaq.astro";
 import ContactForm from "@components/contact/ContactForm.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import { getServiceBySlug } from "@data/services";
-import { PUBLIC_TURNSTILE_SITE_KEY } from "astro:env/client";
 import { env } from "cloudflare:workers";
 
 export const prerender = false;
@@ -11,8 +10,7 @@ export const prerender = false;
 const serviceParam = Astro.url.searchParams.get("service") ?? "";
 const serviceSlug = getServiceBySlug(serviceParam)?.slug ?? "";
 
-const workerSiteKey = env.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
-const turnstileSiteKey = workerSiteKey || PUBLIC_TURNSTILE_SITE_KEY;
+const turnstileSiteKey = env.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
 ---
 
 <PageLayout

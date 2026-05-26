@@ -1,4 +1,4 @@
-import { defineConfig, envField, fontProviders } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import unocss from "@unocss/astro";
@@ -10,15 +10,6 @@ import { siteConfig } from "./src/config.ts";
 
 export default defineConfig({
 	site: siteConfig.site,
-	env: {
-		schema: {
-			PUBLIC_TURNSTILE_SITE_KEY: envField.string({
-				context: "client",
-				access: "public",
-				min: 1,
-			}),
-		},
-	},
 	image: {
 		remotePatterns: [{ protocol: "https", hostname: "placehold.co" }],
 	},
