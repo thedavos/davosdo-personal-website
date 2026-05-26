@@ -226,11 +226,15 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 			return;
 		}
 
-		script.addEventListener("load", () => {
-			if (typeof turnstile !== "undefined") {
-				turnstile.ready(callback);
-			}
-		});
+		script.addEventListener(
+			"load",
+			() => {
+				if (typeof turnstile !== "undefined") {
+					turnstile.ready(callback);
+				}
+			},
+			{ once: true },
+		);
 	}
 
 	function initContactForm(root: HTMLFormElement) {
@@ -272,6 +276,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 
 		let isSubmitting = false;
 		let turnstileWidgetId: string | null = null;
+		let turnstileNeedsRefresh = false;
 
 		const resetTurnstile = () => {
 			if (turnstileWidgetId === null || typeof turnstile === "undefined") {
@@ -281,13 +286,31 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 			turnstile.reset(turnstileWidgetId);
 		};
 
+		const refreshTurnstileForNewSubmit = () => {
+			if (!turnstileNeedsRefresh) {
+				return;
+			}
+
+			turnstileNeedsRefresh = false;
+			setFeedback(null);
+			resetTurnstile();
+		};
+
 		const initTurnstile = () => {
 			if (!turnstileContainer || !turnstileSiteKey) {
 				return;
 			}
 
+			if (turnstileContainer.dataset.turnstileMounted === "true") {
+				return;
+			}
+
 			whenTurnstileReady(() => {
 				if (typeof turnstile === "undefined") {
+					return;
+				}
+
+				if (turnstileContainer.dataset.turnstileMounted === "true") {
 					return;
 				}
 
@@ -304,10 +327,24 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 					size: "flexible",
 					action: "contact",
 				});
+				turnstileContainer.dataset.turnstileMounted = "true";
 			});
 		};
 
 		initTurnstile();
+
+		root.addEventListener("focusin", (event) => {
+			const target = event.target;
+			if (!(target instanceof HTMLElement)) {
+				return;
+			}
+
+			if (target.getAttribute("name") === "company_website") {
+				return;
+			}
+
+			refreshTurnstileForNewSubmit();
+		});
 
 		const setSubmitId = () => {
 			if (!submitIdInput) return;
@@ -379,6 +416,10 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 				return;
 			}
 
+			if (turnstileNeedsRefresh) {
+				refreshTurnstileForNewSubmit();
+			}
+
 			if (
 				turnstileWidgetId !== null &&
 				typeof turnstile !== "undefined" &&
@@ -416,7 +457,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 				root.reset();
 				restoreInitialService();
 				setSubmitId();
-				resetTurnstile();
+				turnstileNeedsRefresh = true;
 				setFeedback(
 					"success",
 					"¡Mensaje enviado! Te responderé en menos de 24 horas.",
@@ -442,6 +483,16 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 		}
 	}
 
+	const bindContactFormLifecycle = () => {
+		const win = window as Window & { __contactFormLifecycleBound?: boolean };
+		if (win.__contactFormLifecycleBound) {
+			return;
+		}
+
+		win.__contactFormLifecycleBound = true;
+		document.addEventListener("astro:page-load", setupContactForms);
+	};
+
 	setupContactForms();
-	document.addEventListener("astro:page-load", setupContactForms);
+	bindContactFormLifecycle();
 </script>
