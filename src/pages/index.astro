@@ -1,46 +1,43 @@
 ---
-import Button from "@components/commons/Button.astro";
-import KeyboardPageNav from "@components/commons/KeyboardPageNav.astro";
-import SocialLinks from "@components/commons/SocialLinks.astro";
+import { env } from "cloudflare:workers";
+import HomeContact from "@components/home/HomeContact.astro";
+import HomeExperience from "@components/home/HomeExperience.astro";
+import HomeHero from "@components/home/HomeHero.astro";
+import HomeProjects from "@components/home/HomeProjects.astro";
+import HomeServices from "@components/home/HomeServices.astro";
 import PageLayout from "@layouts/PageLayout.astro";
-import { SITE_TITLE, SITE_DESCRIPTION, SITE_NAV_ITEMS } from "@/consts";
+import "@styles/home.css";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
+import { experienceItems } from "@data/experience";
+import { getVisibleProjects } from "@data/projects";
+import { getServiceBySlug, services } from "@data/services";
 
-const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
+export const prerender = false;
+
+const serviceParam = Astro.url.searchParams.get("service") ?? "";
+const serviceSlug = getServiceBySlug(serviceParam)?.slug ?? "";
+const visibleProjects = getVisibleProjects();
+const disableTurnstile =
+	env.PUBLIC_DISABLE_TURNSTILE === "true" ||
+	import.meta.env.PUBLIC_DISABLE_TURNSTILE === "true";
+const turnstileSiteKey = disableTurnstile
+	? ""
+	: env.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
 ---
 
 <PageLayout
+	showFooter
 	title={SITE_TITLE}
 	description={SITE_DESCRIPTION}
-	centerContent={true}
+	containerClass="home-page w-full max-w-[1080px] mx-auto px-4 py-0"
 >
-	<p class="mb-2 hidden md:block text-base font-medium leading-[1.4]">Hola, soy</p>
-	<h1
-		class="mb-3 text-center m-auto md:m-none md:text-left max-w-[12ch] text-[42px] font-bold leading-[0.98] tracking-[-0.03em] md:mb-3 md:text-[72px] md:tracking-[-0.04em]"
-	>
-		David Vargas Domínguez
-	</h1>
-	<h2
-		class="mb-4 hidden max-w-[18ch] text-2xl font-semibold leading-[1.15] tracking-[-0.02em] md:mb-5 md:block md:text-[32px] md:leading-[1.12]"
-	>
-		Tú tienes la idea, yo la hago funcionar
-	</h2>
-	<h2
-		class="mb-4 block text-center m-auto max-w-[18ch] text-2xl font-semibold leading-[1.15] tracking-[-0.02em] md:mb-5 md:hidden md:text-[32px] md:leading-[1.12]"
-	>
-		Full-Stack Software Engineer
-	</h2>
-	<p class="mb-6 text-center m-auto md:m-none md:text-left max-w-[62ch] text-[17px] font-normal leading-[1.6] md:mb-7 md:text-[19px]">
-		Desarrollo productos web completos: la interfaz, la lógica, el servidor y el deploy. Todo lo que necesita una idea para existir en internet, en un solo lugar.
-	</p>
-
-	<div class="mb-4 flex flex-col items-stretch gap-3 md:mb-5 md:flex-row md:flex-wrap md:gap-3">
-		<Button href="/projects" size="sm" rightIcon="i-lucide-arrow-right">Ver qué construí</Button>
-		<Button href="/services" variant="ghost">Ver servicios</Button>
-	</div>
-
-	<SocialLinks
-		class="flex flex-wrap justify-center gap-x-2 gap-y-3 max-w-full md:justify-initial md:gap-x-3 md:gap-y-4 md:max-w-[62ch]"
+	<HomeHero />
+	<HomeProjects projects={visibleProjects} />
+	<HomeExperience items={experienceItems} />
+	<HomeServices services={services} />
+	<HomeContact
+		selectedService={serviceSlug}
+		turnstileSiteKey={turnstileSiteKey}
+		disableTurnstile={disableTurnstile}
 	/>
-
-	<KeyboardPageNav navItems={SITE_NAV_ITEMS} currentPath={currentPath} />
 </PageLayout>

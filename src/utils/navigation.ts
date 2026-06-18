@@ -28,6 +28,14 @@ export const getCircularNavItems = (
 	currentPath: string,
 ) => {
 	const orderedItems = getOrderedNavItems(navItems);
+	if (orderedItems.length < 2) {
+		return {
+			orderedItems,
+			previousItem: null,
+			nextItem: null,
+		};
+	}
+
 	const currentIndex = getCurrentNavIndex(orderedItems, currentPath);
 
 	if (currentIndex < 0 || !orderedItems.length) {
@@ -53,7 +61,7 @@ export const getCircularNavUrl = (
 	currentPath: string,
 	direction: "previous" | "next",
 ) => {
-	if (!navItems.length) return null;
+	if (navItems.length < 2) return null;
 
 	const currentIndex = getCurrentNavIndex(navItems, currentPath);
 	if (currentIndex < 0) return null;

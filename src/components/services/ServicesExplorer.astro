@@ -62,10 +62,11 @@ const { services } = Astro.props as Props;
 							<Button
 								fullWidth={true}
 								as="a"
-								href={`/contact?service=${slug}`}
+								href={`/?service=${slug}#contacto`}
 								variant="primary"
 								size="sm"
 								class="service-card__action-primary"
+								data-no-swup
 							>
 								Hablemos
 							</Button>
@@ -145,10 +146,11 @@ const { services } = Astro.props as Props;
 					<div class="use-cases-panel__cta">
 						<Button
 							as="a"
-							href={`/contact?service=${slug}`}
+							href={`/?service=${slug}#contacto`}
 							variant="ghost"
 							size="sm"
 							rightIcon="i-lucide-arrow-right"
+							data-no-swup
 						>
 							Hablemos de esto
 						</Button>
@@ -486,13 +488,11 @@ const { services } = Astro.props as Props;
 			const panel = getPanel(slug);
 			if (!panel) return;
 
-			const shouldAnimate = options.animate !== false && !prefersReducedMotion();
-
 			lastTrigger = trigger ?? lastTrigger;
 			activeSlug = slug;
 			showPanel(slug);
 
-			if (!shouldAnimate) {
+			if (options.animate === false || prefersReducedMotion()) {
 				servicesView.hidden = true;
 				servicesView.classList.remove("services-explorer__view--active");
 				servicesView.setAttribute("aria-hidden", "true");

@@ -1,0 +1,46 @@
+---
+import ServicesExplorer from "@components/services/ServicesExplorer.astro";
+import type { Service } from "@data/services";
+
+type Props = {
+	services: Service[];
+};
+
+const { services } = Astro.props as Props;
+---
+
+<section id="servicios" class="home-section home-services" data-cascade-scope>
+	<header class="home-section__header">
+		<h2
+			class="home-section__title"
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
+		>
+			¿En qué te puedo ayudar?
+		</h2>
+
+		<p
+			class="home-section__subtitle"
+			data-cascade-item
+			style="--cascade-delay: 0.06s"
+		>
+			Soluciones frontend y automatizaciones a medida. Ayudo a equipos y fundadores a construir productos digitales modernos con un enfoque claro en rendimiento y mantenibilidad
+		</p>
+	</header>
+
+	<ServicesExplorer services={services} />
+</section>
+
+<style>
+	.home-services {
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+	}
+
+	@media (max-width: 760px) {
+		.home-services {
+			gap: 24px;
+		}
+	}
+</style>

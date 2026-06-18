@@ -82,6 +82,7 @@ export default defineConfig({
 				'a[download]',
 				'a[href^="mailto:"]',
 				'a[href^="tel:"]',
+				'a[data-no-swup]',
 			],
 		}),
 	],

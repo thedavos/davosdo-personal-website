@@ -1,0 +1,269 @@
+---
+import ContactFaq from "@components/contact/ContactFaq.astro";
+import ContactForm from "@components/contact/ContactForm.astro";
+
+type Props = {
+	selectedService?: string;
+	turnstileSiteKey?: string;
+	disableTurnstile?: boolean;
+};
+
+const {
+	selectedService = "",
+	turnstileSiteKey = "",
+	disableTurnstile = false,
+} = Astro.props as Props;
+---
+
+<section id="contacto" class="home-section home-contact" data-cascade-scope>
+	<header
+		class="home-section__header"
+		data-cascade-item
+		style="--cascade-delay: 0.04s"
+	>
+		<h2 class="home-section__title">Contacto</h2>
+	</header>
+
+	<div class="home-contact__layout">
+		<section
+			class="home-contact__section home-contact__section--faq order-1 lg:order-2"
+			data-cascade-item
+			style="--cascade-delay: 0.08s"
+			aria-labelledby="contact-faq-title"
+		>
+			<h3 class="home-contact__section-title" id="contact-faq-title">
+				Preguntas frecuentes
+			</h3>
+			<ContactFaq />
+		</section>
+
+		<section
+			class="home-contact__section home-contact__section--form order-2 lg:order-1"
+			data-cascade-item
+			style="--cascade-delay: 0.12s"
+			aria-labelledby="contact-form-title"
+		>
+			<h3 class="home-contact__form-title" id="contact-form-title">
+				Cuéntame sobre tu idea. Ya sea una app, un bot, una plataforma web o
+				una automatización. Te respondo en menos de 24h.
+			</h3>
+			<ContactForm
+				selectedService={selectedService}
+				turnstileSiteKey={turnstileSiteKey}
+				disableTurnstile={disableTurnstile}
+			/>
+		</section>
+	</div>
+</section>
+
+<style>
+	.home-contact {
+		display: flex;
+		flex-direction: column;
+		gap: 64px;
+	}
+
+	.home-contact__layout {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 40px;
+		align-items: start;
+	}
+
+	.home-contact__section {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.home-contact__section-title {
+		margin: 0;
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: rgb(var(--color-secondary) / 0.85);
+	}
+
+	.home-contact__form-title {
+		margin: 0;
+		max-width: 42ch;
+		color: rgb(var(--color-secondary));
+		font-size: 17px;
+		font-weight: 400;
+		line-height: 1.55;
+		letter-spacing: 0;
+		text-wrap: pretty;
+	}
+
+	@media (min-width: 1024px) {
+		.home-contact__layout {
+			grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+			gap: 48px;
+		}
+	}
+
+	@media (max-width: 760px) {
+		.home-contact {
+			gap: 36px;
+		}
+
+		.home-contact__layout {
+			gap: 32px;
+		}
+
+		.home-contact__section-title {
+			font-size: 24px;
+		}
+
+		.home-contact__form-title {
+			font-size: 18px;
+		}
+	}
+</style>
+
+<script>
+	const CONTACT_HASH = "#contacto";
+
+	function prefersReducedMotion() {
+		return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	}
+
+	function getSectionFromHash(hash: string) {
+		if (!hash || hash === "#") return null;
+
+		const id = decodeURIComponent(hash.slice(1));
+		const element = document.getElementById(id);
+		if (!(element instanceof HTMLElement)) return null;
+
+		if (!element.matches(".home-section, .home-hero")) return null;
+
+		return element;
+	}
+
+	function getContactServiceSelect() {
+		const select = document.querySelector<HTMLSelectElement>(
+			'[data-contact-form] select[name="service"]',
+		);
+
+		return select;
+	}
+
+	function setContactService(service: string | null) {
+		if (!service) return;
+
+		const select = getContactServiceSelect();
+		if (!select || !select.querySelector(`option[value="${service}"]`)) return;
+
+		select.value = service;
+		select.dispatchEvent(new Event("change", { bubbles: true }));
+	}
+
+	function getSectionScrollTarget(section: HTMLElement) {
+		const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+		const scrollMarginTop =
+			Number.parseFloat(window.getComputedStyle(section).scrollMarginTop) || 0;
+
+		return Math.max(0, sectionTop - scrollMarginTop);
+	}
+
+	function easeOutCubic(progress: number) {
+		return 1 - Math.pow(1 - progress, 3);
+	}
+
+	function animateScrollTo(targetY: number) {
+		if (prefersReducedMotion()) {
+			window.scrollTo(0, targetY);
+			return;
+		}
+
+		const startY = window.scrollY;
+		const distance = targetY - startY;
+
+		if (Math.abs(distance) < 2) return;
+
+		const duration = Math.min(820, Math.max(460, Math.abs(distance) * 0.42));
+		const startTime = performance.now();
+
+		const step = (currentTime: number) => {
+			const elapsed = currentTime - startTime;
+			const progress = Math.min(elapsed / duration, 1);
+			const nextY = startY + distance * easeOutCubic(progress);
+
+			window.scrollTo(0, nextY);
+
+			if (progress < 1) {
+				requestAnimationFrame(step);
+			}
+		};
+
+		requestAnimationFrame(step);
+	}
+
+	function scrollToSection(url: URL) {
+		const section = getSectionFromHash(url.hash);
+		if (!section) return;
+
+		if (url.hash === CONTACT_HASH) {
+			setContactService(url.searchParams.get("service"));
+		}
+
+		history.pushState(null, "", url);
+
+		animateScrollTo(getSectionScrollTarget(section));
+	}
+
+	function isSamePageSectionUrl(url: URL) {
+		return (
+			url.origin === window.location.origin &&
+			Boolean(getSectionFromHash(url.hash)) &&
+			(url.pathname === "/" || url.pathname === window.location.pathname)
+		);
+	}
+
+	function onDocumentClick(event: MouseEvent) {
+		if (
+			event.defaultPrevented ||
+			event.metaKey ||
+			event.ctrlKey ||
+			event.shiftKey ||
+			event.altKey
+		) {
+			return;
+		}
+
+		const link = (event.target as HTMLElement).closest<HTMLAnchorElement>(
+			'a[href]',
+		);
+		if (!link) return;
+
+		const url = new URL(link.href, window.location.href);
+		if (!isSamePageSectionUrl(url)) return;
+
+		event.preventDefault();
+		event.stopImmediatePropagation();
+		scrollToSection(url);
+	}
+
+	function syncSectionFromLocation() {
+		const url = new URL(window.location.href);
+		if (url.hash !== CONTACT_HASH) return;
+
+		setContactService(url.searchParams.get("service"));
+	}
+
+	function setupSectionScroll() {
+		const win = window as Window & { __homeSectionScrollBound?: boolean };
+
+		syncSectionFromLocation();
+
+		if (win.__homeSectionScrollBound) return;
+
+		win.__homeSectionScrollBound = true;
+		document.addEventListener("click", onDocumentClick, { capture: true });
+		document.addEventListener("astro:page-load", syncSectionFromLocation);
+	}
+
+	setupSectionScroll();
+</script>

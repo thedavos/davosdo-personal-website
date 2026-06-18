@@ -1,4 +1,5 @@
 ---
+import type { HTMLAttributes } from "astro/types";
 import Button from "@components/commons/Button.astro";
 import BskyIcon from "@components/icons/BskyIcon.astro";
 import HackTheBoxIcon from "@components/icons/HackTheBoxIcon.astro";
@@ -12,8 +13,7 @@ type SocialLink = {
 	external: boolean;
 };
 
-interface Props {
-	class?: string;
+interface Props extends HTMLAttributes<"div"> {
 	links?: SocialLink[];
 }
 
@@ -56,10 +56,10 @@ const defaultLinks: SocialLink[] = [
 	},
 ];
 
-const { class: className, links = defaultLinks } = Astro.props;
+const { class: className, links = defaultLinks, ...props } = Astro.props;
 ---
 
-<div class:list={[className]}>
+<div class:list={[className]} {...props}>
 	{
 		links.map((social) => {
 			const Icon = social.iconComponent;
