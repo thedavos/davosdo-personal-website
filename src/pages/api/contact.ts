@@ -37,17 +37,23 @@ export const POST: APIRoute = async ({ request }) => {
 		return contactJsonResponse({ ok: false, error: "Solicitud inválida." }, 400);
 	}
 
-	const turnstileResult = await verifyTurnstileToken(
-		body[CONTACT_TURNSTILE_FIELD],
-		env.TURNSTILE_SECRET_KEY,
-		request.headers.get("CF-Connecting-IP"),
-	);
+	const disableTurnstile =
+		env.PUBLIC_DISABLE_TURNSTILE === "true" ||
+		import.meta.env.PUBLIC_DISABLE_TURNSTILE === "true";
 
-	if (!turnstileResult.ok) {
-		return contactJsonResponse(
-			{ ok: false, error: turnstileResult.error },
-			turnstileResult.status,
+	if (!disableTurnstile) {
+		const turnstileResult = await verifyTurnstileToken(
+			body[CONTACT_TURNSTILE_FIELD],
+			env.TURNSTILE_SECRET_KEY,
+			request.headers.get("CF-Connecting-IP"),
 		);
+
+		if (!turnstileResult.ok) {
+			return contactJsonResponse(
+				{ ok: false, error: turnstileResult.error },
+				turnstileResult.status,
+			);
+		}
 	}
 
 	if (isHoneypotTriggered(body[CONTACT_HONEYPOT_FIELD])) {

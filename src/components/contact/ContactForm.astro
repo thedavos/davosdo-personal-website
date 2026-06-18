@@ -11,9 +11,14 @@ import { services, getServiceBySlug } from "@data/services";
 type Props = {
 	selectedService?: string;
 	turnstileSiteKey?: string;
+	disableTurnstile?: boolean;
 };
 
-const { selectedService = "", turnstileSiteKey = "" } = Astro.props;
+const {
+	selectedService = "",
+	turnstileSiteKey = "",
+	disableTurnstile = false,
+} = Astro.props;
 const validService = getServiceBySlug(selectedService)?.slug ?? "";
 ---
 
@@ -23,6 +28,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 		data-contact-form
 		data-initial-service={validService}
 		data-turnstile-site-key={turnstileSiteKey}
+		data-turnstile-disabled={disableTurnstile ? "true" : "false"}
 		novalidate
 	>
 		<input
@@ -119,12 +125,16 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 			></div>
 		</div>
 
-		<div
-			class="contact-form__turnstile"
-			data-turnstile-container
-			aria-label="Verificación de seguridad"
-		>
-		</div>
+		{
+			!disableTurnstile && (
+				<div
+					class="contact-form__turnstile"
+					data-turnstile-container
+					aria-label="Verificación de seguridad"
+				>
+				</div>
+			)
+		}
 
 		<p class="contact-form__legal">
 			Al enviar este formulario, aceptas que trate tus datos para responder a tu
@@ -242,8 +252,11 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 		root.dataset.formInitialized = "true";
 
 		const turnstileSiteKey = root.dataset.turnstileSiteKey?.trim() ?? "";
+		const isTurnstileDisabled = root.dataset.turnstileDisabled === "true";
 
-		ensureTurnstileScript();
+		if (!isTurnstileDisabled) {
+			ensureTurnstileScript();
+		}
 
 		const feedback = root.querySelector("[data-form-feedback]");
 		const submitButtonCandidate = root.querySelector("[data-form-submit]");
@@ -297,7 +310,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 		};
 
 		const initTurnstile = () => {
-			if (!turnstileContainer || !turnstileSiteKey) {
+			if (isTurnstileDisabled || !turnstileContainer || !turnstileSiteKey) {
 				return;
 			}
 
@@ -421,6 +434,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 			}
 
 			if (
+				!isTurnstileDisabled &&
 				turnstileWidgetId !== null &&
 				typeof turnstile !== "undefined" &&
 				!turnstile.getResponse(turnstileWidgetId)
@@ -457,7 +471,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 				root.reset();
 				restoreInitialService();
 				setSubmitId();
-				turnstileNeedsRefresh = true;
+				turnstileNeedsRefresh = !isTurnstileDisabled;
 				setFeedback(
 					"success",
 					"¡Mensaje enviado! Te responderé en menos de 24 horas.",

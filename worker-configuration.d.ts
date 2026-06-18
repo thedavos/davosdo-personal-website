@@ -7,6 +7,7 @@ declare namespace Cloudflare {
 		ASSETS: Fetcher;
 		CONTACT_FROM_EMAIL: "contacto@davosdo.dev";
 		CONTACT_TO_EMAIL: "hola@davosdo.dev";
+		PUBLIC_DISABLE_TURNSTILE: string;
 		PUBLIC_TURNSTILE_SITE_KEY: string;
 	}
 }
@@ -15,7 +16,7 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "CONTACT_FROM_EMAIL" | "CONTACT_TO_EMAIL" | "PUBLIC_TURNSTILE_SITE_KEY">> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "CONTACT_FROM_EMAIL" | "CONTACT_TO_EMAIL" | "PUBLIC_DISABLE_TURNSTILE" | "PUBLIC_TURNSTILE_SITE_KEY">> {}
 }
 
 // Begin runtime types
