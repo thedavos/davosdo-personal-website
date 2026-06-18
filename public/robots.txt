@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://davosdo.dev/sitemap-index.xml

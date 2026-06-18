@@ -170,12 +170,12 @@ export interface SiteConfig {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// ASTRO MODULAR CONFIGURATION
+// SITE CONFIGURATION
 // ═══════════════════════════════════════════════════════════════════════════════
 //
-// ⚠️ IMPORTANT: Comment markers like // [CONFIG:KEY] are used by the Astro Modular
-// Settings Obsidian plugin. Do not remove these markers or the plugin will not be
-// able to update your configuration automatically.
+// This file is kept for shared site metadata and compatibility with the
+// remaining blog/config helpers. Navigation for the live app is defined in
+// src/consts.ts and mirrors the one-page portfolio.
 //
 // Most settings have helpful comments explaining what they do.
 //
@@ -185,19 +185,19 @@ export const siteConfig: SiteConfig = {
   // [CONFIG:SITE_URL]
   site: "https://davosdo.dev/",
   // [CONFIG:SITE_TITLE]
-  title: "Astro Modular",
+  title: "davosdo.dev",
   // [CONFIG:HOMEPAGE_TITLE]
-  homepageTitle: "",
+  homepageTitle: "davosdo.dev | David Vargas Domínguez",
   // [CONFIG:SITE_DESCRIPTION]
-  description: "A flexible blog theme designed for Obsidian users.",
+  description: "Portfolio de David Vargas Domínguez, Full-Stack Software Engineer especializado en productos web, automatización e IA aplicada.",
   // [CONFIG:SITE_AUTHOR]
-  author: "David V. Kimball",
+  author: "David Vargas Domínguez",
   // [CONFIG:SITE_LANGUAGE]
-  language: "en",
+  language: "es",
   // [CONFIG:FAVICON_THEME_ADAPTIVE]
   faviconThemeAdaptive: true, // If true, favicon switches between favicon-dark.png and favicon-light.png based on browser's system theme preference. If false, always uses favicon.png
   // [CONFIG:DEFAULT_OG_IMAGE_ALT]
-  defaultOgImageAlt: "Astro Modular logo.", // Alt text for the default Open Graph image, public/open-graph.png
+  defaultOgImageAlt: "davosdo.dev, portfolio de David Vargas Domínguez.", // Alt text for the default Open Graph image, public/open-graph.png
 
   // Global Settings
   // [CONFIG:THEME]
@@ -234,29 +234,29 @@ export const siteConfig: SiteConfig = {
     // [CONFIG:FOOTER_ENABLED]
     enabled: true,
     // [CONFIG:FOOTER_CONTENT]
-    content: `© 2025 {author}. Built with the <a href="https://github.com/davidvkimball/astro-modular" target="_blank">Astro Modular</a> theme.`,
+    content: `© 2026 {author}. Desarrollo web, automatización e IA aplicada.`,
     // [CONFIG:FOOTER_SHOW_SOCIAL_ICONS]
     showSocialIconsInFooter: true,
   },
   //[CONFIG:HIDE_SCROLL_BAR]
   hideScrollBar: false,
   // [CONFIG:SCROLL_TO_TOP]
-  scrollToTop: true,
+  scrollToTop: false,
   // [CONFIG:FEATURE_BUTTON]
-  featureButton: "mode", // "mode" | "graph" | "theme" | "none"
+  featureButton: "none", // "mode" | "graph" | "theme" | "none"
   deployment: {
     // [CONFIG:DEPLOYMENT_PLATFORM]
-    platform: "netlify", // "netlify" | "vercel" | "github-pages" | "cloudflare-workers" - sets redirect configuration for the chosen platform (Cloudflare Workers uses Workers-compatible config)
+    platform: "cloudflare-workers", // "netlify" | "vercel" | "github-pages" | "cloudflare-workers" - sets redirect configuration for the chosen platform (Cloudflare Workers uses Workers-compatible config)
   },
 
   // Command Palette
   commandPalette: {
     // [CONFIG:COMMAND_PALETTE_ENABLED]
-    enabled: true,
+    enabled: false,
     // [CONFIG:COMMAND_PALETTE_SHORTCUT]
     shortcut: "ctrl+K",
     // [CONFIG:COMMAND_PALETTE_PLACEHOLDER]
-    placeholder: "Search posts",
+    placeholder: "Buscar contenido",
     search: {
       // [CONFIG:COMMAND_PALETTE_SEARCH_POSTS]
       posts: true,
@@ -269,21 +269,21 @@ export const siteConfig: SiteConfig = {
     },
     sections: {
       // [CONFIG:COMMAND_PALETTE_SECTIONS_QUICK_ACTIONS]
-      quickActions: true,
+      quickActions: false,
       // [CONFIG:COMMAND_PALETTE_SECTIONS_PAGES]
-      pages: true,
+      pages: false,
       // [CONFIG:COMMAND_PALETTE_SECTIONS_SOCIAL]
-      social: true,
+      social: false,
     },
     quickActions: {
       // [CONFIG:COMMAND_PALETTE_QUICK_ACTIONS_ENABLED]
-      enabled: true,
+      enabled: false,
       // [CONFIG:COMMAND_PALETTE_QUICK_ACTIONS_TOGGLE_MODE]
-      toggleMode: true,
+      toggleMode: false,
       // [CONFIG:COMMAND_PALETTE_QUICK_ACTIONS_GRAPH_VIEW]
-      graphView: true,
+      graphView: false,
       // [CONFIG:COMMAND_PALETTE_QUICK_ACTIONS_CHANGE_THEME]
-      changeTheme: true,
+      changeTheme: false,
     },
   },
 
@@ -294,7 +294,7 @@ export const siteConfig: SiteConfig = {
     // [CONFIG:PROFILE_PICTURE_IMAGE]
     image: "/profile.jpg", // Path to your profile image (place in public/ directory)
     // [CONFIG:PROFILE_PICTURE_ALT]
-    alt: "Profile picture",
+    alt: "David Vargas Domínguez",
     // [CONFIG:PROFILE_PICTURE_SIZE]
     size: "md", // "sm" (32px), "md" (48px), or "lg" (64px) - only affects footer placement
     // [CONFIG:PROFILE_PICTURE_URL]
@@ -315,26 +315,30 @@ export const siteConfig: SiteConfig = {
     showMobileMenu: true,
     // [CONFIG:NAVIGATION_PAGES]
     pages: [
-      { title: "Posts", url: "/posts/", navigationOrder: 1 },
-      { title: "Projects", url: "/projects/", navigationOrder: 2 },
-      { title: "Docs", url: "/docs/", navigationOrder: 3 },
-      { title: "About", url: "/about/", navigationOrder: 4,
-        children: [
-          { title: "Privacy Policy", url: "/privacy-policy/", navigationOrder: 1 }
-        ] },
-      { title: "GitHub", url: "https://github.com/davidvkimball/astro-modular", navigationOrder: 5 }
+      { title: "Sobre mi", url: "/", navigationOrder: 1 },
+      // { title: "Blog", url: "/blog/", navigationOrder: 2 },
     ],
     // [CONFIG:NAVIGATION_SOCIAL]
     social: [
       {
+        title: "GitHub",
+        url: "https://github.com/thedavos",
+        icon: "github",
+      },
+      {
+        title: "LinkedIn",
+        url: "https://www.linkedin.com/in/thedavos/",
+        icon: "linkedin",
+      },
+      {
         title: "X",
-        url: "https://x.com/davidvkimball",
+        url: "https://x.com/davosdodev",
         icon: "x-twitter",
       },
       {
-        title: "GitHub",
-        url: "https://github.com/davidvkimball",
-        icon: "github",
+        title: "Bluesky",
+        url: "https://bsky.app/profile/davoscode.bsky.social",
+        icon: "bluesky",
       },
     ],
   },
@@ -342,42 +346,42 @@ export const siteConfig: SiteConfig = {
   // Optional Content Types - Enable/disable optional content sections (takes priority over homeOptions)
   optionalContentTypes: {
     // [CONFIG:OPTIONAL_CONTENT_TYPES_PROJECTS]
-    projects: true, // Enable projects section
+    projects: false, // Home projects are handled by src/components/home/HomeProjects.astro.
     // [CONFIG:OPTIONAL_CONTENT_TYPES_DOCS]
-    docs: true, // Enable documentation section
+    docs: false, // This site does not expose docs pages.
   },
 
   // Home Options
   homeOptions: {
     featuredPost: {
       // [CONFIG:HOME_OPTIONS_FEATURED_POST_ENABLED]
-      enabled: true, // Show featured post on homepage
+      enabled: false, // Blog is not shown in the navbar yet.
       // [CONFIG:HOME_OPTIONS_FEATURED_POST_TYPE]
       type: "latest", // "latest" or "featured"
       // [CONFIG:HOME_OPTIONS_FEATURED_POST_SLUG]
-      slug: "getting-started", // Slug of post after '/posts/' to be featured (e.g. "post-title"). Only used when type is "featured"
+      slug: "", // Only used when type is "featured".
     },
     recentPosts: {
       // [CONFIG:HOME_OPTIONS_RECENT_POSTS_ENABLED]
-      enabled: true, // Show recent posts on homepage
+      enabled: false, // The current homepage is a one-page portfolio.
       // [CONFIG:HOME_OPTIONS_RECENT_POSTS_COUNT]
       count: 7, // Number of recent posts to show
     },
     projects: {
       // [CONFIG:HOME_OPTIONS_PROJECTS_ENABLED]
-      enabled: true, // Show featured projects on homepage
+      enabled: false, // Projects are rendered by the custom home section.
       // [CONFIG:HOME_OPTIONS_PROJECTS_COUNT]
       count: 2, // Number of projects to show
     },
     docs: {
       // [CONFIG:HOME_OPTIONS_DOCS_ENABLED]
-      enabled: true, // Show featured docs on homepage
+      enabled: false, // Docs are not part of this site.
       // [CONFIG:HOME_OPTIONS_DOCS_COUNT]
       count: 3, // Number of docs to show
     },
     blurb: {
       // [CONFIG:HOME_OPTIONS_BLURB_PLACEMENT]
-      placement: "below", // 'above' (at the top), 'below' (after content), or 'none' (disabled)
+      placement: "none", // 'above' (at the top), 'below' (after content), or 'none' (disabled)
     },
   },
 
@@ -722,7 +726,7 @@ function validateSiteConfig(config: SiteConfig): { isValid: boolean; errors: str
 
   // Only validate slug when type is "featured" - slug is optional when type is "latest"
   if (config.homeOptions.featuredPost.type === 'featured' && (!config.homeOptions.featuredPost.slug || config.homeOptions.featuredPost.slug.trim() === '')) {
-    errors.push('Featured post slug is required when type is "featured". Set homeOptions.featuredPost.slug to the post slug (the part after /posts/ in the URL).');
+    errors.push('Featured post slug is required when type is "featured". Set homeOptions.featuredPost.slug to the post slug (the part after /blog/ in the URL).');
   }
 
   // Language validation
