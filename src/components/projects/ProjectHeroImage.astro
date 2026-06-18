@@ -37,24 +37,36 @@ const sizes =
 		: "(max-width: 900px) 100vw, min(900px, 100vw)";
 
 const widths = [400, 640, 800, 1200];
+
+const imageClass = [
+	"project-hero-image",
+	layout === "card" && "project-hero-image--card",
+	layout === "detail" && "project-hero-image--detail",
+	className,
+];
+
+const imageProps = {
+	alt,
+	loading,
+	decoding: "async" as const,
+	fetchpriority,
+	widths,
+	sizes,
+	"class:list": imageClass,
+};
 ---
 
-<Image
-	src={resolved}
-	alt={alt}
-	loading={loading}
-	decoding="async"
-	fetchpriority={fetchpriority}
-	widths={widths}
-	sizes={sizes}
-	inferSize={remote}
-	class:list={[
-		"project-hero-image",
-		layout === "card" && "project-hero-image--card",
-		layout === "detail" && "project-hero-image--detail",
-		className,
-	]}
-/>
+{
+	typeof resolved === "string" ? (
+		remote ? (
+			<Image src={resolved} inferSize {...imageProps} />
+		) : (
+			<Image src={resolved} width={1200} height={600} {...imageProps} />
+		)
+	) : (
+		<Image src={resolved} {...imageProps} />
+	)
+}
 
 <style>
 	.project-hero-image {
