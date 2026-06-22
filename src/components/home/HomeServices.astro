@@ -1,5 +1,5 @@
 ---
-import ServicesExplorer from "@components/services/ServicesExplorer.astro";
+import ServicesGrid from "@components/services/ServicesGrid.astro";
 import type { Service } from "@data/services";
 
 type Props = {
@@ -28,7 +28,7 @@ const { services } = Astro.props as Props;
 		</p>
 	</header>
 
-	<ServicesExplorer services={services} />
+	<ServicesGrid services={services} />
 </section>
 
 <style>
