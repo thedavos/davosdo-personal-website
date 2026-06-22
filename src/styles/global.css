@@ -49,6 +49,20 @@
 	--radius-2xl: 1.5rem;
 }
 
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+	font: inherit;
+	color: inherit;
+}
+
 /*
 html[data-theme='dark'] {
 	--color-primary: 129 140 248;
