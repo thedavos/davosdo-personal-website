@@ -10,15 +10,16 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 ---
 
 <header>
-	<div class="border-b border-border bg-surface/95 px-4 shadow-sm">
+	<div class="border-b border-border">
 		<nav
-			class="mx-auto flex min-h-[61px] w-full max-w-[1080px] items-center justify-between gap-4 md:min-h-[72px] lg:grid lg:grid-cols-[max-content_minmax(0,1fr)_max-content]"
+			class="site-container flex min-h-[61px] items-center justify-between gap-4 md:min-h-[72px] lg:grid lg:grid-cols-[max-content_minmax(0,1fr)]"
 			aria-label="Principal"
 		>
 			<Logo siteTitle={SITE_TITLE} />
 			<div
-				class="hidden items-center justify-self-center gap-1 p-1 md:flex md:justify-self-end"
+				class="hidden items-center justify-self-end gap-1 p-1 md:flex"
 				aria-label="Secciones"
+				data-desktop-navigation
 			>
 				{
 					SITE_NAV_ITEMS.map((item) => (
@@ -27,20 +28,24 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 						</HeaderLink>
 					))
 				}
-			</div>
-			<div class="hidden items-center justify-self-end gap-3 md:flex">
-				{/* <ThemeToggle /> */}
-				{/* Multilenguaje pendiente
-				<div data-morph-persist="desktop-language-switcher">
-					<LanguageSwitcher client:load />
+				<HeaderLink href="/#contacto" class="whitespace-nowrap" data-no-swup>
+					Hablemos
+				</HeaderLink>
+				<div class="ml-1 flex items-center">
+					<ThemeToggle />
 				</div>
-				*/}
 			</div>
-			<MobileNav
-				client:load
-				navItems={SITE_NAV_ITEMS}
-				currentPath={currentPath}
-			/>
+			<div class="flex items-center gap-1 md:hidden">
+				<HeaderLink href="/#contacto" class="whitespace-nowrap" data-no-swup>
+					Hablemos
+				</HeaderLink>
+				<ThemeToggle />
+				<MobileNav
+					client:load
+					navItems={SITE_NAV_ITEMS}
+					currentPath={currentPath}
+				/>
+			</div>
 		</nav>
 	</div>
 </header>
@@ -50,3 +55,37 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 		font-family: var(--font-geist-sans), sans-serif;
 	}
 </style>
+
+<script>
+	function syncHeaderNavigation() {
+		const pathname = window.location.pathname;
+		const currentSegment = pathname.match(/[^/]+/)?.[0] ?? "";
+
+		document
+			.querySelectorAll<HTMLAnchorElement>("[data-desktop-navigation] a[href]")
+			.forEach((link) => {
+				const href = link.getAttribute("href");
+				const isActive =
+					href === pathname || href === `/${currentSegment}`;
+
+				if (isActive) {
+					link.setAttribute("aria-current", "page");
+				} else {
+					link.removeAttribute("aria-current");
+				}
+
+				link.classList.toggle("text-primary", isActive);
+				link.classList.toggle("font-700", isActive);
+				link.classList.toggle("font-semibold", isActive);
+			});
+	}
+
+	syncHeaderNavigation();
+
+	if (!document.documentElement.dataset.headerNavigationBound) {
+		document.documentElement.dataset.headerNavigationBound = "true";
+		document.addEventListener("swup:contentReplaced", syncHeaderNavigation);
+		document.addEventListener("swup:visit:end", syncHeaderNavigation);
+		window.addEventListener("popstate", syncHeaderNavigation);
+	}
+</script>

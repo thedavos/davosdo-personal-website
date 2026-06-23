@@ -19,6 +19,12 @@ export default defineConfig({
 		"i-lucide-chevron-right",
 		"i-lucide-zoom-in",
 		"i-lucide-check",
+		"i-lucide-layout-grid",
+		"i-lucide-smartphone",
+		"i-lucide-shopping-bag",
+		"i-lucide-bot",
+		"i-lucide-terminal",
+		"i-lucide-sparkles",
 	],
 	presets: [
 		presetMini(),
@@ -84,6 +90,7 @@ export default defineConfig({
 		},
 	},
 	shortcuts: {
+		"site-container": "w-full max-w-[900px] mx-auto px-4",
 		"page-container": "w-[720px] max-w-[calc(100%-2em)] mx-auto px-6 py-12",
 		"page-container-wide": "w-[960px] max-w-[calc(100%-2em)] mx-auto px-6 py-12",
 		"surface-card": "rounded-xl bg-surface shadow-md",

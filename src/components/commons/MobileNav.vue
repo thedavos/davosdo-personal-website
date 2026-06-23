@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 // import LanguageSwitcher from "@/components/commons/LanguageSwitcher.vue";
 import type { NavigationItem } from '@/types'
 
@@ -17,10 +17,15 @@ const firstLink = ref<HTMLAnchorElement | null>(null);
 const drawerId = "mobile-navigation-drawer";
 let previousBodyOverflow = "";
 
-const currentSegment = computed(() => props.currentPath.match(/[^/]+/g)?.[0] ?? "");
+const getCurrentPath = () =>
+	typeof window === "undefined" ? props.currentPath : window.location.pathname;
 
-const isLinkActive = (href: string) =>
-	href === props.currentPath || href === `/${currentSegment.value}`;
+const isLinkActive = (href: string) => {
+	const currentPath = getCurrentPath();
+	const currentSegment = currentPath.match(/[^/]+/g)?.[0] ?? "";
+
+	return href === currentPath || href === `/${currentSegment}`;
+};
 
 const closeMenu = () => {
 	isOpen.value = false;
