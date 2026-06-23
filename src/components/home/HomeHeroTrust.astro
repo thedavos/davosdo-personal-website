@@ -1,0 +1,112 @@
+---
+import ClientLogo from "@components/logos/ClientLogo.astro";
+import { clientTrustBadges } from "@data/client-trust";
+---
+
+<div
+	class="home-hero-trust"
+	aria-label="Experiencia en Interbank y Global66"
+>
+	<p class="home-hero-trust__label">Experiencia en producción con</p>
+
+	<ul class="home-hero-trust__logos">
+		{
+			clientTrustBadges.map((badge) => (
+				<li>
+					{badge.href ? (
+						<a
+							href={badge.href}
+							class="home-hero-trust__logo-link"
+							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={badge.logoAlt}
+						>
+							<ClientLogo
+								src={badge.logoSrc}
+								modifier={`client-logo--${badge.name}`}
+							/>
+						</a>
+					) : (
+						<ClientLogo
+							src={badge.logoSrc}
+							alt={badge.logoAlt}
+							modifier={`client-logo--${badge.name}`}
+						/>
+					)}
+				</li>
+			))
+		}
+	</ul>
+</div>
+
+<style>
+	.home-hero-trust {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		padding-top: 24px;
+		border-top: 1px solid rgb(var(--color-border));
+	}
+
+	.home-hero-trust__label {
+		margin: 0;
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: rgb(var(--color-text-muted));
+	}
+
+	.home-hero-trust__logos {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 24px 28px;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
+
+	.home-hero-trust__logos li {
+		display: flex;
+		align-items: center;
+	}
+
+	.home-hero-trust__logo-link {
+		display: inline-flex;
+		text-decoration: none;
+		opacity: 0.72;
+		transition: opacity 160ms ease;
+	}
+
+	.home-hero-trust__logo-link:hover {
+		opacity: 1;
+	}
+
+	.home-hero-trust__logo-link:focus-visible {
+		outline: 2px solid var(--color-primary-hover);
+		outline-offset: 4px;
+		border-radius: var(--radius-sm);
+	}
+
+	.home-hero-trust :global(.client-logo--interbank) {
+		height: 18px;
+		max-width: 108px;
+	}
+
+	.home-hero-trust :global(.client-logo--global66) {
+		height: 22px;
+		max-width: 116px;
+	}
+
+	@media (min-width: 768px) {
+		.home-hero-trust :global(.client-logo--interbank) {
+			height: 20px;
+			max-width: 120px;
+		}
+
+		.home-hero-trust :global(.client-logo--global66) {
+			height: 24px;
+			max-width: 124px;
+		}
+	}
+</style>

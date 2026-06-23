@@ -3,6 +3,7 @@ export type Service = {
 	slug: string;
 	description: string;
 	chips: string[];
+	icon: string;
 };
 
 export const services: Service[] = [
@@ -12,6 +13,7 @@ export const services: Service[] = [
 		description:
 			"De la idea al producto. Construyo SaaS, dashboards y portales con arquitectura sólida, rendimiento de edge y código que dura.",
 		chips: ["Vue", "React", "Angular", "JS/TS"],
+		icon: "i-lucide-layout-grid",
 	},
 	{
 		title: "Mobile Apps",
@@ -19,6 +21,7 @@ export const services: Service[] = [
 		description:
 			"Tu app en iOS y Android sin doblar el presupuesto. Experiencias nativas con Flutter, lista para escalar desde el día uno.",
 		chips: ["React Native", "Flutter"],
+		icon: "i-lucide-smartphone",
 	},
 	{
 		title: "Ecommerce",
@@ -26,6 +29,7 @@ export const services: Service[] = [
 		description:
 			"Tiendas que convierten. Diseño, catálogo, checkout y pasarela de pagos optimizados para que vendas más con menos fricción.",
 		chips: ["Shopify", "Astro", "CMS"],
+		icon: "i-lucide-shopping-bag",
 	},
 	{
 		title: "Automation Bots",
@@ -33,6 +37,7 @@ export const services: Service[] = [
 		description:
 			"Elimina el trabajo repetitivo. Bots y pipelines que rastrean, notifican y atienden clientes mientras tú duermes.",
 		chips: ["n8n", "Python"],
+		icon: "i-lucide-bot",
 	},
 	{
 		title: "CLI",
@@ -40,6 +45,7 @@ export const services: Service[] = [
 		description:
 			"Herramientas que entienden tu flujo. Scripts y CLIs a medida para que tu equipo técnico trabaje el doble de rápido.",
 		chips: ["Node.js", "Typescript", "Golang"],
+		icon: "i-lucide-terminal",
 	},
 	{
 		title: "AI Apps",
@@ -47,6 +53,7 @@ export const services: Service[] = [
 		description:
 			"IA que resuelve problemas reales. Asistentes, búsqueda semántica y agentes entrenados sobre tu negocio, no sobre demos genéricas.",
 		chips: ["OpenAI", "Vercel AI SDK", "Kapso.ai"],
+		icon: "i-lucide-sparkles",
 	},
 ];
 

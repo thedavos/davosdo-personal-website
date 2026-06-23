@@ -13,7 +13,7 @@ const { services } = Astro.props as Props;
 
 <div class="services-grid" aria-label="Servicios">
 	{
-		services.map(({ title, slug, description, chips }, index) => (
+		services.map(({ title, slug, description, chips, icon }, index) => (
 			<Card
 				as="article"
 				variant="outlined"
@@ -23,7 +23,10 @@ const { services } = Astro.props as Props;
 				style={`--cascade-delay: ${0.1 + index * 0.06}s`}
 			>
 				<div class="card__header" slot="header">
-					<h2 class="service-card__title">{title}</h2>
+					<div class="service-card__title-row">
+						<span class:list={["service-card__icon", icon]} aria-hidden="true" />
+						<h3 class="service-card__title">{title}</h3>
+					</div>
 				</div>
 
 				<div class="service-card__body">
@@ -70,6 +73,20 @@ const { services } = Astro.props as Props;
 		min-width: 0;
 		min-height: 280px;
 		padding: 24px;
+	}
+
+	.service-card__title-row {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.service-card__icon {
+		display: inline-flex;
+		flex-shrink: 0;
+		width: 1.35rem;
+		height: 1.35rem;
+		color: rgb(var(--color-primary));
 	}
 
 	.service-card__title {

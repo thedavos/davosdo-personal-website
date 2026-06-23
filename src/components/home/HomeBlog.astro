@@ -1,0 +1,74 @@
+---
+import Button from "@components/commons/Button.astro";
+import BlogGrid from "@components/blog/BlogGrid.astro";
+import { getCollection } from "astro:content";
+import { getFeaturedAndRecent } from "@/lib/blog";
+
+const posts = await getCollection("blog");
+const { featured, recent } = getFeaturedAndRecent(posts);
+---
+
+<section id="blog" class="home-section home-section--surface home-blog" data-cascade-scope>
+	<div class="home-section__inner">
+		<header
+			class="home-section__header"
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
+		>
+			<h2 class="home-section__title">Blog</h2>
+			<p class="home-section__subtitle">
+				Notas sobre desarrollo, herramientas y lo que voy aprendiendo en
+				proyectos.
+			</p>
+		</header>
+
+		<div class="home-blog__content">
+			{
+				featured ? (
+					<BlogGrid featured={featured} recent={recent} />
+				) : (
+					<p class="home-blog__empty">Aún no hay artículos publicados.</p>
+				)
+			}
+
+			{
+				featured && (
+					<div
+						class="home-blog__cta"
+						data-cascade-item
+						style="--cascade-delay: 0.28s"
+					>
+						<Button
+							as="a"
+							href="/blog"
+							variant="outline"
+							size="md"
+							rightIcon="i-lucide-arrow-right"
+						>
+							Ver posts
+						</Button>
+					</div>
+				)
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.home-blog__content {
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+	}
+
+	.home-blog__cta {
+		display: flex;
+		justify-content: center;
+	}
+
+	.home-blog__empty {
+		margin: 0;
+		color: rgb(var(--color-text-muted));
+		text-align: center;
+	}
+</style>

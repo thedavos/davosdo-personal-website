@@ -1,0 +1,44 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"img"> & {
+	src: string;
+	modifier?: string;
+};
+
+const { src, modifier, class: className, alt = "", ...props } = Astro.props as Props;
+---
+
+<img
+	src={src}
+	alt={alt}
+	width={120}
+	height={24}
+	loading="lazy"
+	decoding="async"
+	class:list={["client-logo", modifier, className]}
+	{...props}
+/>
+
+<style>
+	.client-logo {
+		display: block;
+		width: auto;
+		height: 20px;
+		max-width: 120px;
+		border-radius: 0;
+		filter: saturate(0%);
+		opacity: 0.82;
+	}
+
+	html[data-theme="dark"] .client-logo {
+		filter: saturate(0%) invert(1);
+		opacity: 0.78;
+	}
+
+	@media (min-width: 768px) {
+		.client-logo {
+			height: 22px;
+		}
+	}
+</style>

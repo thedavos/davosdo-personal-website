@@ -1,14 +1,14 @@
 ---
 import { env } from "cloudflare:workers";
+import HomeBlog from "@components/home/HomeBlog.astro";
 import HomeContact from "@components/home/HomeContact.astro";
-import HomeExperience from "@components/home/HomeExperience.astro";
+import HomeFaq from "@components/home/HomeFaq.astro";
 import HomeHero from "@components/home/HomeHero.astro";
 import HomeProjects from "@components/home/HomeProjects.astro";
 import HomeServices from "@components/home/HomeServices.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import "@styles/home.css";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
-import { experienceItems } from "@data/experience";
 import { getVisibleProjects } from "@data/projects";
 import { getServiceBySlug, services } from "@data/services";
 
@@ -29,12 +29,13 @@ const turnstileSiteKey = disableTurnstile
 	showFooter
 	title={SITE_TITLE}
 	description={SITE_DESCRIPTION}
-	containerClass="home-page w-full max-w-[1080px] mx-auto px-4 py-0"
+	containerClass="home-page py-0"
 >
 	<HomeHero />
 	<HomeProjects projects={visibleProjects} />
-	<HomeExperience items={experienceItems} />
 	<HomeServices services={services} />
+	<HomeBlog />
+	<HomeFaq />
 	<HomeContact
 		selectedService={serviceSlug}
 		turnstileSiteKey={turnstileSiteKey}

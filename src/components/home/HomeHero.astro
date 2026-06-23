@@ -1,108 +1,137 @@
 ---
 import Button from "@components/commons/Button.astro";
 import SocialLinks from "@components/commons/SocialLinks.astro";
+import HomeHeroTrust from "@components/home/HomeHeroTrust.astro";
 ---
 
 <section id="sobre-mi" class="home-hero" data-cascade-scope>
-	<p
-		class="home-hero__eyebrow"
-		data-cascade-item
-		style="--cascade-delay: 0.04s"
-	>
-		Hola, soy
-	</p>
-	<h1
-		class="home-hero__title"
-		data-cascade-item
-		style="--cascade-delay: 0.08s"
-	>
-		David Vargas Dominguez
-	</h1>
-	<h2
-		class="home-hero__subtitle"
-		data-cascade-item
-		style="--cascade-delay: 0.12s"
-	>
-		Senior Software Engineer
-	</h2>
-	<p
-		class="home-hero__copy"
-		data-cascade-item
-		style="--cascade-delay: 0.16s"
-	>
-		Creo productos listos para producción. Me encargo de diseñar interfaces de usuario rápidas, construir lógica de servidor sólida y asegurar un despliegue optimizado
-	</p>
-
-	<div
-		class="home-hero__actions"
-		data-cascade-item
-		style="--cascade-delay: 0.20s"
-	>
-		<Button
-			href="#proyectos"
-			size="sm"
-			rightIcon="i-lucide-arrow-right"
-			data-no-swup
+	<div class="home-hero__inner site-container">
+		<p
+			class="home-hero__eyebrow"
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
 		>
-			Ver qué construí
-		</Button>
-		<Button href="#servicios" variant="ghost" data-no-swup>
-			Ver servicios
-		</Button>
-	</div>
+			Hola, soy
+		</p>
+		<h1
+			class="home-hero__title"
+			data-cascade-item
+			style="--cascade-delay: 0.08s"
+		>
+			David Vargas Dominguez
+		</h1>
+		<p
+			class="home-hero__role"
+			data-cascade-item
+			style="--cascade-delay: 0.12s"
+		>
+			Senior Software Engineer
+		</p>
+		<p
+			class="home-hero__copy"
+			data-cascade-item
+			style="--cascade-delay: 0.16s"
+		>
+			Construyo productos web listos para producción, con foco en interfaces
+			rápidas, lógica de servidor sólida y despliegue optimizado.
+		</p>
 
-	<SocialLinks
-		class="home-hero__social"
-		data-cascade-item
-		style="--cascade-delay: 0.24s"
-	/>
+		<div
+			class="home-hero__actions"
+			data-cascade-item
+			style="--cascade-delay: 0.20s"
+		>
+			<Button
+				href="#proyectos"
+				size="sm"
+				rightIcon="i-lucide-arrow-right"
+				data-no-swup
+			>
+				Ver qué construí
+			</Button>
+			<Button href="/experience" variant="ghost" size="sm">
+				Ver trayectoria
+			</Button>
+		</div>
+
+		<SocialLinks
+			class="home-hero__social"
+			data-cascade-item
+			style="--cascade-delay: 0.24s"
+		/>
+
+		<div
+			data-cascade-item
+			style="--cascade-delay: 0.28s"
+		>
+			<HomeHeroTrust />
+		</div>
+	</div>
 </section>
 
 <style>
 	.home-hero {
 		box-sizing: border-box;
+		position: relative;
 		display: flex;
+		width: 100%;
 		min-height: calc(100svh - 61px);
 		flex-direction: column;
 		justify-content: center;
 		padding: 40px 0 56px;
+		background: rgb(var(--color-background));
+	}
+
+	.home-hero::after {
+		content: "";
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		height: 1px;
+		background: rgb(var(--color-border));
+	}
+
+	.home-hero__inner {
+		display: flex;
+		flex-direction: column;
 	}
 
 	.home-hero__eyebrow {
-		display: none;
 		margin: 0 0 8px;
-		font-size: 16px;
-		font-weight: 500;
+		font-size: 15px;
+		font-weight: 400;
 		line-height: 1.4;
+		color: rgb(var(--color-text-muted));
 	}
 
 	.home-hero__title {
 		max-width: 12ch;
-		margin: 0 0 12px;
+		margin: 0 0 10px;
 		text-align: left;
-		font-size: 42px;
+		font-size: clamp(2.75rem, 8vw, 4.5rem);
 		font-weight: 700;
 		line-height: 0.98;
 		letter-spacing: 0;
 	}
 
-	.home-hero__subtitle {
-		max-width: 18ch;
-		margin: 0 0 16px;
-		text-align: left;
-		font-size: 24px;
-		font-weight: 600;
-		line-height: 1.15;
-		letter-spacing: 0;
+	.home-hero__role {
+		max-width: 24ch;
+		margin: 0 0 20px;
+		font-size: 18px;
+		font-weight: 400;
+		line-height: 1.35;
+		color: rgb(var(--color-text-muted));
 	}
 
 	.home-hero__copy {
-		max-width: 62ch;
-		margin: 0 0 24px;
+		max-width: 52ch;
+		margin: 0 0 28px;
 		text-align: left;
 		font-size: 17px;
 		font-weight: 400;
 		line-height: 1.6;
+		color: rgb(var(--color-body));
 	}
 
 	.home-hero__actions {
@@ -110,7 +139,7 @@ import SocialLinks from "@components/commons/SocialLinks.astro";
 		flex-direction: column;
 		align-items: stretch;
 		gap: 12px;
-		margin-bottom: 16px;
+		margin-bottom: 20px;
 	}
 
 	.home-hero__social {
@@ -119,6 +148,7 @@ import SocialLinks from "@components/commons/SocialLinks.astro";
 		flex-wrap: wrap;
 		justify-content: flex-start;
 		gap: 12px 8px;
+		margin-bottom: 28px;
 	}
 
 	@media (min-width: 768px) {
@@ -127,37 +157,31 @@ import SocialLinks from "@components/commons/SocialLinks.astro";
 			padding: 56px 0 80px;
 		}
 
-		.home-hero__eyebrow {
-			display: block;
-		}
-
 		.home-hero__title {
 			font-size: 72px;
-			letter-spacing: 0;
 		}
 
-		.home-hero__subtitle {
-			margin-bottom: 20px;
-			font-size: 32px;
-			line-height: 1.12;
+		.home-hero__role {
+			margin-bottom: 24px;
+			font-size: 20px;
 		}
 
 		.home-hero__copy {
-			margin-bottom: 28px;
-			font-size: 19px;
+			margin-bottom: 32px;
+			font-size: 18px;
 		}
 
 		.home-hero__actions {
 			flex-direction: row;
 			flex-wrap: wrap;
 			align-items: center;
-			gap: 12px;
-			margin-bottom: 20px;
+			margin-bottom: 24px;
 		}
 
 		.home-hero__social {
-			max-width: 62ch;
+			max-width: 52ch;
 			gap: 16px 12px;
+			margin-bottom: 36px;
 		}
 	}
 </style>

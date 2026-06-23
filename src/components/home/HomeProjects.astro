@@ -9,49 +9,45 @@ type Props = {
 const { projects } = Astro.props as Props;
 ---
 
-<section id="proyectos" class="home-section home-projects" data-cascade-scope>
-	<header
-		class="home-section__header"
-		data-cascade-item
-		style="--cascade-delay: 0.04s"
-	>
-		<h2 class="home-section__title">Proyectos</h2>
-		<p class="home-section__subtitle">
-			Proyectos reales, cero maquetas. Desde flujos de automatización hasta aplicaciones web de alto rendimiento. Código optimizado y listo para escalar
-		</p>
-	</header>
+<section id="proyectos" class="home-section home-section--surface home-projects" data-cascade-scope>
+	<div class="home-section__inner">
+		<header
+			class="home-section__header"
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
+		>
+			<h2 class="home-section__title">Proyectos</h2>
+			<p class="home-section__subtitle">
+				Proyectos reales, cero maquetas. Desde flujos de automatización hasta aplicaciones web de alto rendimiento. Código optimizado y listo para escalar
+			</p>
+		</header>
 
-	<div class="home-projects__grid" aria-label="Proyectos destacados">
-		{
-			projects.map((project, index) => (
-				<ProjectCard
-					slug={project.slug}
-					title={project.title}
-					description={project.description}
-					tags={project.tags}
-					importance={project.importance}
-					heroSrc={
-						project.importance === "high"
-							? project.images.hero
-							: undefined
-					}
-					priority={project.importance === "high" && index === 0}
-					colSpan={project.colSpan}
-					url={`/projects/${project.slug}`}
-					style={`--cascade-delay: ${0.12 + index * 0.04}s`}
-				/>
-			))
-		}
+		<div class="home-projects__grid" aria-label="Proyectos destacados">
+			{
+				projects.map((project, index) => (
+					<ProjectCard
+						slug={project.slug}
+						title={project.title}
+						description={project.description}
+						tags={project.tags}
+						importance={project.importance}
+						heroSrc={
+							project.importance === "high"
+								? project.images.hero
+								: undefined
+						}
+						priority={project.importance === "high" && index === 0}
+						colSpan={project.colSpan}
+						url={`/projects/${project.slug}`}
+						style={`--cascade-delay: ${0.12 + index * 0.04}s`}
+					/>
+				))
+			}
+		</div>
 	</div>
 </section>
 
 <style>
-	.home-projects {
-		display: flex;
-		flex-direction: column;
-		gap: 44px;
-	}
-
 	.home-projects__grid {
 		display: grid;
 		grid-auto-flow: dense;
@@ -69,10 +65,6 @@ const { projects } = Astro.props as Props;
 	}
 
 	@media (max-width: 640px) {
-		.home-projects {
-			gap: 32px;
-		}
-
 		.home-projects__grid {
 			grid-auto-rows: auto;
 			grid-template-columns: 1fr;

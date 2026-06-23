@@ -1,0 +1,38 @@
+---
+import ContactFaq from "@components/contact/ContactFaq.astro";
+---
+
+<section
+	id="preguntas-frecuentes"
+	class="home-section home-section--background home-faq"
+	data-cascade-scope
+>
+	<div class="home-section__inner">
+		<header
+			class="home-section__header"
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
+		>
+			<h2 class="home-section__title">Preguntas frecuentes</h2>
+			<p class="home-section__subtitle">
+				Respuestas rápidas sobre plazos, alcance y forma de trabajo antes de escribirme.
+			</p>
+		</header>
+
+		<div
+			class="home-faq__content"
+			data-cascade-item
+			style="--cascade-delay: 0.08s"
+		>
+			<ContactFaq />
+		</div>
+	</div>
+</section>
+
+<style>
+	.home-faq__content {
+		width: 100%;
+		max-width: 720px;
+		margin: 0 auto;
+	}
+</style>
