@@ -1,64 +1,75 @@
-# Astro Starter Kit: Blog
+# davosdo.dev
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/astro-blog-starter-template)
+Sitio personal y portfolio de [David Vargas Domínguez](https://davosdo.dev): landing con proyectos, servicios, blog, experiencia y formulario de contacto.
 
-![Astro Template Preview](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
+## Stack
 
-<!-- dash-content-start -->
+- [Astro](https://astro.build) 6 + islands de [Vue](https://vuejs.org) donde hace falta interactividad
+- [UnoCSS](https://unocss.dev) para estilos utilitarios y tokens del sitio
+- [Cloudflare Workers](https://developers.cloudflare.com/workers/) para hosting, assets estáticos y el endpoint de contacto
+- [Swup](https://swup.js.org) para transiciones entre páginas
+- Content Collections para el blog en `src/content/blog`
 
-Create a blog with Astro and deploy it on Cloudflare Workers as a [static website](https://developers.cloudflare.com/workers/static-assets/).
+## Requisitos
 
-Features:
+- Node.js 22 o superior
+- [pnpm](https://pnpm.io)
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-- ✅ Built-in Observability logging
-
-<!-- dash-content-end -->
-
-## Getting Started
-
-Outside of this repo, you can start a new project with this template using [C3](https://developers.cloudflare.com/pages/get-started/c3/) (the `create-cloudflare` CLI):
+## Desarrollo local
 
 ```bash
-npm create cloudflare@latest -- --template=cloudflare/templates/astro-blog-starter-template
+pnpm install
+cp .env.example .env
+pnpm dev
 ```
 
-A live public deployment of this template is available at [https://astro-blog-starter-template.templates.workers.dev](https://astro-blog-starter-template.templates.workers.dev)
+El sitio queda disponible en `http://localhost:4321`.
 
-## 🚀 Project Structure
+Variables relevantes para desarrollo:
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+| Variable | Uso |
+| --- | --- |
+| `CONTACT_FROM_EMAIL` | Remitente del formulario de contacto |
+| `CONTACT_TO_EMAIL` | Bandeja de destino |
+| `PUBLIC_TURNSTILE_SITE_KEY` | Site key pública de Cloudflare Turnstile |
+| `PUBLIC_DISABLE_TURNSTILE` | Pon `true` en `.env.development` para desactivar Turnstile en local |
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+El secreto de Turnstile (`TURNSTILE_SECRET_KEY`) va como secret de Wrangler, no en el repositorio.
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+## Scripts
 
-Any static assets, like images, can be placed in the `public/` directory.
+| Comando | Descripción |
+| --- | --- |
+| `pnpm dev` | Servidor de desarrollo |
+| `pnpm build` | Build de producción en `dist/` |
+| `pnpm preview` | Build + preview con Wrangler |
+| `pnpm check` | Build, comprobación de tipos y dry-run de deploy |
+| `pnpm deploy` | Despliegue a Cloudflare Workers |
 
-## 🧞 Commands
+## Estructura del proyecto
 
-All commands are run from the root of the project, from a terminal:
+```text
+src/
+├── components/     # UI (Astro y Vue)
+├── content/blog/   # Artículos en Markdown/MDX
+├── data/           # Proyectos, servicios, experiencia, FAQ
+├── layouts/        # PageLayout, BlogPost
+├── pages/          # Rutas del sitio
+└── styles/         # CSS global, home, blog, formularios
+public/             # Assets estáticos (logos, imágenes del blog, etc.)
+```
 
-| Command                           | Action                                           |
-| :-------------------------------- | :----------------------------------------------- |
-| `npm install`                     | Installs dependencies                            |
-| `npm run dev`                     | Starts local dev server at `localhost:4321`      |
-| `npm run build`                   | Build your production site to `./dist/`          |
-| `npm run preview`                 | Preview your build locally, before deploying     |
-| `npm run astro ...`               | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help`         | Get help using the Astro CLI                     |
-| `npm run build && npm run deploy` | Deploy your production site to Cloudflare        |
-| `npm wrangler tail`               | View real-time logs for all Workers              |
+Convenciones y guías para contribuir o trabajar con el código: [`AGENTS.md`](./AGENTS.md).
 
-## 👀 Want to learn more?
+## Despliegue
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+El proyecto usa `@astrojs/cloudflare`. Tras configurar secrets y variables en Wrangler:
 
-## Credit
+```bash
+pnpm build
+pnpm deploy
+```
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+## Licencia
+
+Proyecto privado. No redistribuir sin permiso.
