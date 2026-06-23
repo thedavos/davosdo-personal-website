@@ -1,45 +1,59 @@
 :root {
-	--form-field-border: rgb(226 232 240);
-	--form-field-border-hover: rgb(203 213 225);
+	--form-field-border: rgba(var(--color-secondary), 0.18);
+	--form-field-border-hover: rgba(var(--color-secondary), 0.3);
 	--form-field-border-focus: rgb(var(--color-primary));
 	--form-panel-border: rgba(var(--color-secondary), 0.12);
 }
 
-.form-panel {
+html[data-theme="dark"] {
+	--form-field-border: rgb(var(--color-border));
+	--form-field-border-hover: rgba(255, 255, 255, 0.24);
+	--form-panel-border: rgba(255, 255, 255, 0.18);
+}
+
+html[data-theme="dark"] .home-section--surface .form-fields :is(input, select, textarea):not(:disabled):not(.form-control-error) {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+html[data-theme="dark"] .home-section--surface .form-fields :is(input, select, textarea):not(:disabled):not(:focus-visible):not(.form-control-error):hover {
+	border-color: rgba(255, 255, 255, 0.26);
+}
+
+.form-fields {
 	box-sizing: border-box;
 	max-width: 100%;
 }
 
-.form-panel input,
-.form-panel select,
-.form-panel textarea {
+.form-fields input,
+.form-fields select,
+.form-fields textarea {
 	box-sizing: border-box;
 	max-width: 100%;
 }
 
-.form-panel input::placeholder,
-.form-panel textarea::placeholder {
-	color: rgb(var(--color-secondary) / 0.55);
+.form-fields input::placeholder,
+.form-fields textarea::placeholder {
+	color: rgb(var(--color-text-muted) / 0.65);
 }
 
-.form-panel input:not(:disabled):not(:focus-visible):hover,
-.form-panel select:not(:disabled):not(:focus-visible):hover,
-.form-panel textarea:not(:disabled):not(:focus-visible):hover {
+.form-fields input:not(:disabled):not(:focus-visible):hover,
+.form-fields select:not(:disabled):not(:focus-visible):hover,
+.form-fields textarea:not(:disabled):not(:focus-visible):hover {
 	border-color: var(--form-field-border-hover);
 }
 
-.form-panel select {
+.form-fields select {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
 }
 
-.form-panel select option {
+.form-fields select option {
 	background: rgb(var(--color-surface));
 	color: rgb(var(--color-body));
 }
 
-.form-panel .form-field {
+.form-fields .form-field {
 	width: 100%;
 	min-width: 0;
 }
