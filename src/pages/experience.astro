@@ -1,5 +1,85 @@
 ---
-export const prerender = false;
-
-return Astro.redirect("/#experiencia", 301);
+import Timeline from "@components/experience/Timeline.astro";
+import PageLayout from "@layouts/PageLayout.astro";
+import { experienceItems } from "@data/experience";
 ---
+
+<PageLayout
+	title="Experiencia | davosdo.dev"
+	description="Experiencia profesional en desarrollo de productos web y móviles."
+	containerClass="w-full max-w-[980px] mx-auto px-4 py-12"
+>
+	<section class="experience-page" data-cascade-scope>
+		<header
+			class="experience-page__hero"
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
+		>
+			<h1 class="experience-page__title">Experiencia</h1>
+			<p class="experience-page__subtitle">
+				Siete años construyendo aplicaciones web y móviles sólidas. Me enfoco
+				en el rendimiento, código mantenible que envejece bien y decisiones
+				técnicas claras que facilitan el trabajo de todo el equipo.
+			</p>
+		</header>
+
+		<Timeline
+			items={experienceItems}
+			ariaLabel="Experiencia laboral de David Vargas"
+			class="experience-page__timeline"
+		/>
+	</section>
+</PageLayout>
+
+<style>
+	.experience-page {
+		display: flex;
+		flex-direction: column;
+		gap: 64px;
+	}
+
+	.experience-page__hero {
+		max-width: 680px;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	.experience-page__title {
+		margin: 0 0 16px;
+		font-size: 64px;
+		line-height: 1;
+		letter-spacing: 0;
+	}
+
+	.experience-page__subtitle {
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 20px;
+		line-height: 1.55;
+		text-wrap: pretty;
+	}
+
+	.experience-page__timeline {
+		margin-top: 4px;
+	}
+
+	@media (max-width: 760px) {
+		.experience-page {
+			gap: 32px;
+		}
+
+		.experience-page__hero {
+			max-width: none;
+			margin: 0;
+			text-align: left;
+		}
+
+		.experience-page__title {
+			font-size: 42px;
+		}
+
+		.experience-page__subtitle {
+			font-size: 18px;
+		}
+	}
+</style>
