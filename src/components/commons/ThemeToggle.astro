@@ -2,17 +2,16 @@
 ---
 
 <button
-	id="theme-toggle"
-	class="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-body transition-all hover:border-primary/30 hover:bg-slate-50 hover:text-primary active:scale-95"
+	data-theme-toggle
+	class="theme-toggle inline-flex h-10 w-10 items-center justify-center rounded-full border-0 bg-transparent p-0 text-body transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-[2px] focus-visible:outline-primary-hover focus-visible:outline-offset-[3px]"
 	aria-label="Cambiar tema"
+	type="button"
 >
-	<span class="i-lucide-sun block dark:hidden text-lg"></span>
-	<span class="i-lucide-moon hidden dark:block text-lg"></span>
+	<span class="theme-toggle__icon theme-toggle__icon--sun i-lucide-sun text-lg" aria-hidden="true"></span>
+	<span class="theme-toggle__icon theme-toggle__icon--moon i-lucide-moon text-lg" aria-hidden="true"></span>
 </button>
 
 <script>
-	const themeToggle = document.getElementById("theme-toggle");
-
 	const getTheme = () => {
 		if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
 			return localStorage.getItem("theme");
@@ -26,7 +25,6 @@
 		document.documentElement.setAttribute("data-theme", theme);
 		localStorage.setItem("theme", theme);
 
-		// Opcional: Para que UnoCSS dark mode funcione si se usa
 		if (theme === "dark") {
 			document.documentElement.classList.add("dark");
 		} else {
@@ -34,29 +32,61 @@
 		}
 	};
 
-	// Inicializar
-	setTheme(getTheme()!);
+	function syncThemeFromStorage() {
+		setTheme(getTheme() ?? "light");
+	}
 
-	themeToggle?.addEventListener("click", () => {
-		const currentTheme = document.documentElement.getAttribute("data-theme");
-		const newTheme = currentTheme === "dark" ? "light" : "dark";
-		setTheme(newTheme);
-	});
+	function bindThemeToggle() {
+		if (document.documentElement.dataset.themeToggleBound) return;
 
-	// Escuchar cambios de Swup para re-inicializar si es necesario
-	document.addEventListener("swup:contentReplaced", () => {
-		// El botón podría haber cambiado en el DOM, volvemos a vincular
-		const newToggle = document.getElementById("theme-toggle");
-		newToggle?.addEventListener("click", () => {
+		document.documentElement.dataset.themeToggleBound = "true";
+
+		document.addEventListener("click", (event) => {
+			const toggle = (event.target as HTMLElement).closest("[data-theme-toggle]");
+			if (!toggle) return;
+
 			const currentTheme = document.documentElement.getAttribute("data-theme");
 			const newTheme = currentTheme === "dark" ? "light" : "dark";
 			setTheme(newTheme);
 		});
-	});
+	}
+
+	function setupThemeToggle() {
+		syncThemeFromStorage();
+		bindThemeToggle();
+	}
+
+	setupThemeToggle();
+	document.addEventListener("astro:page-load", setupThemeToggle);
 </script>
 
 <style>
-	/* Animación suave para el cambio de colores */
+	.theme-toggle {
+		cursor: pointer;
+	}
+
+	.theme-toggle__icon {
+		display: inline-flex;
+	}
+
+	.theme-toggle__icon--moon {
+		display: none;
+	}
+
+	html[data-theme="dark"] .theme-toggle__icon--sun {
+		display: none;
+	}
+
+	html[data-theme="dark"] .theme-toggle__icon--moon {
+		display: inline-flex;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.theme-toggle {
+			transition: none;
+		}
+	}
+
 	:global(body) {
 		transition: background-color 0.3s ease, color 0.3s ease;
 	}

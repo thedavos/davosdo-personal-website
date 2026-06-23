@@ -62,7 +62,6 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url);
 <meta name="twitter:image" content={imageUrl} />
 <meta name="twitter:image:alt" content={imageAlt} />
 
-<!-- Theme Setup
 <script is:inline>
 	const theme = (() => {
 		if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
@@ -80,4 +79,3 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url);
 		document.documentElement.classList.remove('dark');
 	}
 </script>
--->
