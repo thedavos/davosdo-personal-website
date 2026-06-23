@@ -53,6 +53,7 @@ import { clientTrustBadges } from "@data/client-trust";
 		font-size: 13px;
 		font-weight: 400;
 		line-height: 1.4;
+		text-align: center;
 		color: rgb(var(--color-text-muted));
 	}
 
@@ -60,6 +61,7 @@ import { clientTrustBadges } from "@data/client-trust";
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
+		justify-content: center;
 		gap: 24px 28px;
 		padding: 0;
 		margin: 0;
@@ -99,6 +101,14 @@ import { clientTrustBadges } from "@data/client-trust";
 	}
 
 	@media (min-width: 768px) {
+		.home-hero-trust__label {
+			text-align: left;
+		}
+
+		.home-hero-trust__logos {
+			justify-content: flex-start;
+		}
+
 		.home-hero-trust :global(.client-logo--interbank) {
 			height: 20px;
 			max-width: 120px;
