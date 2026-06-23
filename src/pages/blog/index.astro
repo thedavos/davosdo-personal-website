@@ -1,126 +1,198 @@
 ---
-import Button from "@components/commons/Button.astro";
-import BlogGrid from "@components/blog/BlogGrid.astro";
+import BlogArchiveGrid from "@components/blog/BlogArchiveGrid.astro";
+import BlogFeaturedCard from "@components/blog/BlogFeaturedCard.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import { getCollection } from "astro:content";
-import { getFeaturedAndRecent } from "@/lib/blog";
+import { enrichPost, sortPostsByDate } from "@/lib/blog";
 
-const posts = await getCollection("blog");
-const { featured, recent } = getFeaturedAndRecent(posts);
+const posts = sortPostsByDate(await getCollection("blog"));
+const featured = posts[0];
+const archivePosts = posts.slice(1);
+const featuredEnriched = featured ? enrichPost(featured) : undefined;
 ---
 
 <PageLayout
-	title="Blog | davosdo.dev"
-	description="Artículos sobre desarrollo, producto y tecnología."
-	containerClass="w-full max-w-[1080px] mx-auto px-4 py-12"
+	title="Blog | todos los artículos | davosdo.dev"
+	description="Archivo completo de artículos del blog."
+	containerClass="site-container py-12"
 	showFooter={true}
 >
-	<section class="blog-page" data-cascade-scope>
+	<section class="blog-all-page" data-cascade-scope>
 		<header
-			class="blog-page__hero"
+			class="blog-all-page__hero"
 			data-cascade-item
 			style="--cascade-delay: 0.04s"
 		>
-			<h1 class="blog-page__title">Blog</h1>
-			<p class="blog-page__subtitle">
-				Notas sobre desarrollo, herramientas y lo que voy aprendiendo en
-				proyectos reales.
+			<h1 class="blog-all-page__title">Todos los artículos</h1>
+			<p class="blog-all-page__subtitle">
+				Archivo completo ordenado por fecha, del más reciente al más
+				antiguo.
 			</p>
 		</header>
 
 		{
-			featured ? (
-				<BlogGrid featured={featured} recent={recent} />
+			featuredEnriched ? (
+				<div data-cascade-item style="--cascade-delay: 0.1s">
+					<BlogFeaturedCard
+						post={featuredEnriched.post}
+						readingTimeLabel={featuredEnriched.readingTimeLabel}
+						url={featuredEnriched.url}
+						layout="horizontal"
+					/>
+				</div>
 			) : (
-				<p class="blog-page__empty">Aún no hay artículos publicados.</p>
+				<p class="blog-all-page__empty">Aún no hay artículos publicados.</p>
 			)
 		}
 
 		{
-			featured && (
-				<div
-					class="blog-page__cta"
+			archivePosts.length > 0 && (
+				<section
+					class="blog-all-page__archive"
+					aria-labelledby="blog-archive-heading"
 					data-cascade-item
-					style="--cascade-delay: 0.28s"
+					style="--cascade-delay: 0.16s"
 				>
-					<Button
-						as="a"
-						href="/blog/all"
-						variant="outline"
-						size="md"
-						rightIcon="i-lucide-arrow-right"
-					>
-						Ver posts
-					</Button>
-				</div>
+					<div class="blog-all-page__archive-header">
+						<h2 id="blog-archive-heading" class="blog-all-page__archive-title">
+							Más artículos
+						</h2>
+						<p class="blog-all-page__archive-lead">
+							El resto del archivo, ordenado del más reciente al más
+							antiguo.
+						</p>
+					</div>
+					<BlogArchiveGrid posts={archivePosts} />
+				</section>
 			)
 		}
 	</section>
 </PageLayout>
 
 <style>
-	.blog-page {
+	.blog-all-page {
 		display: flex;
 		flex-direction: column;
-		gap: 44px;
+		gap: 40px;
 	}
 
-	.blog-page__hero {
+	.blog-all-page__hero {
 		max-width: 720px;
 		margin: 0 auto;
 		text-align: center;
 	}
 
-	.blog-page__title {
+	.blog-all-page__title {
 		margin: 0 0 16px;
-		font-size: 64px;
+		font-size: 56px;
 		letter-spacing: 0;
 		line-height: 1;
 	}
 
-	.blog-page__subtitle {
+	.blog-all-page__subtitle {
 		max-width: 58ch;
 		margin: 0 auto;
 		color: var(--color-text-muted);
-		font-size: 20px;
+		font-size: 18px;
 		line-height: 1.55;
 		text-wrap: pretty;
 	}
 
-	.blog-page__cta {
+	.blog-all-page__archive {
 		display: flex;
-		justify-content: center;
+		flex-direction: column;
+		gap: 24px;
+		padding-top: 8px;
+		border-top: 1px solid var(--form-panel-border);
 	}
 
-	.blog-page__empty {
+	.blog-all-page__archive-header {
+		display: grid;
+		gap: 8px;
+		max-width: 52ch;
+	}
+
+	.blog-all-page__archive-title {
+		margin: 0;
+		font-size: 22px;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		line-height: 1.15;
+		color: var(--color-text);
+	}
+
+	.blog-all-page__archive-lead {
+		margin: 0;
+		color: var(--color-text-muted);
+		font-size: 15px;
+		line-height: 1.55;
+		text-wrap: pretty;
+	}
+
+	.blog-all-page__archive :global(.blog-archive-grid) {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 24px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.blog-all-page__archive :global(.blog-archive-grid__item) {
+		display: flex;
+		min-width: 0;
+	}
+
+	@media (max-width: 900px) {
+		.blog-all-page__archive :global(.blog-archive-grid) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 640px) {
+		.blog-all-page__archive :global(.blog-archive-grid) {
+			grid-template-columns: 1fr;
+			gap: 12px;
+		}
+	}
+
+	.blog-all-page__empty {
 		margin: 0;
 		color: var(--color-text-muted);
 		text-align: center;
 	}
 
 	@media (max-width: 760px) {
-		.blog-page__hero {
+		.blog-all-page__hero {
 			max-width: none;
 			margin: 0;
 			text-align: left;
 		}
 
-		.blog-page__subtitle {
+		.blog-all-page__subtitle {
 			margin: 0;
+		}
+
+		.blog-all-page__archive-header {
+			max-width: none;
 		}
 	}
 
 	@media (max-width: 640px) {
-		.blog-page {
+		.blog-all-page {
 			gap: 32px;
 		}
 
-		.blog-page__title {
-			font-size: 42px;
+		.blog-all-page__title {
+			font-size: 38px;
 		}
 
-		.blog-page__subtitle {
-			font-size: 18px;
+		.blog-all-page__archive-title {
+			font-size: 20px;
+		}
+
+		.blog-all-page__archive-lead {
+			font-size: 14px;
 		}
 	}
 </style>

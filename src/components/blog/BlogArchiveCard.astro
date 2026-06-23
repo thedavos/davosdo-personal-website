@@ -14,7 +14,6 @@ type Props = {
 
 const { post, readingTimeLabel, url, class: className, style } = Astro.props;
 const { title, category, pubDate, heroImage } = post.data;
-const imageSrc = heroImage ?? "/blog-placeholder-1.jpg";
 ---
 
 <article class:list={["blog-archive-card", className]} style={style}>
@@ -25,17 +24,21 @@ const imageSrc = heroImage ?? "/blog-placeholder-1.jpg";
 		padding="none"
 		class="service-card-surface service-card-surface-hover blog-archive-card__card h-full"
 	>
-		<div class="blog-archive-card__media">
-			<img
-				src={imageSrc}
-				alt=""
-				width={400}
-				height={225}
-				loading="lazy"
-				decoding="async"
-				class="blog-archive-card__image"
-			/>
-		</div>
+		{
+			heroImage && (
+				<div class="blog-archive-card__media">
+					<img
+						src={heroImage}
+						alt=""
+						width={400}
+						height={225}
+						loading="lazy"
+						decoding="async"
+						class="blog-archive-card__image"
+					/>
+				</div>
+			)
+		}
 		<div class="blog-archive-card__body">
 			<div class="blog-archive-card__tags">
 				<Chip size="xs" variant="muted">{category}</Chip>
