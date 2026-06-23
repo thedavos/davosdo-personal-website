@@ -35,11 +35,7 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 					<ThemeToggle />
 				</div>
 			</div>
-			<div class="flex items-center gap-1 md:hidden">
-				<HeaderLink href="/#contacto" class="whitespace-nowrap" data-no-swup>
-					Hablemos
-				</HeaderLink>
-				<ThemeToggle />
+			<div class="flex items-center md:hidden">
 				<MobileNav
 					client:load
 					navItems={SITE_NAV_ITEMS}

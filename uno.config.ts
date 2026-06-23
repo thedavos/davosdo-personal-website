@@ -11,6 +11,7 @@ export default defineConfig({
 		"i-lucide-sun",
 		"i-lucide-moon",
 		"i-lucide-arrow-right",
+		"i-lucide-arrow-up-right",
 		"i-lucide-arrow-left",
 		"i-lucide-send",
 		"i-lucide-chevron-down",
