@@ -57,21 +57,16 @@ const {
 	}
 
 	/* Variants */
-	.chip--default {
-		border-color: var(--color-card-border);
-		background: rgba(255, 255, 255, 0.82);
-		color: var(--color-text);
+	.chip--default,
+	.chip--muted {
+		border-color: rgba(var(--color-secondary), 0.14);
+		background: rgba(var(--color-secondary), 0.08);
+		color: rgb(var(--color-text-muted));
 	}
 
 	.chip--primary {
 		border-color: var(--color-primary-border);
 		background: var(--color-primary-soft);
-		color: var(--color-primary);
-	}
-
-	.chip--muted {
-		border-color: rgba(71, 85, 105, 0.10);
-		background: rgba(248, 250, 252, 0.9);
-		color: var(--color-text-muted);
+		color: rgb(var(--color-primary));
 	}
 </style>
