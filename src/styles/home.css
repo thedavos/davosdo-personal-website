@@ -3,6 +3,8 @@
 	flex-direction: column;
 	gap: 0;
 	width: 100%;
+	max-width: none;
+	min-width: 0;
 }
 
 .home-section {
