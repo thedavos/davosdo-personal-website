@@ -12,8 +12,7 @@ type Props = {
 };
 
 const { post, readingTimeLabel, url, class: className, style } = Astro.props;
-const { title, category, pubDate, heroImage } = post.data;
-const imageSrc = heroImage ?? "/blog-placeholder.svg";
+const { title, category, pubDate } = post.data;
 ---
 
 <article class:list={["blog-compact", className]} style={style} data-cascade-item>
@@ -25,27 +24,14 @@ const imageSrc = heroImage ?? "/blog-placeholder.svg";
 		class="service-card-surface service-card-surface-hover blog-compact__card h-full"
 	>
 		<div class="blog-compact__body">
-			<div class="blog-compact__media">
-				<img
-					src={imageSrc}
-					alt=""
-					width={80}
-					height={80}
-					loading="lazy"
-					decoding="async"
-					class="blog-compact__image"
-				/>
-			</div>
-			<div class="blog-compact__copy">
-				<h3 class="blog-compact__title">{title}</h3>
-				<BlogPostMeta
-					category={category}
-					readingTimeLabel={readingTimeLabel}
-					pubDate={pubDate}
-					variant="inline"
-					size="compact"
-				/>
-			</div>
+			<h3 class="blog-compact__title">{title}</h3>
+			<BlogPostMeta
+				category={category}
+				readingTimeLabel={readingTimeLabel}
+				pubDate={pubDate}
+				variant="inline"
+				size="compact"
+			/>
 		</div>
 	</Card>
 </article>
@@ -72,11 +58,11 @@ const imageSrc = heroImage ?? "/blog-placeholder.svg";
 	.blog-compact__body {
 		display: flex;
 		flex: 1;
-		flex-direction: row;
-		align-items: stretch;
-		min-height: 0;
+		flex-direction: column;
+		justify-content: center;
+		gap: 4px;
+		padding: 0 16px;
 		min-width: 0;
-		gap: 10px;
 	}
 
 	.blog-compact__media {
@@ -91,15 +77,6 @@ const imageSrc = heroImage ?? "/blog-placeholder.svg";
 		height: 100%;
 		min-height: 100%;
 		object-fit: cover;
-	}
-
-	.blog-compact__copy {
-		display: flex;
-		flex: 1;
-		flex-direction: column;
-		justify-content: center;
-		gap: 4px;
-		min-width: 0;
 	}
 
 	.blog-compact__title {
