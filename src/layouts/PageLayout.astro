@@ -31,12 +31,17 @@ const {
 		<slot name="head" />
 	</head>
 	<body>
+		<a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 		<Header />
 		<div
 			id="swup-container"
 			class="min-h-[calc(100vh-61px)] flex flex-col transition-swup-slide md:min-h-[calc(100vh-72px)]"
 		>
-			<main class:list={["flex flex-1", centerContent && "items-center"]}>
+			<main
+				id="main-content"
+				tabindex="-1"
+				class:list={["flex flex-1", centerContent && "items-center"]}
+			>
 				<div class={containerClass}>
 					<slot />
 				</div>
