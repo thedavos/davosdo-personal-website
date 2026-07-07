@@ -565,6 +565,49 @@ export const projects: ProjectDetail[] = [
 		},
 	},
 	{
+		title: "Misgastos automation",
+		slug: "misgastos-automation",
+		description:
+			"Workflow personal para registrar gastos desde Telegram con n8n, Supabase, AWS Bedrock y Metabase, sin construir una app propia.",
+		tags: ["n8n", "Telegram", "Supabase", "AWS Bedrock", "Metabase"],
+		show: true,
+		importance: "low",
+		status: "production",
+		longDescription:
+			"Misgastos automation nació de una necesidad bastante concreta: anotar gastos en segundos y recuperar visibilidad sobre en qué se me iba el dinero. En lugar de crear otra app financiera, armé un workflow donde Telegram es la interfaz, n8n orquesta el flujo, Supabase guarda el estado, AWS Bedrock interpreta texto e imágenes, y Metabase muestra el resultado. No lo pensé como producto público; es una automatización personal hecha para mi forma de registrar gastos, con reglas peruanas para Yape, Plin, comercios, categorías y métodos de pago.",
+		role: "Automation Developer & Creator",
+		year: "2026 – presente",
+		features: [
+			"Registro de gastos por texto o captura enviada desde Telegram",
+			"Extracción multimodal con Amazon Nova Lite vía AWS Bedrock",
+			"Taxonomía real de categorías, subcategorías y reglas de merchants desde Supabase",
+			"Drafts con aclaraciones cuando faltan datos antes de confirmar un gasto",
+			"Persistencia de gastos y estado en Postgres, con vistas SQL para contexto de IA",
+			"Dashboard en Metabase para revisar categorías, tendencias y gasto mensual",
+			"Stack self-hosted en Railway detrás de Cloudflare Tunnel",
+		],
+		stack: [
+			{ category: "Entrada", items: ["Telegram Bot", "Texto", "Imágenes"] },
+			{ category: "Orquestación", items: ["n8n", "Code nodes", "HTTP Request"] },
+			{ category: "AI", items: ["AWS Bedrock", "Amazon Nova Lite", "Multimodal extraction"] },
+			{ category: "Datos", items: ["Supabase", "Postgres", "SQL views"] },
+			{ category: "Infraestructura", items: ["Railway", "Cloudflare Tunnel"] },
+			{ category: "Analytics", items: ["Metabase"] },
+		],
+		links: [
+			{ label: "Blog post", url: "/blog/misgastos-workflow/", icon: "i-lucide-newspaper" },
+			{ label: "Workflow JSON", url: "/blog/misgastos-workflow/misgastos-workflow.json", icon: "i-lucide-download" },
+		],
+		images: {
+			hero: "/blog/misgastos-workflow/misgastos-flow-diagram.png",
+			gallery: [
+				"/blog/misgastos-workflow/railway-self-hosted-stack.png",
+				"/blog/misgastos-workflow/n8n-workflow-overview.png",
+				"/blog/misgastos-workflow/metabase-dashboard.png",
+			],
+		},
+	},
+	{
 		title: "TyriaPilot",
 		slug: "tyriapilot",
 		description:
