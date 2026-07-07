@@ -13,11 +13,18 @@ const { featured, recent } = Astro.props;
 
 const featuredEnriched = featured ? enrichPost(featured) : undefined;
 const recentEnriched = recent.map(enrichPost);
+const pairedPost = recentEnriched.length === 1 ? recentEnriched[0] : undefined;
 const rowCount = Math.max(recentEnriched.length, 1);
+const layoutMode =
+	recentEnriched.length === 0
+		? "solo"
+		: pairedPost
+			? "pair"
+			: "stack";
 ---
 
 <div
-	class="blog-grid"
+	class:list={["blog-grid", `blog-grid--${layoutMode}`]}
 	style={`--blog-grid-rows: ${rowCount}`}
 	aria-label="Artículos recientes"
 >
@@ -34,18 +41,28 @@ const rowCount = Math.max(recentEnriched.length, 1);
 	}
 
 	{
-		recentEnriched.map((item, index) => (
-			<div
-				class="blog-grid__compact"
-				style={`--blog-compact-row: ${index + 1}`}
-			>
-				<BlogCompactCard
-					post={item.post}
-					readingTimeLabel={item.readingTimeLabel}
-					url={item.url}
+		pairedPost ? (
+			<div class="blog-grid__paired">
+				<BlogFeaturedCard
+					post={pairedPost.post}
+					readingTimeLabel={pairedPost.readingTimeLabel}
+					url={pairedPost.url}
 				/>
 			</div>
-		))
+		) : (
+			recentEnriched.map((item, index) => (
+				<div
+					class="blog-grid__compact"
+					style={`--blog-compact-row: ${index + 1}`}
+				>
+					<BlogCompactCard
+						post={item.post}
+						readingTimeLabel={item.readingTimeLabel}
+						url={item.url}
+					/>
+				</div>
+			))
+		)
 	}
 </div>
 
@@ -59,6 +76,7 @@ const rowCount = Math.max(recentEnriched.length, 1);
 	}
 
 	.blog-grid__featured,
+	.blog-grid__paired,
 	.blog-grid__compact {
 		display: flex;
 		flex-direction: column;
@@ -71,29 +89,54 @@ const rowCount = Math.max(recentEnriched.length, 1);
 		grid-row: 1 / span var(--blog-grid-rows, 4);
 	}
 
+	.blog-grid__paired {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
 	.blog-grid__compact {
 		grid-column: 2;
 		grid-row: var(--blog-compact-row);
 	}
 
 	.blog-grid__featured > :global(*),
+	.blog-grid__paired > :global(*),
 	.blog-grid__compact > :global(*) {
 		flex: 1;
 		min-height: 0;
 	}
 
+	.blog-grid--solo {
+		grid-template-columns: minmax(0, 720px);
+		grid-template-rows: auto;
+		justify-content: center;
+	}
+
+	.blog-grid--solo .blog-grid__featured {
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	.blog-grid--pair {
+		grid-template-rows: auto;
+	}
+
+	.blog-grid--pair .blog-grid__featured {
+		grid-row: 1;
+	}
+
 	@media (max-width: 900px) {
-		.blog-grid {
+		.blog-grid--stack {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			grid-template-rows: auto;
 		}
 
-		.blog-grid__featured {
+		.blog-grid--stack .blog-grid__featured {
 			grid-column: 1 / -1;
 			grid-row: auto;
 		}
 
-		.blog-grid__compact {
+		.blog-grid--stack .blog-grid__compact {
 			grid-column: auto;
 			grid-row: auto;
 		}
@@ -105,6 +148,7 @@ const rowCount = Math.max(recentEnriched.length, 1);
 		}
 
 		.blog-grid__featured,
+		.blog-grid__paired,
 		.blog-grid__compact {
 			grid-column: 1;
 			grid-row: auto;
