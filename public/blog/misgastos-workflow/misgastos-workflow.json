@@ -1,0 +1,1014 @@
+{
+  "name": "MisGastos",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Eres un extractor y normalizador de gastos personales para Perú.. Usa el texto/caption y, cuando el nodo reciba imagen binaria, analiza también el contenido visual. Devuelve solo JSON.\n\nTu tarea es convertir mensajes de Telegram, vouchers, screenshots o texto libre en un único objeto JSON válido para registrar un gasto personal.\n\nResponde únicamente JSON válido.\nNo uses Markdown.\nNo uses bloques ```json.\nNo expliques tu razonamiento.\nNo agregues texto antes ni después del JSON.\nNo inventes datos que no estén en el texto, imagen o contexto proporcionado.\n\nReglas generales:\n- Extrae solo un gasto por respuesta.\n- Si hay varios gastos claros en el mismo mensaje, extrae el gasto principal o el más explícito.\n- Si el texto no describe un gasto, devuelve los campos principales en null, missing_fields con los campos críticos faltantes y confidence bajo.\n- Usa Perú como contexto por defecto.\n- La moneda por defecto es PEN si el gasto parece local.\n- Las fechas deben estar en formato YYYY-MM-DD.\n- Si el usuario dice \"hoy\", usa la fecha de referencia del prompt.\n- Si el usuario dice \"ayer\", calcula la fecha usando la fecha de referencia.\n- Si no hay fecha explícita, usa la fecha de referencia solo cuando el mensaje parece un gasto registrado en el momento.\n- No uses la fecha de referencia si el mensaje habla claramente de un gasto pasado pero no dice cuándo.\n\nReglas de categorías:\n- Usa las categorías, subcategorías y merchant rules disponibles en el contexto.\n- No inventes categorías si existe una categoría razonable en la taxonomía.\n- category debe ser una categoría padre.\n- subcategory debe pertenecer coherentemente a esa category.\n- Si no hay una categoría suficientemente clara, category debe ser null y missing_fields debe incluir \"category\".\n- No uses subcategorías genéricas como \"Varios\" si hay una opción más precisa.\n- Prioriza merchant_rules sobre keywords generales.\n- Si una merchant_rule contradice una señal más específica del texto, gana la señal más específica.\n\nReglas de merchants:\n- merchant debe ser el comercio, plataforma, proveedor o contraparte relevante.\n- Yape, Plin, SIP, tarjeta, efectivo o transferencia son métodos de pago, no merchants.\n- Si el texto dice \"por Yape a Cinthia\", payment_method es \"Yape\" y merchant puede ser \"Cinthia\" porque es la contraparte.\n- Si solo dice \"almuerzo\", \"taxi\", \"micro\", \"pan\", \"mercado\" o \"farmacia\" sin nombre propio, merchant debe ser null o un merchant genérico solo si la taxonomía lo permite.\n- No pongas como merchant palabras genéricas como \"almuerzo\", \"desayuno\", \"cena\", \"taxi\", \"comida\" o \"gasto\".\n\nReglas de métodos de pago:\n- Si aparece Yape, payment_method debe ser \"Yape\".\n- Si aparece Plin, payment_method debe ser \"Plin\".\n- Si aparece SIP, payment_method debe ser \"SIP\".\n- Si aparece efectivo, cash o pagué en físico, payment_method debe ser \"Efectivo\".\n- Si aparece tarjeta de crédito, payment_method debe ser \"Tarjeta crédito\".\n- Si aparece tarjeta de débito, payment_method debe ser \"Tarjeta débito\".\n- Si aparece transferencia bancaria, payment_method debe ser \"Transferencia\".\n- Si no se puede saber, payment_method debe ser null.\n\nReglas para missing_fields:\n- missing_fields solo puede contener: \"amount\", \"category\", \"expense_date\".\n- Incluye \"amount\" solo si no hay monto claro.\n- Incluye \"category\" solo si no hay categoría clara.\n- Incluye \"expense_date\" solo si no se puede determinar una fecha razonable.\n- No agregues campos a missing_fields solo porque la confianza sea baja.\n- No agregues \"merchant\", \"subcategory\", \"payment_method\" ni \"description\" a missing_fields.\n\nReglas de confianza:\n- confidence debe ser un número entre 0 y 1.\n- Usa confidence >= 0.85 cuando monto, categoría y fecha están claros.\n- Usa confidence entre 0.70 y 0.84 cuando el gasto está completo pero hay alguna ambigüedad menor.\n- Usa confidence < 0.70 cuando faltan datos críticos o el texto no parece un gasto.\n- Baja la confianza si estás deduciendo categoría o merchant sin señal fuerte.\n- No uses confidence para marcar campos como faltantes.\n\nReglas específicas para Perú:\n- \"Yape a X\", \"Plin a X\" o \"transferí a X\" suele ser Transferencias personales si no hay comercio o compra clara.\n- \"Pagué deuda a X\" suele ser Transferencias personales > Apoyo / personas o Préstamos informales, según la taxonomía.\n- \"Micro\", \"combi\", \"pasaje\" o \"microbús\" es Transporte > Micro / combi / bus urbano, no taxi.\n- \"Taxi\" sin app es Transporte > Taxi.\n- Uber, Cabify, inDrive o DiDi Taxi son Transporte > Taxi por app.\n- Rappi o PedidosYa suelen ser Comida > Delivery, salvo que el texto indique supermercado, farmacia u otro rubro.\n- SmartFit es Fitness y deporte > Gimnasio, no Streaming.\n- OpenAI, ChatGPT, Cursor, Railway, Supabase o Cloudflare son Tecnología y trabajo, no entretenimiento.\n- SANNA, Ferginest, laboratorio o análisis clínico van en Salud > Clínica / laboratorio, no Farmacia.\n- Inkafarma, Mifarma o botica van en Salud > Farmacia.\n- Disney+, Netflix, Max o Prime Video son Suscripciones > Streaming video.\n\nFormato de salida obligatorio:\n{\n  \"amount\": number | null,\n  \"currency\": \"PEN\" | \"USD\" | \"EUR\" | null,\n  \"category\": string | null,\n  \"subcategory\": string | null,\n  \"merchant\": string | null,\n  \"description\": string | null,\n  \"payment_method\": \"Yape\" | \"Plin\" | \"SIP\" | \"Efectivo\" | \"Tarjeta débito\" | \"Tarjeta crédito\" | \"Transferencia\" | \"Otro\" | null,\n  \"expense_date\": \"YYYY-MM-DD\" | null,\n  \"missing_fields\": [\"amount\" | \"category\" | \"expense_date\"],\n  \"confidence\": number,\n  \"raw_ocr_text\": string | null,\n  \"document_type\": string | null\n}\n\nRegla crítica para entradas mixtas: si hay imagen y caption/texto, el caption del usuario es contexto intencional y tiene prioridad para categoría/subcategoría/propósito. En vouchers de Yape/Plin/SIP usa la imagen para monto, fecha y método de pago, pero no clasifiques como Transferencias personales si el caption indica un rubro de compra como Mercado, Farmacia, Taxi, Comida o similar."
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "messageType": "imageBinary",
+              "binaryImageDataKey": "telegram_image"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2544,
+        2624
+      ],
+      "id": "238a905a-5e37-4861-89bb-022ad63bccc7",
+      "name": "AI - Expense Extractor (Vision)"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.image_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "telegram_image"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "55001932-183d-47bc-9bb6-264d54db53f7",
+      "name": "Telegram API - Download Image Binary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        2576
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "expense_drafts",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalize AI Expense Output').item.json.open_draft_id || '__no_open_draft__' }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "resolved"
+            }
+          ]
+        }
+      },
+      "id": "fafe98cc-c0f0-4135-9ba2-94c099451180",
+      "name": "Supabase - Resolve Previous Draft After Expense",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3600,
+        2544
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dfdqFNXuCKyYNXmo",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "expense_drafts",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalize AI Expense Output').item.json.open_draft_id || '__no_open_draft__' }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "resolved"
+            }
+          ]
+        }
+      },
+      "id": "b8cabb5f-2d26-4d4b-898d-6c1d36691d66",
+      "name": "Supabase - Resolve Previous Draft After Replacement Draft",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3600,
+        3008
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dfdqFNXuCKyYNXmo",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b941a6cb-c25a-4fd5-b60f-e98492057640",
+              "leftValue": "={{ $json.has_image_for_ai === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "614655fe-a682-4a25-8447-787168185aae",
+      "name": "AI Input Has Image Binary?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2288,
+        2752
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Eres un extractor y normalizador de gastos personales para Perú.. Usa el texto/caption y, cuando el nodo reciba imagen binaria, analiza también el contenido visual. Devuelve solo JSON.\n\nTu tarea es convertir mensajes de Telegram, vouchers, screenshots o texto libre en un único objeto JSON válido para registrar un gasto personal.\n\nResponde únicamente JSON válido.\nNo uses Markdown.\nNo uses bloques ```json.\nNo expliques tu razonamiento.\nNo agregues texto antes ni después del JSON.\nNo inventes datos que no estén en el texto, imagen o contexto proporcionado.\n\nReglas generales:\n- Extrae solo un gasto por respuesta.\n- Si hay varios gastos claros en el mismo mensaje, extrae el gasto principal o el más explícito.\n- Si el texto no describe un gasto, devuelve los campos principales en null, missing_fields con los campos críticos faltantes y confidence bajo.\n- Usa Perú como contexto por defecto.\n- La moneda por defecto es PEN si el gasto parece local.\n- Las fechas deben estar en formato YYYY-MM-DD.\n- Si el usuario dice \"hoy\", usa la fecha de referencia del prompt.\n- Si el usuario dice \"ayer\", calcula la fecha usando la fecha de referencia.\n- Si no hay fecha explícita, usa la fecha de referencia solo cuando el mensaje parece un gasto registrado en el momento.\n- No uses la fecha de referencia si el mensaje habla claramente de un gasto pasado pero no dice cuándo.\n\nReglas de categorías:\n- Usa las categorías, subcategorías y merchant rules disponibles en el contexto.\n- No inventes categorías si existe una categoría razonable en la taxonomía.\n- category debe ser una categoría padre.\n- subcategory debe pertenecer coherentemente a esa category.\n- Si no hay una categoría suficientemente clara, category debe ser null y missing_fields debe incluir \"category\".\n- No uses subcategorías genéricas como \"Varios\" si hay una opción más precisa.\n- Prioriza merchant_rules sobre keywords generales.\n- Si una merchant_rule contradice una señal más específica del texto, gana la señal más específica.\n\nReglas de merchants:\n- merchant debe ser el comercio, plataforma, proveedor o contraparte relevante.\n- Yape, Plin, SIP, tarjeta, efectivo o transferencia son métodos de pago, no merchants.\n- Si el texto dice \"por Yape a Cinthia\", payment_method es \"Yape\" y merchant puede ser \"Cinthia\" porque es la contraparte.\n- Si solo dice \"almuerzo\", \"taxi\", \"micro\", \"pan\", \"mercado\" o \"farmacia\" sin nombre propio, merchant debe ser null o un merchant genérico solo si la taxonomía lo permite.\n- No pongas como merchant palabras genéricas como \"almuerzo\", \"desayuno\", \"cena\", \"taxi\", \"comida\" o \"gasto\".\n\nReglas de métodos de pago:\n- Si aparece Yape, payment_method debe ser \"Yape\".\n- Si aparece Plin, payment_method debe ser \"Plin\".\n- Si aparece SIP, payment_method debe ser \"SIP\".\n- Si aparece efectivo, cash o pagué en físico, payment_method debe ser \"Efectivo\".\n- Si aparece tarjeta de crédito, payment_method debe ser \"Tarjeta crédito\".\n- Si aparece tarjeta de débito, payment_method debe ser \"Tarjeta débito\".\n- Si aparece transferencia bancaria, payment_method debe ser \"Transferencia\".\n- Si no se puede saber, payment_method debe ser null.\n\nReglas para missing_fields:\n- missing_fields solo puede contener: \"amount\", \"category\", \"expense_date\".\n- Incluye \"amount\" solo si no hay monto claro.\n- Incluye \"category\" solo si no hay categoría clara.\n- Incluye \"expense_date\" solo si no se puede determinar una fecha razonable.\n- No agregues campos a missing_fields solo porque la confianza sea baja.\n- No agregues \"merchant\", \"subcategory\", \"payment_method\" ni \"description\" a missing_fields.\n\nReglas de confianza:\n- confidence debe ser un número entre 0 y 1.\n- Usa confidence >= 0.85 cuando monto, categoría y fecha están claros.\n- Usa confidence entre 0.70 y 0.84 cuando el gasto está completo pero hay alguna ambigüedad menor.\n- Usa confidence < 0.70 cuando faltan datos críticos o el texto no parece un gasto.\n- Baja la confianza si estás deduciendo categoría o merchant sin señal fuerte.\n- No uses confidence para marcar campos como faltantes.\n\nReglas específicas para Perú:\n- \"Yape a X\", \"Plin a X\" o \"transferí a X\" suele ser Transferencias personales si no hay comercio o compra clara.\n- \"Pagué deuda a X\" suele ser Transferencias personales > Apoyo / personas o Préstamos informales, según la taxonomía.\n- \"Micro\", \"combi\", \"pasaje\" o \"microbús\" es Transporte > Micro / combi / bus urbano, no taxi.\n- \"Taxi\" sin app es Transporte > Taxi.\n- Uber, Cabify, inDrive o DiDi Taxi son Transporte > Taxi por app.\n- Rappi o PedidosYa suelen ser Comida > Delivery, salvo que el texto indique supermercado, farmacia u otro rubro.\n- SmartFit es Fitness y deporte > Gimnasio, no Streaming.\n- OpenAI, ChatGPT, Cursor, Railway, Supabase o Cloudflare son Tecnología y trabajo, no entretenimiento.\n- SANNA, Ferginest, laboratorio o análisis clínico van en Salud > Clínica / laboratorio, no Farmacia.\n- Inkafarma, Mifarma o botica van en Salud > Farmacia.\n- Disney+, Netflix, Max o Prime Video son Suscripciones > Streaming video.\n\nFormato de salida obligatorio:\n{\n  \"amount\": number | null,\n  \"currency\": \"PEN\" | \"USD\" | \"EUR\" | null,\n  \"category\": string | null,\n  \"subcategory\": string | null,\n  \"merchant\": string | null,\n  \"description\": string | null,\n  \"payment_method\": \"Yape\" | \"Plin\" | \"SIP\" | \"Efectivo\" | \"Tarjeta débito\" | \"Tarjeta crédito\" | \"Transferencia\" | \"Otro\" | null,\n  \"expense_date\": \"YYYY-MM-DD\" | null,\n  \"missing_fields\": [\"amount\" | \"category\" | \"expense_date\"],\n  \"confidence\": number,\n  \"raw_ocr_text\": string | null,\n  \"document_type\": string | null\n}\n\nRegla crítica para entradas mixtas: si hay imagen y caption/texto, el caption del usuario es contexto intencional y tiene prioridad para categoría/subcategoría/propósito. En vouchers de Yape/Plin/SIP usa la imagen para monto, fecha y método de pago, pero no clasifiques como Transferencias personales si el caption indica un rubro de compra como Mercado, Farmacia, Taxi, Comida o similar."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "067d1c49-bdb2-4a98-9f10-3f54fd3bc0a1",
+      "name": "AI - Expense Extractor (Text)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2544,
+        2832
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# MisGastos - Input productivo\n\n**Telegram**\n- gastos por texto\n- gastos con imagen/voucher/screenshot\n- imagen con caption\n\nEl workflow descarga las imagenes de Telegram como binario y las pasa al Basic LLM Chain como mensaje multimodal, no como URL dentro del prompt.\n\n**Fuera de esta version**\n- Gmail Trigger y normalizacion de correos\n- comandos conversacionales dentro del flujo principal\n- reportes/insights dentro del workflow\n\nTodo mensaje de Telegram se procesa como posible gasto o comprobante.",
+        "height": 492,
+        "width": 664,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        976
+      ],
+      "id": "60742df9-ff5c-4b83-b7f6-50d7daee35f6",
+      "name": "README - Productive Inputs1"
+    },
+    {
+      "parameters": {
+        "content": "# Supabase como base transaccional\n\nSupabase/Postgres guarda:\n- gastos confirmados en expenses\n- drafts pendientes en expense_drafts\n- categorias/subcategorias\n- merchant rules\n\nEl workflow consulta v_ai_taxonomy_context, una vista que agrega categorias + merchant rules en un solo JSON para el prompt de IA.\n\nLos drafts se leen por chat_id/status, ordenados por updated_at descendente, y se marcan como resolved cuando una nueva ejecucion genera un gasto confirmado o un draft reemplazante.",
+        "height": 484,
+        "width": 640,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        560,
+        976
+      ],
+      "id": "8b33bba1-9e61-4ce9-bcdf-5512848a918a",
+      "name": "README - Supabase Storage1"
+    },
+    {
+      "parameters": {
+        "content": "# IA visible en el canvas\n\nSe usa AWS Bedrock con Amazon Nova Lite para extraer gastos desde texto e imagen.\n\nEl prompt recibe:\n- texto de Telegram\n- imagen binaria de Telegram cuando existe\n- draft abierto mas reciente\n- categorias activas\n- merchant rules activas\n- fecha de referencia en America/Lima\n- reglas globales para Peru\n\nLa respuesta JSON pasa por un nodo Code que normaliza montos, moneda, metodo de pago, campos faltantes y estado.",
+        "height": 484,
+        "width": 640,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        976
+      ],
+      "id": "caed5fcd-3933-4804-82db-6b7d75b5f998",
+      "name": "README - AI Nodes1"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        2736
+      ],
+      "id": "63930dff-76d2-4469-b834-bf4df3c9df28",
+      "name": "Telegram Trigger",
+      "webhookId": "4a8fe933-0b32-46b1-8db2-1ec4ce597e6a",
+      "credentials": {
+        "telegramApi": {
+          "id": "eOJtd9meIhx62JDr",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const update = $json;\nconst message = update.message || {};\nconst chat = message.chat || {};\nconst from = message.from || {};\n\nfunction clean(value) {\n  return value === undefined || value === null ? '' : String(value).trim();\n}\n\nfunction limaParts(date) {\n  const formatter = new Intl.DateTimeFormat('en-CA', {\n    timeZone: 'America/Lima',\n    year: 'numeric',\n    month: '2-digit',\n    day: '2-digit',\n    hour: '2-digit',\n    minute: '2-digit',\n    second: '2-digit',\n    hour12: false,\n  });\n  return Object.fromEntries(formatter.formatToParts(date).filter((p) => p.type !== 'literal').map((p) => [p.type, p.value]));\n}\n\nfunction limaTimestamp(date) {\n  const p = limaParts(date);\n  return p.year + '-' + p.month + '-' + p.day + 'T' + p.hour + ':' + p.minute + ':' + p.second + '-05:00';\n}\n\nfunction limaDate(date) {\n  const p = limaParts(date);\n  return p.year + '-' + p.month + '-' + p.day;\n}\n\nconst rawText = clean(message.text || message.caption || '');\nlet telegramFileId = null;\nlet fileMimeType = null;\nlet fileKind = null;\n\nif (Array.isArray(message.photo) && message.photo.length) {\n  const largest = [...message.photo].sort((a, b) => (b.file_size || 0) - (a.file_size || 0))[0];\n  telegramFileId = largest.file_id;\n  fileMimeType = 'image/jpeg';\n  fileKind = 'photo';\n} else if (message.document?.file_id && String(message.document.mime_type || '').startsWith('image/')) {\n  telegramFileId = message.document.file_id;\n  fileMimeType = message.document.mime_type;\n  fileKind = 'document_image';\n}\n\nconst chatId = clean(chat.id || from.id || 'unknown');\nconst msgId = clean(message.message_id || (chatId + ':' + Date.now()));\nconst receivedDate = new Date((message.date || Math.floor(Date.now() / 1000)) * 1000);\n\nreturn [{\n  json: {\n    source: 'telegram',\n    source_channel: 'telegram',\n    input_type: telegramFileId && rawText ? 'mixed' : telegramFileId ? 'image' : 'text',\n    chat_id: chatId,\n    conversation_id: 'telegram:' + chatId,\n    reply_chat_id: chatId,\n    source_message_id: msgId,\n    message_id: msgId,\n    raw_text: rawText,\n    subject: null,\n    sender_name: clean([from.first_name, from.last_name].filter(Boolean).join(' ')) || from.username || null,\n    sender_email: null,\n    telegram_file_id: telegramFileId,\n    telegram_file_mime_type: fileMimeType,\n    telegram_file_kind: fileKind,\n    image_url: null,\n    has_image: Boolean(telegramFileId),\n    received_at: receivedDate.toISOString(),\n    received_at_utc: receivedDate.toISOString(),\n    received_at_lima: limaTimestamp(receivedDate),\n    reference_date_lima: limaDate(receivedDate),\n    original_payload: update,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        2736
+      ],
+      "id": "0bf27cb0-81dc-49be-8b73-17f0429329f6",
+      "name": "Normalize Telegram Event"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f2704b30-34b1-41f7-bf3f-3336bd072591",
+              "leftValue": "={{ $json.has_image === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        2736
+      ],
+      "id": "d1e578cf-11b5-4e6f-9a58-1d533364244c",
+      "name": "Telegram Has Image File?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.telegram_get_file_url }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { file_id: $json.telegram_file_id } }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        944,
+        2576
+      ],
+      "id": "90d612ce-a36e-4b57-be91-d50a6147d7b2",
+      "name": "Telegram API - Get File Path"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $('Load Environment Variables').item.json;\nconst result = $json;\nlet imageUrl = null;\n\nif (result.result?.file_path) {\n  imageUrl = input.telegram_file_download_base + '/' + result.result.file_path;\n}\n\nreturn [{\n  json: {\n    ...input,\n    image_url: imageUrl,\n    has_image: Boolean(imageUrl),\n    telegram_file_path: result.result?.file_path || null,\n    telegram_image_binary_property: imageUrl ? 'telegram_image' : null,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        2576
+      ],
+      "id": "07210dcf-e2c3-46a9-9f69-6fb63e79819a",
+      "name": "Attach Telegram File URL"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "expense_drafts",
+        "limit": 1,
+        "orderBy": "updated_at.desc",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.chat_id }}"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "awaiting_clarification"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        2752
+      ],
+      "id": "dbaa1b45-e8f5-4d53-8bb7-e5dffed6126a",
+      "name": "Supabase - Get Open Draft for Expense",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dfdqFNXuCKyYNXmo",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "v_ai_taxonomy_context",
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1888,
+        2752
+      ],
+      "id": "61eb68bb-8cef-4f16-bd0d-521d3f9cd60a",
+      "name": "Supabase - Get AI Taxonomy Context",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dfdqFNXuCKyYNXmo",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function firstExistingNodeJson(names) {\n  for (const name of names) {\n    try {\n      const value = $(name).item.json;\n      if (value && Object.keys(value).length) return value;\n    } catch (e) {}\n  }\n  return {};\n}\n\nfunction firstExistingNodeBinary(names) {\n  for (const name of names) {\n    try {\n      const value = $(name).item.binary;\n      if (value && Object.keys(value).length) return value;\n    } catch (e) {}\n  }\n  return null;\n}\n\nconst input = firstExistingNodeJson([\n  'Normalize Telegram Image Binary',\n  'Telegram API - Download Image Binary',\n  'Attach Telegram File URL',\n  'Load Environment Variables',\n  'Normalize Telegram Event',\n]);\nconst imageBinary = firstExistingNodeBinary(['Normalize Telegram Image Binary', 'Telegram API - Download Image Binary']);\n\nlet openDraft = null;\ntry {\n  const d = $('Supabase - Get Open Draft for Expense').item.json;\n  if (d && (d.id || d.draft_id || d['Draft ID'])) openDraft = d;\n} catch (e) {}\n\nlet taxonomyContext = null;\nlet taxonomyPrompt = '{}';\ntry {\n  const t = $('Supabase - Get AI Taxonomy Context').item.json;\n  taxonomyContext = t.taxonomy_context || null;\n  taxonomyPrompt = t.taxonomy_prompt || JSON.stringify(taxonomyContext || t || {}, null, 2);\n} catch (e) {}\n\nconst referenceDateTime = input.received_at_lima || input.received_at || new Date().toISOString();\nconst referenceDate = input.reference_date_lima || String(referenceDateTime).slice(0, 10);\nconst hasImage = input.has_image === true && Boolean(imageBinary?.telegram_image);\nconst imageInstruction = hasImage\n  ? 'Hay una imagen adjunta. Analiza el contenido visual del mensaje binario junto con el texto/caption.'\n  : 'No hay imagen adjunta. Usa solo el texto y el contexto disponible.';\n\nconst prompt = [\n  'Eres un extractor y normalizador de gastos personales para Peru.',\n  '',\n  'Devuelve un unico objeto JSON valido. No uses Markdown, no expliques tu razonamiento y no inventes datos.',\n  '',\n  'Contexto de entrada:',\n  '- Fecha/hora de referencia en America/Lima: ' + referenceDateTime,\n  '- Fecha de referencia en America/Lima: ' + referenceDate,\n  '- Canal: ' + (input.source_channel || 'telegram'),\n  '- Tipo de entrada: ' + (input.input_type || 'text'),\n  '- Texto o caption recibido: ' + (input.raw_text || ''),\n  '- Imagen adjunta: ' + (hasImage ? 'si, enviada como imageBinary en el mensaje humano' : 'no'),\n  '- Instruccion de imagen: ' + imageInstruction,\n  '- Draft abierto mas reciente, si existe: ' + JSON.stringify(openDraft || null),\n  '',\n  'Catalogo activo de categorias, subcategorias y merchant rules:',\n  taxonomyPrompt,\n  '',\n  'Reglas generales:',\n  '- Extrae solo un gasto por respuesta.',\n  '- Si hay varios gastos claros en el mismo mensaje, extrae el gasto principal o el mas explicito.',\n  '- Si el texto no describe un gasto, devuelve los campos principales en null, missing_fields con los campos criticos faltantes y confidence bajo.',\n  '- Usa Peru como contexto por defecto.',\n  '- amount debe ser numero decimal o null.',\n  '- currency por defecto PEN si el gasto parece local en Peru.',\n  '- expense_date debe estar en YYYY-MM-DD o null.',\n  '- Si el usuario dice \"hoy\", usa la fecha de referencia en America/Lima.',\n  '- Si el usuario dice \"ayer\", calcula la fecha usando America/Lima.',\n  '- Si no hay fecha explicita, usa la fecha de referencia solo cuando el mensaje parece un gasto registrado en el momento.',\n  '- No uses la fecha de referencia si el mensaje habla claramente de un gasto pasado pero no dice cuando.',\n  '',\n  'Reglas para entradas mixtas con imagen y caption:',\n  '- Si hay imagen y caption/texto, el caption del usuario es contexto intencional y debe tener prioridad para categoria, subcategoria y proposito del gasto.',\n  '- Usa la imagen principalmente para leer monto, fecha, metodo de pago, destinatario, numero de operacion y texto OCR.',\n  '- No clasifiques como Transferencias personales solo porque un voucher de Yape/Plin/SIP muestra un destinatario, si el caption indica una compra o rubro concreto.',\n  '- Si el caption dice Mercado, mercado, bodega, tienda, abarrotes, fruta, verdura, carne, pollo o huevos, clasifica como Supermercado y despensa > Mercado / bodega.',\n  '- Si el caption dice Farmacia, botica, Inkafarma o Mifarma, clasifica como Salud > Farmacia.',\n  '- Si el caption dice Taxi, movilidad, pasaje, micro o combi, clasifica segun Transporte.',\n  '- Si el caption dice almuerzo, cena, desayuno, delivery o comida, clasifica segun Comida.',\n  '- En vouchers de Yape/Plin/SIP, el destinatario puede ser merchant o contraparte, pero no debe dominar la categoria cuando el caption describe el rubro real.',\n  '- Solo usa Transferencias personales cuando el texto/caption no indique compra, comercio, servicio o rubro concreto y la imagen sea claramente una transferencia a una persona.',\n  '',\n  'Reglas de drafts:',\n  '- Si existe draft abierto y el mensaje actual parece una respuesta corta de aclaracion, combina ambos contextos para completar el gasto.',\n  '- Si el mensaje actual describe claramente un gasto nuevo e independiente, prioriza el mensaje actual y no fuerces datos del draft anterior.',\n  '',\n  'Reglas de categorias:',\n  '- Usa las categorias, subcategorias y merchant rules disponibles en el contexto.',\n  '- No inventes categorias si existe una categoria razonable en la taxonomia.',\n  '- category debe ser una categoria padre.',\n  '- subcategory debe pertenecer coherentemente a esa category.',\n  '- Si no hay una categoria suficientemente clara, category debe ser null y missing_fields debe incluir \"category\".',\n  '- Primero evalua merchant_rules por prioridad. Si una regla aplica y no contradice el texto, usa default_category/default_subcategory/default_merchant.',\n  '- Despues usa keywords de categorias/subcategorias como respaldo.',\n  '- Si una merchant_rule contradice una senal mas especifica del texto, gana la senal mas especifica.',\n  '',\n  'Reglas de merchants y pago:',\n  '- merchant debe ser el comercio, plataforma, proveedor o contraparte relevante.',\n  '- Yape, Plin, SIP, tarjeta, efectivo, transferencia y bancos son payment_method, no merchant.',\n  '- Si el texto dice \"por Yape a Cinthia\", payment_method es \"Yape\" y merchant puede ser \"Cinthia\" porque es la contraparte.',\n  '- No uses palabras genericas como taxi, bus, micro, almuerzo, cena, desayuno, farmacia, mercado, delivery, comida o gasto como merchant si no hay marca.',\n  '- Si aparece Yape, payment_method debe ser \"Yape\".',\n  '- Si aparece Plin, payment_method debe ser \"Plin\".',\n  '- Si aparece SIP, payment_method debe ser \"SIP\".',\n  '- Si aparece efectivo o cash, payment_method debe ser \"Efectivo\".',\n  '- Si aparece tarjeta de credito, payment_method debe ser \"Tarjeta credito\".',\n  '- Si aparece tarjeta de debito, payment_method debe ser \"Tarjeta debito\".',\n  '- Si aparece transferencia bancaria, payment_method debe ser \"Transferencia\".',\n  '',\n  'Reglas especificas para Peru:',\n  '- \"Yape a X\", \"Plin a X\" o \"transferi a X\" suele ser Transferencias personales si no hay comercio o compra clara.',\n  '- \"Micro\", \"combi\", \"pasaje\" o \"microbus\" es Transporte > Micro / combi / bus urbano, no taxi.',\n  '- \"Taxi\" sin app es Transporte > Taxi.',\n  '- Uber, Cabify, inDrive o DiDi Taxi son Transporte > Taxi por app.',\n  '- Rappi o PedidosYa suelen ser Comida > Delivery, salvo que el texto indique supermercado, farmacia u otro rubro.',\n  '- SmartFit es Fitness y deporte > Gimnasio, no Streaming.',\n  '- OpenAI, ChatGPT, Cursor, Railway, Cloudflare, Namecheap o Supabase son Tecnologia y trabajo.',\n  '- SANNA, Ferginest, laboratorio o analisis clinico van en Salud > Clinica / laboratorio.',\n  '- Inkafarma, Mifarma o botica van en Salud > Farmacia.',\n  '- Disney+, Netflix, Max o Prime Video son Suscripciones > Streaming video.',\n  '- Para screenshots/vouchers de Yape, Plin, SIP o bancos, interpreta imagen y texto juntos.',\n  '',\n  'Reglas para missing_fields:',\n  '- missing_fields solo puede contener: \"amount\", \"category\", \"expense_date\".',\n  '- Incluye \"amount\" solo si no hay monto claro.',\n  '- Incluye \"category\" solo si no hay categoria clara.',\n  '- Incluye \"expense_date\" solo si no se puede determinar una fecha razonable.',\n  '- No agregues \"merchant\", \"subcategory\", \"payment_method\" ni \"description\" a missing_fields.',\n  '',\n  'Reglas de confianza:',\n  '- confidence debe ser un numero entre 0 y 1.',\n  '- Usa confidence >= 0.85 cuando monto, categoria y fecha estan claros.',\n  '- Usa confidence entre 0.70 y 0.84 cuando el gasto esta completo pero hay alguna ambiguedad menor.',\n  '- Usa confidence < 0.70 cuando faltan datos criticos o el texto no parece un gasto.',\n  '- No uses confidence para marcar campos como faltantes.',\n  '',\n  'Formato de salida obligatorio:',\n  '{',\n  '  \"amount\": number | null,',\n  '  \"currency\": \"PEN\" | \"USD\" | \"EUR\" | null,',\n  '  \"category\": string | null,',\n  '  \"subcategory\": string | null,',\n  '  \"merchant\": string | null,',\n  '  \"description\": string | null,',\n  '  \"payment_method\": \"Yape\" | \"Plin\" | \"SIP\" | \"Efectivo\" | \"Tarjeta debito\" | \"Tarjeta credito\" | \"Transferencia\" | \"Otro\" | null,',\n  '  \"expense_date\": \"YYYY-MM-DD\" | null,',\n  '  \"missing_fields\": [\"amount\" | \"category\" | \"expense_date\"],',\n  '  \"confidence\": number,',\n  '  \"raw_ocr_text\": string | null,',\n  '  \"document_type\": string | null',\n  '}',\n].join('\\n');\n\nconst outputItem = {\n  json: {\n    ...input,\n    open_draft: openDraft,\n    open_draft_id: openDraft?.id || openDraft?.draft_id || openDraft?.['Draft ID'] || null,\n    taxonomy_context: taxonomyContext,\n    taxonomy_prompt: taxonomyPrompt,\n    chatInput: prompt,\n    has_image_for_ai: hasImage,\n    image_binary_property_for_ai: hasImage ? 'telegram_image' : null,\n  },\n};\n\nif (imageBinary) {\n  outputItem.binary = imageBinary;\n}\n\nreturn [outputItem];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2096,
+        2752
+      ],
+      "id": "8a2dadf4-deeb-4999-bb7a-eef3df93fe5a",
+      "name": "Build AI Extraction Context"
+    },
+    {
+      "parameters": {
+        "model": "amazon.nova-lite-v1:0",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAwsBedrock",
+      "typeVersion": 1.1,
+      "position": [
+        2400,
+        2992
+      ],
+      "id": "86483cc4-5c31-43f0-80b5-8542d2541722",
+      "name": "AWS Bedrock Chat Model",
+      "credentials": {
+        "aws": {
+          "id": "5VTMjndrYpAqbNX9",
+          "name": "AWS (IAM) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $('Build AI Extraction Context').item.json;\nfunction parse(value) {\n  if (!value) return {};\n  if (typeof value === 'object') return value;\n  let text = String(value).trim().replace(/^```json\\s*/i, '').replace(/^```\\s*/i, '').replace(/```$/i, '').trim();\n  const start = text.indexOf('{'), end = text.lastIndexOf('}');\n  if (start >= 0 && end > start) text = text.slice(start, end + 1);\n  try { return JSON.parse(text); } catch (e) { return { parse_error: e.message, raw_response: value }; }\n}\nfunction amount(value) {\n  if (value === null || value === undefined || value === '') return null;\n  if (typeof value === 'number') return Number.isFinite(value) ? Math.round(value * 100) / 100 : null;\n  let s = String(value).trim().replace(/[^0-9,.-]/g, '');\n  if (!s) return null;\n  const hasComma = s.includes(','), hasDot = s.includes('.');\n  if (hasComma && hasDot) s = s.lastIndexOf(',') > s.lastIndexOf('.') ? s.replace(/\\./g, '').replace(',', '.') : s.replace(/,/g, '');\n  else if (hasComma) s = s.replace(',', '.');\n  const n = Number(s); return Number.isFinite(n) && n > 0 ? Math.round(n*100)/100 : null;\n}\nfunction normCurrency(v) { const s = String(v || '').toUpperCase(); if (s.includes('USD') || s.includes('DOLAR') || s.includes('DÓLAR') || s.includes('$')) return 'USD'; if (s.includes('EUR')) return 'EUR'; return 'PEN'; }\nfunction normPayment(v) { const s = String(v || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, ''); if (s.includes('yape')) return 'Yape'; if (s.includes('plin')) return 'Plin'; if (s.includes('sip')) return 'SIP'; if (s.includes('efect') || s.includes('cash')) return 'Efectivo'; if (s.includes('debito') || s.includes('debit')) return 'Tarjeta débito'; if (s.includes('credito') || s.includes('credit')) return 'Tarjeta crédito'; if (s.includes('transfer')) return 'Transferencia'; return v || null; }\nconst parsed = parse($json.output || $json.text || $json);\nconst expense = parsed.expense || parsed;\nconst payload = {\n  ...input,\n  amount: amount(expense.amount),\n  currency: normCurrency(expense.currency),\n  category_name: expense.category || expense.category_name || null,\n  subcategory_name: expense.subcategory || expense.subcategory_name || null,\n  merchant_name: expense.merchant || expense.merchant_name || null,\n  description: expense.description || null,\n  payment_method: normPayment(expense.payment_method),\n  expense_date: expense.expense_date || null,\n  missing_fields: Array.isArray(expense.missing_fields) ? expense.missing_fields.filter(v => ['amount','category','expense_date'].includes(v)) : [],\n  confidence: Math.max(0, Math.min(1, Number(expense.confidence ?? 0.75))),\n  raw_ocr_text: expense.raw_ocr_text || null,\n  document_type: expense.document_type || null,\n  source_image_url: input.telegram_file_path ? 'telegram:' + input.telegram_file_path : null,\n  open_draft_id: input.open_draft_id || null,\n  ai_payload: expense,\n};\nif (!payload.amount && !payload.missing_fields.includes('amount')) payload.missing_fields.push('amount');\nif (!payload.category_name && !payload.missing_fields.includes('category')) payload.missing_fields.push('category');\nif (!payload.expense_date && !payload.missing_fields.includes('expense_date')) payload.missing_fields.push('expense_date');\npayload.is_complete = payload.missing_fields.length === 0 && payload.confidence >= 0.8;\npayload.status_to_save = payload.is_complete ? 'confirmed' : 'awaiting_clarification';\npayload.clarification_question = payload.missing_fields.includes('amount') ? 'Me falta el monto. ¿Cuánto fue?' : payload.missing_fields.includes('expense_date') ? 'Me falta la fecha. ¿Fue hoy u otra fecha?' : payload.missing_fields.includes('category') ? 'Me falta la categoría. ¿Cómo quieres clasificarlo?' : `Entendí un gasto de S/ ${payload.amount} en ${payload.category_name || 'sin categoría'}. ¿Lo registro así?`;\nreturn [{ json: payload }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2864,
+        2752
+      ],
+      "id": "e4c7c8d1-9375-4724-bfc2-db2d8e39cf08",
+      "name": "Normalize AI Expense Output"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "16f154f8-73ba-48dd-9371-c0103d640fd7",
+              "leftValue": "={{ $json.is_complete === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3056,
+        2752
+      ],
+      "id": "c66abb4b-e245-4a84-b471-de3d26ffe67d",
+      "name": "Expense Is Complete?"
+    },
+    {
+      "parameters": {
+        "tableId": "expenses",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "chat_id",
+              "fieldValue": "={{ $json.chat_id }}"
+            },
+            {
+              "fieldId": "source_message_id",
+              "fieldValue": "={{ $json.source_message_id }}"
+            },
+            {
+              "fieldId": "source",
+              "fieldValue": "={{ $json.source_channel }}"
+            },
+            {
+              "fieldId": "raw_text",
+              "fieldValue": "={{ $json.raw_text }}"
+            },
+            {
+              "fieldId": "amount",
+              "fieldValue": "={{ $json.amount }}"
+            },
+            {
+              "fieldId": "currency",
+              "fieldValue": "={{ $json.currency }}"
+            },
+            {
+              "fieldId": "category_name",
+              "fieldValue": "={{ $json.category_name }}"
+            },
+            {
+              "fieldId": "subcategory_name",
+              "fieldValue": "={{ $json.subcategory_name }}"
+            },
+            {
+              "fieldId": "merchant_name",
+              "fieldValue": "={{ $json.merchant_name }}"
+            },
+            {
+              "fieldId": "description",
+              "fieldValue": "={{ $json.description }}"
+            },
+            {
+              "fieldId": "payment_method",
+              "fieldValue": "={{ $json.payment_method }}"
+            },
+            {
+              "fieldId": "expense_date",
+              "fieldValue": "={{ $json.expense_date }}"
+            },
+            {
+              "fieldId": "confidence",
+              "fieldValue": "={{ $json.confidence }}"
+            },
+            {
+              "fieldId": "confirmation_status",
+              "fieldValue": "confirmed"
+            },
+            {
+              "fieldId": "source_image_url",
+              "fieldValue": "={{ $json.source_image_url }}"
+            },
+            {
+              "fieldId": "raw_ocr_text",
+              "fieldValue": "={{ $json.raw_ocr_text }}"
+            },
+            {
+              "fieldId": "ai_payload",
+              "fieldValue": "={{ $json.ai_payload }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3328,
+        2608
+      ],
+      "id": "a5f4637d-ac62-4868-a9f9-c84e3cc45adc",
+      "name": "Supabase - Create Confirmed Expense",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dfdqFNXuCKyYNXmo",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "expense_drafts",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "chat_id",
+              "fieldValue": "={{ $json.chat_id }}"
+            },
+            {
+              "fieldId": "source_message_id",
+              "fieldValue": "={{ $json.source_message_id }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "awaiting_clarification"
+            },
+            {
+              "fieldId": "raw_text",
+              "fieldValue": "={{ $json.raw_text }}"
+            },
+            {
+              "fieldId": "last_user_reply",
+              "fieldValue": "={{ $json.raw_text }}"
+            },
+            {
+              "fieldId": "amount",
+              "fieldValue": "={{ $json.amount }}"
+            },
+            {
+              "fieldId": "currency",
+              "fieldValue": "={{ $json.currency }}"
+            },
+            {
+              "fieldId": "category_name",
+              "fieldValue": "={{ $json.category_name }}"
+            },
+            {
+              "fieldId": "subcategory_name",
+              "fieldValue": "={{ $json.subcategory_name }}"
+            },
+            {
+              "fieldId": "merchant_name",
+              "fieldValue": "={{ $json.merchant_name }}"
+            },
+            {
+              "fieldId": "description",
+              "fieldValue": "={{ $json.description }}"
+            },
+            {
+              "fieldId": "payment_method",
+              "fieldValue": "={{ $json.payment_method }}"
+            },
+            {
+              "fieldId": "expense_date",
+              "fieldValue": "={{ $json.expense_date }}"
+            },
+            {
+              "fieldId": "missing_fields",
+              "fieldValue": "={{ $json.missing_fields }}"
+            },
+            {
+              "fieldId": "clarification_question",
+              "fieldValue": "={{ $json.clarification_question }}"
+            },
+            {
+              "fieldId": "confidence",
+              "fieldValue": "={{ $json.confidence }}"
+            },
+            {
+              "fieldId": "source_image_url",
+              "fieldValue": "={{ $json.source_image_url }}"
+            },
+            {
+              "fieldId": "raw_ocr_text",
+              "fieldValue": "={{ $json.raw_ocr_text }}"
+            },
+            {
+              "fieldId": "ai_payload",
+              "fieldValue": "={{ $json.ai_payload }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3328,
+        2880
+      ],
+      "id": "b4eef940-a776-457e-a566-f02128d6c54b",
+      "name": "Supabase - Create Expense Draft",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dfdqFNXuCKyYNXmo",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let item = $json;\nlet msg = 'Listo.';\n\nif (item.id && item.status === 'awaiting_clarification') {\n  msg = `Tengo el gasto como borrador. ${item.clarification_question || 'Me falta confirmar algunos datos.'}`;\n} else if (item.id && item.amount) {\n  const detail = item.subcategory_name || item.category_name || 'gasto';\n  msg = `✅ Registré S/ ${item.amount} en ${detail}${item.merchant_name ? ' · ' + item.merchant_name : ''}.`;\n} else if (item.message) {\n  msg = item.message;\n}\n\ntry {\n  const input = $('Build AI Extraction Context').item.json;\n  item.reply_chat_id = input.reply_chat_id;\n  item.chat_id = input.chat_id;\n} catch (e) {}\n\nreturn [{\n  json: {\n    ...item,\n    delivery_chat_id: item.reply_chat_id || item.chat_id || $env.TELEGRAM_CHAT_ID,\n    message: msg\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        2768
+      ],
+      "id": "9d9e93b8-e13c-4bf9-b9f8-dd282b2373cd",
+      "name": "Build Delivery Message"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.delivery_chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3872,
+        2768
+      ],
+      "id": "290db6ce-4007-49e8-a883-4c5c9147416b",
+      "name": "Send Telegram Reply",
+      "webhookId": "087fee50-b157-4620-b766-04d6c42e69da",
+      "credentials": {
+        "telegramApi": {
+          "id": "eOJtd9meIhx62JDr",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json;\n\nfunction requiredEnv(name) {\n  const value = String($env[name] || '').trim();\n  if (!value) {\n    throw new Error('Missing required environment variable: ' + name);\n  }\n  return value;\n}\n\nconst telegramAccessToken = requiredEnv('TELEGRAM_ACCESS_TOKEN');\nconst telegramBotApiBase = 'https://api.telegram.org/bot' + telegramAccessToken;\nconst telegramFileDownloadBase = 'https://api.telegram.org/file/bot' + telegramAccessToken;\n\nreturn [{\n  json: {\n    ...input,\n    telegram_get_file_url: telegramBotApiBase + '/getFile',\n    telegram_file_download_base: telegramFileDownloadBase,\n    fallback_reply_chat_id: $env.TELEGRAM_CHAT_ID || null,\n    runtime_config_loaded: true,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        2736
+      ],
+      "id": "a6d35f81-9fb9-4fd2-9a33-297b0691840b",
+      "name": "Load Environment Variables"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item;\nconst binary = item.binary || {};\nconst image = binary.telegram_image;\n\nfunction imageMimeType() {\n  const declared = String(item.json.telegram_file_mime_type || '').toLowerCase();\n  if (declared.startsWith('image/')) return declared;\n\n  const extension = String(image?.fileExtension || image?.fileName || item.json.telegram_file_path || '').toLowerCase();\n  if (extension.endsWith('.png') || extension === 'png') return 'image/png';\n  if (extension.endsWith('.webp') || extension === 'webp') return 'image/webp';\n  if (extension.endsWith('.gif') || extension === 'gif') return 'image/gif';\n  if (extension.endsWith('.jpg') || extension.endsWith('.jpeg') || extension === 'jpg' || extension === 'jpeg') return 'image/jpeg';\n\n  return 'image/jpeg';\n}\n\nif (image) {\n  binary.telegram_image = {\n    ...image,\n    mimeType: imageMimeType(),\n    fileExtension: image.fileExtension || 'jpg',\n    fileName: image.fileName || 'telegram-image.jpg',\n  };\n}\n\nreturn [{\n  json: {\n    ...item.json,\n    telegram_image_mime_type_for_ai: binary.telegram_image?.mimeType || null,\n  },\n  binary,\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        2576
+      ],
+      "id": "d9f62421-f3cd-4e37-aee2-e7d3ecb8d3a1",
+      "name": "Normalize Telegram Image Binary"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram API - Download Image Binary": {
+      "main": [
+        [
+          {
+            "node": "Normalize Telegram Image Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Input Has Image Binary?": {
+      "main": [
+        [
+          {
+            "node": "AI - Expense Extractor (Vision)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI - Expense Extractor (Text)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - Expense Extractor (Vision)": {
+      "main": [
+        [
+          {
+            "node": "Normalize AI Expense Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - Expense Extractor (Text)": {
+      "main": [
+        [
+          {
+            "node": "Normalize AI Expense Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalize Telegram Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Telegram Event": {
+      "main": [
+        [
+          {
+            "node": "Load Environment Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Has Image File?": {
+      "main": [
+        [
+          {
+            "node": "Telegram API - Get File Path",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase - Get Open Draft for Expense",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram API - Get File Path": {
+      "main": [
+        [
+          {
+            "node": "Attach Telegram File URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Telegram File URL": {
+      "main": [
+        [
+          {
+            "node": "Telegram API - Download Image Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Get Open Draft for Expense": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Get AI Taxonomy Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Get AI Taxonomy Context": {
+      "main": [
+        [
+          {
+            "node": "Build AI Extraction Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build AI Extraction Context": {
+      "main": [
+        [
+          {
+            "node": "AI Input Has Image Binary?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AWS Bedrock Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI - Expense Extractor (Vision)",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI - Expense Extractor (Text)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize AI Expense Output": {
+      "main": [
+        [
+          {
+            "node": "Expense Is Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expense Is Complete?": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Create Confirmed Expense",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase - Create Expense Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Create Confirmed Expense": {
+      "main": [
+        [
+          {
+            "node": "Build Delivery Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Supabase - Resolve Previous Draft After Expense",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Create Expense Draft": {
+      "main": [
+        [
+          {
+            "node": "Build Delivery Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Supabase - Resolve Previous Draft After Replacement Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Delivery Message": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Environment Variables": {
+      "main": [
+        [
+          {
+            "node": "Telegram Has Image File?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Telegram Image Binary": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Get Open Draft for Expense",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8e6964b9-ed2c-4865-a632-f1ce06df7f30",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0acd411cf06116b0f4ee80fc72ee8c92f5d27d8187d3a0c37f21dded5edbd4f2"
+  },
+  "nodeGroups": [],
+  "id": "n2vnCDx0RganTrLx",
+  "tags": [
+    {
+      "updatedAt": "2026-07-01T03:28:38.440Z",
+      "createdAt": "2026-07-01T03:28:38.440Z",
+      "id": "AI2POBgHYtv9y8Wg",
+      "name": "1.0 Starter"
+    }
+  ]
+}
