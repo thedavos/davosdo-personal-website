@@ -565,6 +565,48 @@ export const projects: ProjectDetail[] = [
 		},
 	},
 	{
+		title: "Davos Links",
+		slug: "davos-links",
+		description:
+			"Panel para crear enlaces cortos con marca propia, organizarlos y revisar métricas simples de clics sobre Cloudflare.",
+		tags: ["TanStack Start", "React", "Cloudflare", "D1", "KV"],
+		show: true,
+		importance: "low",
+		status: "production",
+		longDescription:
+			"Davos Links es una herramienta personal para administrar links cortos bajo links.davosdo.dev. El producto combina una landing pública, autenticación, panel de gestión, creación de enlaces, filtros, exportación CSV y analítica básica de clics. La arquitectura corre sobre Cloudflare Workers con TanStack Start, usa D1 para datos relacionales, KV para soporte edge y Workers Analytics Engine para registrar actividad de enlaces sin montar una infraestructura pesada.",
+		role: "Fullstack Developer & Creator",
+		year: "2026 – presente",
+		features: [
+			"Landing pública para presentar el producto y guiar al panel",
+			"Autenticación con Better Auth bajo /api/auth/*",
+			"Panel privado para crear, editar, pausar y revisar enlaces cortos",
+			"Filtros por estado, etiquetas y campañas",
+			"Resumen de clics con ventanas de 7, 30 y 90 días",
+			"Exportación CSV de actividad y enlaces",
+			"Tracking de clics con Workers Analytics Engine mediante el binding CLICK_ANALYTICS",
+		],
+		stack: [
+			{ category: "Frontend", items: ["TanStack Start", "React", "TypeScript", "TanStack Router", "Tailwind CSS", "Shadcn"] },
+			{ category: "Backend", items: ["Cloudflare Workers", "Better Auth", "Wrangler"] },
+			{ category: "Datos", items: ["Cloudflare D1", "Cloudflare KV"] },
+			{ category: "Analytics", items: ["Workers Analytics Engine", "CLICK_ANALYTICS"] },
+		],
+		links: [
+			{ label: "Davos Links", url: "https://links.davosdo.dev", icon: "i-lucide-rocket", live: true },
+			{ label: "Repositorio", url: "https://github.com/thedavos/davos-links", icon: "i-lucide-github" },
+		],
+		images: {
+			hero: "/projects/davos-links/davos-links-hero.webp",
+			gallery: [
+				"/projects/davos-links/davos-links-dashboard.webp",
+				"/projects/davos-links/davos-links-links.webp",
+				"/projects/davos-links/davos-links-new-link.webp",
+				"/projects/davos-links/davos-links-login.webp",
+			],
+		},
+	},
+	{
 		title: "Misgastos automation",
 		slug: "misgastos-automation",
 		description:

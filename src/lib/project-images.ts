@@ -1,4 +1,5 @@
 import type { ImageMetadata } from "astro";
+import davosLinksHero from "@/assets/projects/davos-links/davos-links-hero.webp";
 import global66Hero from "@/assets/projects/global66/g66_home.webp";
 import interbankHero from "@/assets/projects/interbank/ibk_cambio_moneda_inicio.webp";
 import rutasecHero from "@/assets/projects/rutasec/rutasec_home.webp";
@@ -7,6 +8,7 @@ const heroBySlug: Record<string, ImageMetadata> = {
 	interbank: interbankHero,
 	global66: global66Hero,
 	rutasec: rutasecHero,
+	"davos-links": davosLinksHero,
 };
 
 export function resolveProjectHero(
