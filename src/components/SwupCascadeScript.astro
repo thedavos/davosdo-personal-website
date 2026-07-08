@@ -15,11 +15,5 @@
 			document.addEventListener("astro:after-swap", () => window.__runSwupCascade?.());
 			window.__swupCascadeBound = true;
 		}
-
-		if (document.readyState === "loading") {
-			document.addEventListener("DOMContentLoaded", runCascade, { once: true });
-		} else {
-			runCascade();
-		}
 	})();
 </script>

@@ -255,10 +255,11 @@ hr {
 
 /* Swup Transitions — Cascade Stagger
    El contenido entra en cascada: cada hijo aparece con un delay escalonado.
-   El contenedor NO se oculta durante enter — los hijos manejan su propia
-   visibilidad via animation-fill-mode: backwards (arrancan en opacity:0). */
+   Durante navegacion Swup el contenedor se desvanece; la cascada de entrada
+   la manejan los hijos via animation-fill-mode: backwards. */
 .transition-swup-slide {
   opacity: 1;
+  transition: opacity 0.2s ease;
 }
 
 .sr-only {
@@ -307,10 +308,8 @@ hr {
 	backface-visibility: hidden;
 }
 
-/* Leave: fade out rapido */
-html.is-leaving .transition-swup-slide {
+html.is-animating .transition-swup-slide {
   opacity: 0;
-  transition: opacity 0.2s ease;
 }
 
 /* Cascade keyframes */
