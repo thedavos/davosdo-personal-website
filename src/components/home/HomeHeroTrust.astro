@@ -5,7 +5,7 @@ import { clientTrustBadges } from "@data/client-trust";
 
 <div
 	class="home-hero-trust"
-	aria-label="Experiencia en Interbank y Global66"
+	aria-label="Experiencia en Interbank, Global66 y FractalUp"
 >
 	<p class="home-hero-trust__label">Experiencia en producción con</p>
 
@@ -100,6 +100,11 @@ import { clientTrustBadges } from "@data/client-trust";
 		max-width: 116px;
 	}
 
+	.home-hero-trust :global(.client-logo--fractalup) {
+		height: 22px;
+		max-width: 116px;
+	}
+
 	@media (min-width: 768px) {
 		.home-hero-trust__label {
 			text-align: left;
@@ -115,6 +120,11 @@ import { clientTrustBadges } from "@data/client-trust";
 		}
 
 		.home-hero-trust :global(.client-logo--global66) {
+			height: 24px;
+			max-width: 124px;
+		}
+
+		.home-hero-trust :global(.client-logo--fractalup) {
 			height: 24px;
 			max-width: 124px;
 		}

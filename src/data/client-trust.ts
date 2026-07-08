@@ -18,4 +18,10 @@ export const clientTrustBadges: ClientTrustBadge[] = [
 		logoAlt: "Global66",
 		href: "https://global66.com",
 	},
+	{
+		name: "fractalup",
+		logoSrc: "/logos/fractalup.svg",
+		logoAlt: "FractalUp",
+		href: "https://fractalup.com",
+	},
 ];
