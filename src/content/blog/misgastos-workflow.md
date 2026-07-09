@@ -10,7 +10,7 @@ heroImage: "/blog/misgastos-workflow/misgastos-flow-diagram.png"
 
 Hace un tiempo venía perdiendo el control de mis gastos. Más o menos sabía cuánto gastaba cada mes, pero después de unos días me costaba recordar en qué se me había ido el dinero. A veces apuntaba gastos sueltos en las notas del celular o en un chat conmigo mismo en WhatsApp, pero nunca me duraba demasiado.
 
-También probé algunas aplicaciones de finanzas personales, pero ninguna terminaba de encajar con lo que buscaba. Yo quería algo rápido, casi inmediato: registrar un gasto en segundos y seguir con mi día. En la mayoría de apps había demasiada fricción: abrir la aplicación, elegir una categoría, escribir una descripción, poner el monto, seleccionar el método de pago y recién guardar. Eran demasiados pasos para algo que quería resolver con un mensaje.
+Probé algunas aplicaciones de finanzas personales, pero ninguna terminaba de encajar con lo que buscaba. Quería registrar un gasto en segundos y seguir con mi día; en cambio, casi todas me pedían abrir la app, elegir categoría, escribir una descripción, poner el monto, seleccionar el método de pago y recién guardar. Demasiados pasos para algo que quería resolver con un mensaje.
 
 Además, buena parte de mis gastos pasan por Yape, Plin o tarjetas, y casi ninguna app que probé entendía bien esa realidad. Muchas terminaban tratando Yape o Plin como si fueran efectivo, cuando para mí era importante diferenciar el método de pago del comercio o de la persona a la que le estaba pagando.
 
@@ -46,7 +46,7 @@ La versión inicial me sirvió para validar la idea, pero Airtable no me iba a d
 
 Elegí self-hostear Supabase, no la versión gestionada, por una razón concreta: quería poder crear mis propias vistas SQL sobre los datos sin pelear con los límites del plan gratuito. Todo queda detrás de un túnel de Cloudflare, con subdominios propios, así que no hay ninguna URL genérica de Railway dando vueltas.
 
-> *Uso Railway para este proyecto y para otros servicios personales. Si estás pensando en montar algo parecido, dejo mi [link de referido](https://links.davosdo.dev/railway): te da $20 en créditos de bienvenida y, si más adelante pagas por el servicio, yo recibo una comisión. Lo menciono por transparencia; el post no va de Railway, pero puede servirte si quieres probar un setup similar.*
+> *Uso Railway para este proyecto y para otros servicios personales. Si estás pensando en montar algo parecido, dejo mi [link de referido](https://links.davosdo.dev/drUlN): te da $20 en créditos de bienvenida y, si más adelante pagas por el servicio, yo recibo una comisión. Lo menciono por transparencia; el post no va de Railway, pero puede servirte si quieres probar un setup similar.*
 
 Técnicamente, el sistema quedó separado en piezas bastante claras: Telegram es la interfaz, n8n orquesta el flujo, Supabase guarda el estado, Bedrock interpreta el gasto y Metabase muestra el resultado. No hay una app propia en el medio, que era justo lo que quería evitar.
 
@@ -105,9 +105,9 @@ También ajusté la fecha de referencia a `America/Lima`. Si usaba UTC, un mensa
 
 Y todavía queda un pendiente que prefiero resolver en la base de datos: duplicados. El workflow guarda `source_message_id`, pero la protección fuerte debería ser un índice o constraint en Supabase para evitar que un retry de Telegram cree dos gastos iguales.
 
-El otro problema que más tiempo me quitó fue Metabase.
+### El problema inesperado: visualizar los datos
 
-Los filtros de fecha no funcionan bien como variables de texto sueltas, tienen que ser Field Filters conectados de verdad a una columna, o el dashboard mensual simplemente no filtra nada. A eso se sumaron varias queries que tuve que reescribir porque una cosa es que la query devuelva los datos correctos y otra que Metabase los grafique como uno espera, más bastante prueba y error ajustando el tipo de visualización de cada card hasta que el dashboard se viera como quería. De los problemas técnicos de este proyecto, este fue el que más tiempo terminé metiéndole.
+Metabase fue el problema técnico que más tiempo me quitó. Los filtros de fecha no funcionan como variables de texto sueltas: tienen que ser Field Filters conectados de verdad a una columna; de lo contrario, el dashboard mensual no filtra nada. También reescribí varias queries y ajusté las visualizaciones hasta que cada card mostrara lo que esperaba. Que una query devuelva datos correctos no garantiza que el dashboard los interprete bien.
 
 ![Dashboard de gastos en Metabase](/blog/misgastos-workflow/metabase-dashboard.png)
 
@@ -115,13 +115,13 @@ Los filtros de fecha no funcionan bien como variables de texto sueltas, tienen q
 
 Esto no es un proyecto complicado. En el fondo, es un wrapper de un LLM con un bot de Telegram al frente: el tipo de cosa que alguien arma en un fin de semana, y de hecho la primera versión nació más o menos así. Pero la versión que uso hoy me tomó cuatro días de trabajo repartidos en dos meses: dos días para la primera versión y dos más, varias semanas después, para pulirla y migrarla.
 
-No lo apuré a propósito. Tengo trabajo de tiempo completo y otros proyectos, y elegí avanzar una hora cuando hay ganas antes que meterme un sprint nocturno para "terminarlo ya". El sistema sigue ahí, corriendo, con más de 650 gastos procesados y una confianza promedio de la IA que ronda 93%. No sé si habría llegado a esta versión más sólida si lo hubiera forzado en un fin de semana.
+No lo apuré a propósito. Tengo trabajo de tiempo completo y otros proyectos, y elegí avanzar una hora cuando hay ganas antes que meterme un sprint nocturno para "terminarlo ya". El sistema sigue ahí, corriendo, con más de 650 gastos procesados y una confianza promedio reportada por la IA que ronda el 93%. No sé si habría llegado a esta versión más sólida si lo hubiera forzado en un fin de semana.
 
-## El workflow en JSON
+## El workflow en GitHub
 
-También voy a dejar el archivo del workflow en JSON para quien quiera revisarlo, importarlo en su propio n8n o simplemente usarlo como referencia:
+También dejé el workflow en un repositorio de GitHub para quien quiera revisarlo, importarlo en su propio n8n o simplemente usarlo como referencia:
 
-[Descargar workflow de MisGastos](/blog/misgastos-workflow/misgastos-workflow.json)
+[Repositorio: thedavos/expenses-workflow](https://github.com/thedavos/expenses-workflow)
 
 No es un template universal ni pretende funcionar tal cual en cualquier cuenta. Está armado para mi setup: Telegram como entrada, Supabase como base de datos, AWS Bedrock como modelo y algunas reglas bastante peruanas para Yape, Plin, mercados, taxis, comida y servicios.
 

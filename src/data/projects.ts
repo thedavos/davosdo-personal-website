@@ -639,6 +639,7 @@ export const projects: ProjectDetail[] = [
 		links: [
 			{ label: "Blog post", url: "/blog/misgastos-workflow/", icon: "i-lucide-newspaper" },
 			{ label: "Workflow JSON", url: "/blog/misgastos-workflow/misgastos-workflow.json", icon: "i-lucide-download" },
+			{ label: "Repositorio", url: "https://github.com/thedavos/expenses-workflow", icon: "i-lucide-github" },
 		],
 		images: {
 			hero: "/blog/misgastos-workflow/misgastos-flow-diagram.png",
