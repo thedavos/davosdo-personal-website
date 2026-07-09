@@ -607,7 +607,7 @@ export const projects: ProjectDetail[] = [
 		},
 	},
 	{
-		title: "Misgastos automation",
+		title: "Misgastos Workflow",
 		slug: "misgastos-automation",
 		description:
 			"Workflow personal para registrar gastos desde Telegram con n8n, Supabase, AWS Bedrock y Metabase, sin construir una app propia.",
@@ -616,7 +616,7 @@ export const projects: ProjectDetail[] = [
 		importance: "low",
 		status: "production",
 		longDescription:
-			"Misgastos automation nació de una necesidad bastante concreta: anotar gastos en segundos y recuperar visibilidad sobre en qué se me iba el dinero. En lugar de crear otra app financiera, armé un workflow donde Telegram es la interfaz, n8n orquesta el flujo, Supabase guarda el estado, AWS Bedrock interpreta texto e imágenes, y Metabase muestra el resultado. No lo pensé como producto público; es una automatización personal hecha para mi forma de registrar gastos, con reglas peruanas para Yape, Plin, comercios, categorías y métodos de pago.",
+			"Misgastos Workflow nació de una necesidad bastante concreta: anotar gastos en segundos y recuperar visibilidad sobre en qué se me iba el dinero. En lugar de crear otra app financiera, armé un workflow donde Telegram es la interfaz, n8n orquesta el flujo, Supabase guarda el estado, AWS Bedrock interpreta texto e imágenes, y Metabase muestra el resultado. No lo pensé como producto público; es una automatización personal hecha para mi forma de registrar gastos, con reglas peruanas para Yape, Plin, comercios, categorías y métodos de pago.",
 		role: "Automation Developer & Creator",
 		year: "2026 – presente",
 		features: [
