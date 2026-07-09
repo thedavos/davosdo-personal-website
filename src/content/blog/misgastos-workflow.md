@@ -46,7 +46,7 @@ La versión inicial me sirvió para validar la idea, pero Airtable no me iba a d
 
 Elegí self-hostear Supabase, no la versión gestionada, por una razón concreta: quería poder crear mis propias vistas SQL sobre los datos sin pelear con los límites del plan gratuito. Todo queda detrás de un túnel de Cloudflare, con subdominios propios, así que no hay ninguna URL genérica de Railway dando vueltas.
 
-> *Uso Railway para este proyecto y para otros servicios personales. Si estás pensando en montar algo parecido, dejo mi [link de referido](https://links.davosdo.dev/drUlN): te da $20 en créditos de bienvenida y, si más adelante pagas por el servicio, yo recibo una comisión. Lo menciono por transparencia; el post no va de Railway, pero puede servirte si quieres probar un setup similar.*
+> *Uso Railway para este proyecto y para otros servicios personales. Si estás pensando en montar algo parecido, dejo mi [link de referido](https://links.davosdo.dev/railway): te da $20 en créditos de bienvenida y, si más adelante pagas por el servicio, yo recibo una comisión. Lo menciono por transparencia; el post no va de Railway, pero puede servirte si quieres probar un setup similar.*
 
 Técnicamente, el sistema quedó separado en piezas bastante claras: Telegram es la interfaz, n8n orquesta el flujo, Supabase guarda el estado, Bedrock interpreta el gasto y Metabase muestra el resultado. No hay una app propia en el medio, que era justo lo que quería evitar.
 
