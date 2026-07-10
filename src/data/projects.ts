@@ -13,6 +13,34 @@ export type StackCategory = {
 	items: string[];
 };
 
+export type ProjectTechnologyFilter = {
+	value: string;
+	label: string;
+	tokens: readonly string[];
+};
+
+export const projectTechnologyFilters = [
+	{ value: "vue", label: "Vue", tokens: ["vue"] },
+	{ value: "react", label: "React", tokens: ["react"] },
+	{ value: "angular", label: "Angular", tokens: ["angular"] },
+	{ value: "tanstack", label: "TanStack", tokens: ["tanstack"] },
+	{ value: "flutter", label: "Flutter", tokens: ["flutter"] },
+	{ value: "typescript", label: "TypeScript", tokens: ["typescript"] },
+	{ value: "tailwind", label: "Tailwind", tokens: ["tailwind"] },
+	{ value: "css", label: "CSS", tokens: ["css", "scss"] },
+	{
+		value: "microfrontends",
+		label: "Microfrontends",
+		tokens: ["microfrontend", "microfrontends"],
+	},
+	{ value: "cloudflare", label: "Cloudflare", tokens: ["cloudflare"] },
+	{ value: "aws", label: "AWS", tokens: ["aws"] },
+	{ value: "azure", label: "Azure", tokens: ["azure"] },
+	{ value: "analytics", label: "Analytics", tokens: ["analytics"] },
+	{ value: "apis", label: "APIs", tokens: ["api", "apis"] },
+	{ value: "ia", label: "IA", tokens: ["ai", "ia"] },
+] as const satisfies readonly ProjectTechnologyFilter[];
+
 export type ProjectSummary = {
 	title: string;
 	slug: string;
@@ -696,6 +724,25 @@ export function getProjectBySlug(slug: string): ProjectDetail | undefined {
 
 export function getVisibleProjects(): ProjectDetail[] {
 	return projects.filter((p) => p.show);
+}
+
+function tokenizeProjectTechnology(value: string): string[] {
+	return (
+		value
+			.normalize("NFD")
+			.replace(/[\u0300-\u036f]/g, "")
+			.toLowerCase()
+			.match(/[a-z0-9]+/g) ?? []
+	);
+}
+
+export function getProjectFilterTokens(project: ProjectDetail): string[] {
+	const technologyValues = [
+		...project.tags,
+		...project.stack.flatMap(({ category, items }) => [category, ...items]),
+	];
+
+	return [...new Set(technologyValues.flatMap(tokenizeProjectTechnology))];
 }
 
 const importanceRank: Record<ProjectImportance, number> = {

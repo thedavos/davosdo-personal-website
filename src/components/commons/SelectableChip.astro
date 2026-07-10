@@ -1,0 +1,62 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import Chip from "@components/commons/Chip.astro";
+
+type Props = {
+	value: string;
+	selected?: boolean;
+} & HTMLAttributes<"button">;
+
+const {
+	value,
+	selected = false,
+	class: className,
+	...props
+} = Astro.props as Props;
+
+const classes = [
+	"selectable-chip min-h-9 cursor-pointer select-none",
+	"transition-[transform,background-color,border-color,color,box-shadow] duration-150 ease-out",
+	"hover:border-primary/30 hover:bg-primary-soft hover:text-primary",
+	"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+	"active:translate-y-[1px]",
+	className,
+]
+	.filter(Boolean)
+	.join(" ");
+---
+
+<Chip
+	as="button"
+	type="button"
+	variant="default"
+	size="md"
+	class={classes}
+	aria-pressed={selected}
+	data-project-filter-chip
+	data-filter-value={value}
+	{...props}
+>
+	<slot />
+</Chip>
+
+<style is:global>
+	.selectable-chip[aria-pressed="true"] {
+		border-color: rgb(var(--color-primary));
+		background: rgb(var(--color-primary));
+		color: white;
+		box-shadow: 0 1px 2px rgba(var(--color-primary), 0.18);
+	}
+
+	.selectable-chip[aria-pressed="true"]:hover {
+		border-color: rgb(var(--color-primary-dark));
+		background: rgb(var(--color-primary-dark));
+		color: white;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.selectable-chip {
+			transition: none;
+		}
+	}
+</style>

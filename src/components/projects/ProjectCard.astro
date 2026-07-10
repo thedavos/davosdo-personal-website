@@ -18,6 +18,7 @@ type Props = {
 	priority?: boolean;
 	colSpan?: 1 | 2;
 	variant?: ProjectCardVariant;
+	filterTokens?: readonly string[];
 	style?: string;
 	class?: string;
 };
@@ -33,6 +34,7 @@ const {
 	priority = false,
 	colSpan,
 	variant = "masonry",
+	filterTokens = [],
 	style,
 	class: className,
 } = Astro.props as Props;
@@ -54,7 +56,14 @@ const classes = [
 	.join(" ");
 ---
 
-<div class={classes} style={style} data-cascade-item>
+<div
+	class={classes}
+	style={style}
+	data-cascade-item
+	data-project-filter-tokens={filterTokens.length > 0
+		? filterTokens.join(" ")
+		: undefined}
+>
 	<Card
 		as="article"
 		variant="outlined"
@@ -122,6 +131,10 @@ const classes = [
 		flex-direction: column;
 		box-sizing: border-box;
 		min-width: 0;
+	}
+
+	.project-card[hidden] {
+		display: none;
 	}
 
 	.project-card--high {

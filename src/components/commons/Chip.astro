@@ -1,30 +1,36 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 
+type ChipElement = "span" | "button";
 type ChipVariant = "default" | "primary" | "muted";
 type ChipSize = "xs" | "sm" | "md";
 
 type BaseProps = {
+	as?: ChipElement;
 	variant?: ChipVariant;
 	size?: ChipSize;
 };
 
-type Props = BaseProps & HTMLAttributes<"span">;
+type Props = BaseProps &
+	(HTMLAttributes<"span"> | HTMLAttributes<"button">);
 
 const {
+	as = "span",
 	variant = "default",
 	size = "md",
 	class: className,
 	...props
-} = Astro.props;
+} = Astro.props as Props;
+
+const Component = as;
 ---
 
-<span
+<Component
 	class:list={["chip", `chip--${variant}`, `chip--${size}`, className]}
 	{...props}
 >
 	<slot />
-</span>
+</Component>
 
 <style>
 	.chip {

@@ -1,15 +1,27 @@
 ---
+import Button from "@components/commons/Button.astro";
+import SelectableChip from "@components/commons/SelectableChip.astro";
 import ProjectCard from "@components/projects/ProjectCard.astro";
-import type { ProjectDetail } from "@data/projects";
+import {
+	getProjectFilterTokens,
+	projectTechnologyFilters,
+	type ProjectDetail,
+} from "@data/projects";
 
 type Props = {
 	projects: ProjectDetail[];
 };
 
 const { projects } = Astro.props as Props;
+const initialResultLabel = `${projects.length} ${projects.length === 1 ? "proyecto" : "proyectos"}`;
 ---
 
-<section id="proyectos" class="home-section home-section--surface home-projects" data-cascade-scope>
+<section
+	id="proyectos"
+	class="home-section home-section--surface home-projects"
+	data-cascade-scope
+	data-project-filter-root
+>
 	<div class="home-section__inner">
 		<header
 			class="home-section__header"
@@ -22,27 +34,102 @@ const { projects } = Astro.props as Props;
 			</p>
 		</header>
 
-		<div class="home-projects__grid" aria-label="Proyectos destacados">
-			{
-				projects.map((project, index) => (
-					<ProjectCard
-						slug={project.slug}
-						title={project.title}
-						description={project.description}
-						tags={project.tags}
-						importance={project.importance}
-						heroSrc={
-							project.importance === "high"
-								? project.images.hero
-								: undefined
-						}
-						priority={project.importance === "high" && index === 0}
-						colSpan={project.colSpan}
-						url={`/projects/${project.slug}`}
-						style={`--cascade-delay: ${0.12 + index * 0.04}s`}
-					/>
-				))
-			}
+		<div class="home-projects__content flex flex-col gap-6">
+			<div
+				class="home-projects__filters flex flex-col gap-4 border-b border-border pb-5"
+				data-cascade-item
+				style="--cascade-delay: 0.08s"
+			>
+				<div class="flex flex-wrap items-center justify-between gap-3">
+					<p
+						id="project-filter-label"
+						class="m-0 text-sm font-semibold leading-snug text-body"
+					>
+						Filtrar por tecnología
+					</p>
+					<div class="flex min-h-9 items-center gap-2">
+						<span
+							class="text-xs font-medium text-muted"
+							data-project-filter-count
+							aria-live="polite"
+							aria-atomic="true"
+						>
+							{initialResultLabel}
+						</span>
+						<Button
+							variant="ghost"
+							size="sm"
+							leftIcon="i-lucide-x"
+							class="-mr-3"
+							data-project-filter-clear
+							hidden
+						>
+							Limpiar filtros
+						</Button>
+					</div>
+				</div>
+
+				<div
+					class="flex flex-wrap gap-2"
+					role="group"
+					aria-labelledby="project-filter-label"
+				>
+					{
+						projectTechnologyFilters.map((filter) => (
+							<SelectableChip
+								value={filter.value}
+								data-filter-tokens={filter.tokens.join(" ")}
+								aria-controls="project-grid"
+							>
+								{filter.label}
+							</SelectableChip>
+						))
+					}
+				</div>
+			</div>
+
+			<div
+				id="project-grid"
+				class="home-projects__grid"
+				aria-label="Proyectos destacados"
+				data-project-filter-grid
+			>
+				{
+					projects.map((project, index) => (
+						<ProjectCard
+							slug={project.slug}
+							title={project.title}
+							description={project.description}
+							tags={project.tags}
+							importance={project.importance}
+							heroSrc={
+								project.importance === "high"
+									? project.images.hero
+									: undefined
+							}
+							priority={project.importance === "high" && index === 0}
+							colSpan={project.colSpan}
+							filterTokens={getProjectFilterTokens(project)}
+							url={`/projects/${project.slug}`}
+							style={`--cascade-delay: ${0.12 + index * 0.04}s`}
+						/>
+					))
+				}
+			</div>
+
+			<div
+				class="home-projects__empty rounded-xl border border-dashed border-outline bg-background px-6 py-10 text-center"
+				data-project-filter-empty
+				hidden
+			>
+				<h3 class="m-0 text-lg leading-tight text-body">
+					No hay proyectos con esos filtros
+				</h3>
+				<p class="mx-auto mb-0 mt-2 max-w-[44ch] text-sm leading-relaxed text-muted">
+					Prueba otra combinación de tecnologías o limpia los filtros para ver
+					todos los proyectos.
+				</p>
+			</div>
 		</div>
 	</div>
 </section>
@@ -55,6 +142,11 @@ const { projects } = Astro.props as Props;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 		gap: 20px;
 		align-items: stretch;
+	}
+
+	:global([data-project-filter-clear][hidden]),
+	.home-projects__empty[hidden] {
+		display: none;
 	}
 
 	@media (max-width: 900px) {
@@ -71,3 +163,8 @@ const { projects } = Astro.props as Props;
 		}
 	}
 </style>
+
+<script>
+	import { setupProjectFilters } from "@/utils/project-filter";
+	setupProjectFilters();
+</script>
