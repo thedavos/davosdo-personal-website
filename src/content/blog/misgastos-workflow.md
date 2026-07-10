@@ -40,7 +40,7 @@ Construir una app me parecía demasiado para una necesidad bastante simple: anot
 
 ## Rehaciendo todo: self-hosted en Railway
 
-La versión inicial me sirvió para validar la idea, pero Airtable no me iba a dar lo que necesitaba para crecer: no hay SQL real ni forma de armar una vista que junte categorías con reglas de merchants. Hace unas semanas migré todo a un stack self-hosted en Railway: Supabase completo, corriendo ahí mismo, junto con n8n y Metabase, cada uno con su propio Postgres.
+La versión inicial me sirvió para validar la idea, pero Airtable no me daba la flexibilidad de SQL ni las vistas que necesitaba para juntar categorías con reglas de merchants. Hace unas semanas migré todo a un stack self-hosted en Railway: Supabase completo, corriendo ahí mismo, junto con n8n y Metabase, cada uno con su propio Postgres.
 
 ![Arquitectura self-hosted en Railway](/blog/misgastos-workflow/railway-self-hosted-stack.png)
 
@@ -105,9 +105,21 @@ También ajusté la fecha de referencia a `America/Lima`. Si usaba UTC, un mensa
 
 Y todavía queda un pendiente que prefiero resolver en la base de datos: duplicados. El workflow guarda `source_message_id`, pero la protección fuerte debería ser un índice o constraint en Supabase para evitar que un retry de Telegram cree dos gastos iguales.
 
-### El problema inesperado: visualizar los datos
+### Convertir los registros en información útil
 
-Metabase fue el problema técnico que más tiempo me quitó. Los filtros de fecha no funcionan como variables de texto sueltas: tienen que ser Field Filters conectados de verdad a una columna; de lo contrario, el dashboard mensual no filtra nada. También reescribí varias queries y ajusté las visualizaciones hasta que cada card mostrara lo que esperaba. Que una query devuelva datos correctos no garantiza que el dashboard los interprete bien.
+Registrar los gastos era solo la mitad del problema. Si el dashboard no respondía preguntas simples —cuánto gasté este mes, en qué categorías y cómo cambió frente al mes anterior—, el flujo perdía bastante valor.
+
+Metabase fue la parte técnica que más trabajo de iteración me dio. En las consultas nativas, los filtros de fecha no funcionan como variables de texto sueltas: tienen que ser [Field Filters](https://www.metabase.com/docs/latest/questions/native-editor/field-filters) vinculados a una columna real. De lo contrario, el dashboard mensual parece filtrar, pero las tarjetas pueden seguir mostrando datos que no corresponden al período elegido.
+
+También reescribí algunas queries y ajusté las visualizaciones. Que una consulta devuelva filas correctas no garantiza que el dashboard sea correcto: los filtros, las agregaciones y cada gráfico tienen que representar la misma métrica y el mismo período.
+
+Mientras lo resolvía, identifiqué otros errores comunes que conviene anticipar al trabajar con vistas y dashboards en Metabase:
+
+- Si una consulta usa alias o CTEs, el Field Filter debe conocer ese alias; de lo contrario, el filtro puede fallar aunque la consulta funcione sin él.
+- Después de crear o modificar una vista en Postgres, Metabase puede seguir mostrando metadatos antiguos hasta que [sincroniza el esquema y vuelve a escanear los campos](https://www.metabase.com/docs/latest/databases/sync-scan). Eso afecta tipos de columna, filtros y sugerencias de visualización.
+- Si los timestamps se guardan en UTC pero el reporte se interpreta en otra zona horaria, los gastos cercanos a medianoche pueden caer en otro día y alterar los totales diarios o mensuales. La zona horaria de la base, del servidor y de Metabase debe ser [consistente](https://www.metabase.com/docs/latest/configuring-metabase/timezones).
+
+La forma más fiable de validarlo fue contrastar un período conocido contra una consulta directa y probar los filtros en cada tarjeta. Con eso resuelto, el sistema dejó de ser solo un registro automático: ahora también me da visibilidad continua sobre en qué se me va el dinero.
 
 ![Dashboard de gastos en Metabase](/blog/misgastos-workflow/metabase-dashboard.png)
 
