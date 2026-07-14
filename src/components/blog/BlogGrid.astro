@@ -14,7 +14,6 @@ const { featured, recent } = Astro.props;
 const featuredEnriched = featured ? enrichPost(featured) : undefined;
 const recentEnriched = recent.map(enrichPost);
 const pairedPost = recentEnriched.length === 1 ? recentEnriched[0] : undefined;
-const rowCount = Math.max(recentEnriched.length, 1);
 const layoutMode =
 	recentEnriched.length === 0
 		? "solo"
@@ -25,7 +24,6 @@ const layoutMode =
 
 <div
 	class:list={["blog-grid", `blog-grid--${layoutMode}`]}
-	style={`--blog-grid-rows: ${rowCount}`}
 	aria-label="Artículos recientes"
 >
 	{
@@ -50,18 +48,17 @@ const layoutMode =
 				/>
 			</div>
 		) : (
-			recentEnriched.map((item, index) => (
-				<div
-					class="blog-grid__compact"
-					style={`--blog-compact-row: ${index + 1}`}
-				>
-					<BlogCompactCard
-						post={item.post}
-						readingTimeLabel={item.readingTimeLabel}
-						url={item.url}
-					/>
-				</div>
-			))
+			<div class="blog-grid__recent">
+				{recentEnriched.map((item) => (
+					<div class="blog-grid__compact">
+						<BlogCompactCard
+							post={item.post}
+							readingTimeLabel={item.readingTimeLabel}
+							url={item.url}
+						/>
+					</div>
+				))}
+			</div>
 		)
 	}
 </div>
@@ -70,9 +67,8 @@ const layoutMode =
 	.blog-grid {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		grid-template-rows: repeat(var(--blog-grid-rows, 4), minmax(96px, 1fr));
 		gap: 20px;
-		align-items: stretch;
+		align-items: start;
 	}
 
 	.blog-grid__featured,
@@ -86,17 +82,22 @@ const layoutMode =
 
 	.blog-grid__featured {
 		grid-column: 1;
-		grid-row: 1 / span var(--blog-grid-rows, 4);
 	}
 
 	.blog-grid__paired {
 		grid-column: 2;
-		grid-row: 1;
+	}
+
+	.blog-grid__recent {
+		display: grid;
+		align-content: start;
+		gap: 20px;
+		grid-column: 2;
+		min-width: 0;
 	}
 
 	.blog-grid__compact {
-		grid-column: 2;
-		grid-row: var(--blog-compact-row);
+		min-height: 128px;
 	}
 
 	.blog-grid__featured > :global(*),
@@ -108,7 +109,6 @@ const layoutMode =
 
 	.blog-grid--solo {
 		grid-template-columns: minmax(0, 720px);
-		grid-template-rows: auto;
 		justify-content: center;
 	}
 
@@ -118,27 +118,26 @@ const layoutMode =
 	}
 
 	.blog-grid--pair {
-		grid-template-rows: auto;
+		align-items: stretch;
 	}
 
-	.blog-grid--pair .blog-grid__featured {
-		grid-row: 1;
+	.blog-grid--pair .blog-grid__featured,
+	.blog-grid--pair .blog-grid__paired {
+		align-self: stretch;
 	}
 
 	@media (max-width: 900px) {
 		.blog-grid--stack {
+			grid-template-columns: 1fr;
+		}
+
+		.blog-grid--stack .blog-grid__featured,
+		.blog-grid--stack .blog-grid__recent {
+			grid-column: 1;
+		}
+
+		.blog-grid--stack .blog-grid__recent {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
-			grid-template-rows: auto;
-		}
-
-		.blog-grid--stack .blog-grid__featured {
-			grid-column: 1 / -1;
-			grid-row: auto;
-		}
-
-		.blog-grid--stack .blog-grid__compact {
-			grid-column: auto;
-			grid-row: auto;
 		}
 	}
 
@@ -148,10 +147,12 @@ const layoutMode =
 		}
 
 		.blog-grid__featured,
-		.blog-grid__paired,
-		.blog-grid__compact {
+		.blog-grid__paired {
 			grid-column: 1;
-			grid-row: auto;
+		}
+
+		.blog-grid--stack .blog-grid__recent {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>
