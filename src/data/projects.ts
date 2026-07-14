@@ -562,7 +562,7 @@ export const projects: ProjectDetail[] = [
 			"Acortador de URLs personal y open source con redirects en el edge, organización y analytics detallados sobre Cloudflare.",
 		tags: ["TanStack Start", "React", "Cloudflare", "Analytics", "Open Source"],
 		show: true,
-		importance: "medium",
+		importance: "low",
 		status: "production",
 		longDescription:
 			"atajo es mi acortador de URLs personal y un laboratorio práctico para aprender sobre Codex, prompting, agentes de IA e infraestructura de Cloudflare. El producto reúne redirects con caché, gestión de enlaces, campañas, etiquetas y analytics coherentes en una interfaz vivid-light pensada como herramienta para developers. La instancia pública funciona para un único usuario y no ofrece registro abierto, pero el código tiene licencia MIT y puede autoalojarse. La arquitectura corre sobre Cloudflare Workers: D1 mantiene los datos canónicos, KV acelera la resolución de enlaces y Workers Analytics Engine registra la actividad sin añadir una infraestructura separada.",
@@ -594,6 +594,11 @@ export const projects: ProjectDetail[] = [
 			hero: "/projects/atajo/atajo-landing.jpeg",
 			gallery: [
 				"/projects/atajo/atajo-dashboard.jpeg",
+				"/projects/atajo/atajo-links.png",
+				"/projects/atajo/atajo-link-analytics.png",
+				"/projects/atajo/atajo-link-acquisition.png",
+				"/projects/atajo/atajo-overview-breakdowns.png",
+				"/projects/atajo/atajo-settings.png",
 			],
 		},
 	},
