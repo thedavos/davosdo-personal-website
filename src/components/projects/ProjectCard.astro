@@ -8,7 +8,6 @@ type ProjectImportance = "high" | "medium" | "low";
 type ProjectCardVariant = "masonry" | "compact";
 
 type Props = {
-	slug: string;
 	title: string;
 	description: string;
 	tags: string[];
@@ -24,7 +23,6 @@ type Props = {
 };
 
 const {
-	slug,
 	title,
 	description,
 	tags,
@@ -75,7 +73,6 @@ const classes = [
 				showHeroImage && heroSrc && (
 					<a href={url} class="project-card__media" tabindex="-1">
 						<ProjectHeroImage
-							slug={slug}
 							src={heroSrc}
 							alt={`Vista principal de ${title}`}
 							layout="card"

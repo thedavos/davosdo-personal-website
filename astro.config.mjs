@@ -12,6 +12,18 @@ export default defineConfig({
 	site: siteConfig.site,
 	image: {
 		remotePatterns: [{ protocol: "https", hostname: "placehold.co" }],
+		// Wraps the adapter's image service to always send a quality parameter.
+		// See src/lib/image-service.ts for why this matters. Requires
+		// `imageService: "custom"` on the adapter, which in turn means the
+		// transform endpoint has to be wired up explicitly here.
+		service: { entrypoint: "./src/lib/image-service.ts" },
+		endpoint: { entrypoint: "@astrojs/cloudflare/image-transform-endpoint" },
+		// Gives every image a responsive `srcset` -- including Markdown body
+		// images, which otherwise ship at full source resolution.
+		layout: "constrained",
+		// Left off on purpose: images are already styled by `global.css` and
+		// `blog.css`, and the injected global styles would fight that CSS.
+		responsiveStyles: false,
 	},
 	fonts: [
 		{
@@ -86,7 +98,7 @@ export default defineConfig({
 			],
 		}),
 	],
-	adapter: cloudflare(),
+	adapter: cloudflare({ imageService: "custom" }),
 	vite: {
 		build: {
 			rollupOptions: {

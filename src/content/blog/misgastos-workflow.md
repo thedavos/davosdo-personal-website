@@ -3,7 +3,7 @@ title: "Cómo terminé construyendo mi propio tracker de gastos con Telegram, n8
 description: "Cómo armé un workflow personal para registrar gastos desde Telegram con n8n, Supabase, AWS Bedrock y Metabase."
 category: "Automatización"
 pubDate: "Jul 7 2026"
-heroImage: "/blog/misgastos-workflow/misgastos-flow-diagram.png"
+heroImage: "./misgastos-workflow/misgastos-flow-diagram.png"
 ---
 
 ## Por qué
@@ -42,7 +42,7 @@ Construir una app me parecía demasiado para una necesidad bastante simple: anot
 
 La versión inicial me sirvió para validar la idea, pero Airtable no me daba la flexibilidad de SQL ni las vistas que necesitaba para juntar categorías con reglas de merchants. Hace unas semanas migré todo a un stack self-hosted en Railway: Supabase completo, corriendo ahí mismo, junto con n8n y Metabase, cada uno con su propio Postgres.
 
-![Arquitectura self-hosted en Railway](/blog/misgastos-workflow/railway-self-hosted-stack.png)
+![Arquitectura self-hosted en Railway](./misgastos-workflow/railway-self-hosted-stack.png)
 
 Elegí self-hostear Supabase, no la versión gestionada, por una razón concreta: quería poder crear mis propias vistas SQL sobre los datos sin pelear con los límites del plan gratuito. Todo queda detrás de un túnel de Cloudflare, con subdominios propios, así que no hay ninguna URL genérica de Railway dando vueltas.
 
@@ -56,7 +56,7 @@ Para la extracción uso Amazon Nova Lite a través de AWS Bedrock (`amazon.nova-
 
 El flujo actual se ve así:
 
-![Diagrama del workflow de MisGastos](/blog/misgastos-workflow/misgastos-flow-diagram.png)
+![Diagrama del workflow de MisGastos](./misgastos-workflow/misgastos-flow-diagram.png)
 
 La parte más importante del diagrama es que el workflow no trata todos los mensajes igual. Si llega texto, va por la rama de texto. Si llega una imagen, n8n descarga el archivo de Telegram como binario (`telegram_image`) y lo pasa al LLM como un mensaje humano de tipo `imageBinary`. Esto parece un detalle de implementación, pero cambia bastante el resultado: el modelo no recibe una URL escrita en el prompt, recibe la imagen real.
 
@@ -89,7 +89,7 @@ Con ese contexto, un mensaje como "pagué 95 soles por Yape a Renzo, mi parte de
 
 Yape ahí es el método de pago, no el merchant. Al principio los mezclaba y me arruinaba las categorías: Yape terminaba apareciendo como si fuera una tienda.
 
-![Workflow original en n8n](/blog/misgastos-workflow/n8n-workflow-overview.png)
+![Workflow original en n8n](./misgastos-workflow/n8n-workflow-overview.png)
 
 ## Los problemas que sí me costaron
 
@@ -121,7 +121,7 @@ Mientras lo resolvía, identifiqué otros errores comunes que conviene anticipar
 
 La forma más fiable de validarlo fue contrastar un período conocido contra una consulta directa y probar los filtros en cada tarjeta. Con eso resuelto, el sistema dejó de ser solo un registro automático: ahora también me da visibilidad continua sobre en qué se me va el dinero.
 
-![Dashboard de gastos en Metabase](/blog/misgastos-workflow/metabase-dashboard.png)
+![Dashboard de gastos en Metabase](./misgastos-workflow/metabase-dashboard.png)
 
 ## No fue un fin de semana
 

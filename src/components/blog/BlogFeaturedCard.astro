@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import Button from "@components/commons/Button.astro";
 import Card from "@components/commons/Card.astro";
 import Chip from "@components/commons/Chip.astro";
@@ -45,12 +46,14 @@ const isHorizontal = layout === "horizontal";
 			{
 				heroImage && (
 					<div class="blog-featured__media">
-						<img
+						<Image
 							src={heroImage}
 							alt=""
 							width={720}
-							height={360}
+							widths={[360, 540, 720, 840, 1080]}
+							sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1024px) 45vw, 420px"
 							loading="eager"
+							fetchpriority="high"
 							decoding="async"
 							class="blog-featured__image"
 						/>
