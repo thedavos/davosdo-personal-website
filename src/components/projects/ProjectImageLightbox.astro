@@ -1,5 +1,7 @@
 ---
+import { Image, getImage } from "astro:assets";
 import ProjectHeroImage from "@components/projects/ProjectHeroImage.astro";
+import { resolveImage } from "@/lib/project-images";
 
 export interface LightboxImage {
 	src: string;
@@ -11,7 +13,6 @@ interface Props {
 	mode: "hero" | "gallery" | "dialog";
 	images?: LightboxImage[];
 	index?: number;
-	slug?: string;
 	src?: string;
 	alt?: string;
 	loading?: "eager" | "lazy";
@@ -21,20 +22,81 @@ const {
 	mode,
 	images = [],
 	index = 0,
-	slug = "",
 	src = "",
 	alt = "",
 	loading = "lazy",
 } = Astro.props;
 
 const totalCount = images.length;
+
+/**
+ * Gallery thumbnails sit in a `repeat(auto-fit, minmax(280px, 1fr))` grid with
+ * a 16px gap, inside `site-container` (`max-w-[900px]` + 16px padding each
+ * side). That resolves to two 426px columns once the container maxes out, and
+ * a single full-width column on small screens. 852 covers 426px at 2x DPR.
+ */
+const THUMB_WIDTHS = [320, 480, 640, 852];
+const THUMB_SIZES =
+	"(max-width: 640px) calc(100vw - 32px), (max-width: 932px) calc((100vw - 48px) / 2), 426px";
+
+/**
+ * Thumbnails are displayed at `aspect-ratio: 16 / 10` with `object-fit: cover`.
+ * Requesting that ratio makes the crop happen server-side instead of shipping
+ * pixels the browser throws away -- portrait screenshots (1122x1402) would
+ * otherwise download at full height to fill a landscape box.
+ *
+ * Heads up: the local Images emulation in `wrangler dev` ignores `fit` and pads
+ * to the requested box, so thumbnails look letterboxed locally. Production
+ * crops correctly, which is what the CSS `object-fit: cover` already did.
+ */
+const THUMB_ASPECT = 16 / 10;
+const thumbHeight = (width: number) => Math.round(width / THUMB_ASPECT);
+
+/**
+ * Full-size images shown in the dialog are capped well below the source
+ * resolution (several are 3248x2122 screenshots) since the dialog never
+ * exceeds the viewport.
+ */
+const DIALOG_MAX_WIDTH = 1600;
+
+const galleryImages =
+	mode === "gallery"
+		? images.map((img) => ({ ...img, resolved: resolveImage(img.src) }))
+		: [];
+
+/**
+ * The dialog sets `src` from JavaScript, so `<Image>` cannot be used directly.
+ * Optimized URLs are resolved at build time instead and handed to the client
+ * script, which keeps the same `{ src, alt }` shape it already expected.
+ */
+const dialogImages =
+	mode === "dialog"
+		? await Promise.all(
+				images.map(async (img) => {
+					const resolved = resolveImage(img.src);
+					if (typeof resolved === "string") {
+						return { src: resolved, alt: img.alt, width: 0, height: 0 };
+					}
+					const optimized = await getImage({
+						src: resolved,
+						width: Math.min(resolved.width, DIALOG_MAX_WIDTH),
+						format: "webp",
+					});
+					return {
+						src: optimized.src,
+						alt: img.alt,
+						width: optimized.attributes.width ?? 0,
+						height: optimized.attributes.height ?? 0,
+					};
+				}),
+			)
+		: [];
 ---
 
 {
 	mode === "hero" && (
 		<div class="project-lightbox__hero-wrap">
 			<ProjectHeroImage
-				slug={slug}
 				src={src}
 				alt={alt}
 				layout="detail"
@@ -48,7 +110,7 @@ const totalCount = images.length;
 
 {
 	mode === "gallery" &&
-		images.map((img, imageIndex) => {
+		galleryImages.map((img, imageIndex) => {
 			if (img.variant !== "gallery") return null;
 			return (
 				<button
@@ -58,12 +120,27 @@ const totalCount = images.length;
 					data-index={imageIndex}
 					aria-label={`Ver ${img.alt} en grande`}
 				>
-					<img
-						src={img.src}
-						alt={img.alt}
-						class="project-lightbox__thumb project-lightbox__thumb--gallery"
-						loading="lazy"
-					/>
+					{typeof img.resolved === "string" ? (
+						<img
+							src={img.resolved}
+							alt={img.alt}
+							class="project-lightbox__thumb project-lightbox__thumb--gallery"
+							loading="lazy"
+							decoding="async"
+						/>
+					) : (
+						<Image
+							src={img.resolved}
+							alt={img.alt}
+							width={THUMB_WIDTHS[THUMB_WIDTHS.length - 1]}
+							height={thumbHeight(THUMB_WIDTHS[THUMB_WIDTHS.length - 1])}
+							widths={THUMB_WIDTHS}
+							sizes={THUMB_SIZES}
+							class="project-lightbox__thumb project-lightbox__thumb--gallery"
+							loading="lazy"
+							decoding="async"
+						/>
+					)}
 					<span class="project-lightbox__zoom-badge" aria-hidden="true">
 						<span class="project-lightbox__zoom-icon i-lucide-zoom-in" />
 					</span>
@@ -110,7 +187,7 @@ const totalCount = images.length;
 
 {
 	mode === "dialog" && totalCount > 0 && (
-		<script define:vars={{ images }}>
+		<script define:vars={{ images: dialogImages }}>
 			const lightboxMediaQuery = "(min-width: 641px)";
 
 			const LIGHTBOX_OPEN_ATTR = "data-lightbox-open";
@@ -226,6 +303,10 @@ const totalCount = images.length;
 					const current = images[activeIndex];
 					preview.src = current.src;
 					preview.alt = current.alt;
+					if (current.width && current.height) {
+						preview.width = current.width;
+						preview.height = current.height;
+					}
 					preload(activeIndex - 1);
 					preload(activeIndex + 1);
 				};

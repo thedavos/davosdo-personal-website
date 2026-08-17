@@ -2,3 +2,5 @@ _worker.js
 _routes.json
 _headers
 _redirects
+.DS_Store
+**/.DS_Store

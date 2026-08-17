@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import Card from "@components/commons/Card.astro";
 import Chip from "@components/commons/Chip.astro";
 import BlogPostMeta from "@components/blog/BlogPostMeta.astro";
@@ -27,11 +28,12 @@ const { title, category, pubDate, heroImage } = post.data;
 		{
 			heroImage && (
 				<div class="blog-archive-card__media">
-					<img
+					<Image
 						src={heroImage}
 						alt=""
 						width={400}
-						height={225}
+						widths={[280, 420, 560, 840, 1120]}
+						sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 900px) calc((100vw - 56px) / 2), 273px"
 						loading="lazy"
 						decoding="async"
 						class="blog-archive-card__image"

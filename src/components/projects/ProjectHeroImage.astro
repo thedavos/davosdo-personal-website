@@ -1,14 +1,10 @@
 ---
 import { Image } from "astro:assets";
-import {
-	isRemoteImageSrc,
-	resolveProjectHero,
-} from "@/lib/project-images";
+import { isRemoteImageSrc, resolveImage } from "@/lib/project-images";
 
 type Layout = "card" | "detail";
 
 type Props = {
-	slug: string;
 	src: string;
 	alt: string;
 	loading?: "eager" | "lazy";
@@ -18,7 +14,6 @@ type Props = {
 };
 
 const {
-	slug,
 	src,
 	alt,
 	loading = "lazy",
@@ -27,16 +22,28 @@ const {
 	class: className,
 } = Astro.props;
 
-const resolved = resolveProjectHero(slug, src);
+const resolved = resolveImage(src);
 const remote =
 	typeof resolved === "string" && isRemoteImageSrc(resolved);
 
+/**
+ * Measured against the real layout, both inside `site-container`
+ * (`max-w-[900px]` + 16px padding each side, so 868px of content):
+ * - `card`   renders ~422px wide in the two-column project grid.
+ * - `detail` spans the full 868px container.
+ *
+ * The top width in each ladder covers a 2x DPR screen. Extra `srcset`
+ * candidates are free here because transforms happen on demand, not at build.
+ */
 const sizes =
 	layout === "card"
-		? "(max-width: 640px) 100vw, (max-width: 900px) 50vw, 50vw"
-		: "(max-width: 900px) 100vw, min(900px, 100vw)";
+		? "(max-width: 640px) calc(100vw - 32px), (max-width: 932px) calc((100vw - 48px) / 2), 422px"
+		: "(max-width: 932px) calc(100vw - 32px), 868px";
 
-const widths = [400, 640, 800, 1200];
+const widths =
+	layout === "card"
+		? [320, 480, 640, 844, 1080]
+		: [400, 640, 868, 1200, 1400];
 
 const imageClass = [
 	"project-hero-image",
@@ -64,7 +71,7 @@ const imageProps = {
 			<Image src={resolved} width={1200} height={600} {...imageProps} />
 		)
 	) : (
-		<Image src={resolved} {...imageProps} />
+		<Image src={resolved} width={1200} {...imageProps} />
 	)
 }
 

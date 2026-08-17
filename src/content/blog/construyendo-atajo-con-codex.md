@@ -3,7 +3,7 @@ title: "Construyendo atajo con Codex: contexto, skills, subagentes e iteración"
 description: "Lo que aprendí usando Codex, instrucciones persistentes, skills especializados y subagentes para convertir un proyecto personal en un producto pulido sobre Cloudflare."
 category: "Inteligencia artificial"
 pubDate: "Jul 14 2026"
-heroImage: "/blog/construyendo-atajo-con-codex/atajo-landing.jpeg"
+heroImage: "./construyendo-atajo-con-codex/atajo-landing.jpeg"
 ---
 
 **atajo** comenzó como una excusa para aprender.

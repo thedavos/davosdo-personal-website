@@ -3,7 +3,7 @@ title: "Entendiendo SQL Injection"
 description: "Qué es SQL injection, cómo detectarla, un ejemplo real de explotación y las medidas básicas para prevenirla."
 category: "Ciberseguridad"
 pubDate: "Jun 22 2026"
-heroImage: "/blog/entendiendo-sql-injection/hero.svg"
+heroImage: "./entendiendo-sql-injection/hero.svg"
 ---
 
 SQL injection (SQLi) es una de las vulnerabilidades más conocidas y, a la vez, una de las que más sigue apareciendo en aplicaciones reales. En este artículo recopilo lo que he ido aprendiendo sobre el patrón: qué es, qué puede lograr un atacante, cómo empezar a detectarla y cómo se ve en la práctica.
