@@ -37,7 +37,7 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 			</div>
 			<div class="flex items-center md:hidden">
 				<MobileNav
-					client:load
+					client:media="(max-width: 767px)"
 					navItems={SITE_NAV_ITEMS}
 					currentPath={currentPath}
 				/>

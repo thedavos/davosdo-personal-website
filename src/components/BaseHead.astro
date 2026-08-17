@@ -31,8 +31,15 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url);
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <meta name="generator" content={Astro.generator} />
 
+<!-- Geist Sans is used for body copy, so it is worth preloading. Geist Mono is
+     only applied to `code`/`pre` (see global.css), so it is left to load on
+     demand instead of costing every page a 71 KB preload. -->
 <Font cssVariable="--font-geist-sans" preload />
-<Font cssVariable="--font-geist-mono" preload />
+<Font cssVariable="--font-geist-mono" />
+
+<!-- The contact form injects the Turnstile script on demand; warming the
+     connection removes DNS + TLS from the critical path at submit time. -->
+<link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
