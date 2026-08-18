@@ -87,7 +87,6 @@ html[data-theme='dark'] {
 
 html[data-theme='dark'] .card,
 html[data-theme='dark'] .service-card-surface,
-html[data-theme='dark'] .card-surface,
 html[data-theme='dark'] .contact-faq {
 	box-shadow: none !important;
 	border: 1px solid rgb(var(--color-border)) !important;
