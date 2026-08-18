@@ -402,14 +402,14 @@ onBeforeUnmount(() => {
 		margin-top: 0.35rem;
 		border: 1px solid rgb(var(--color-primary));
 		background: rgb(var(--color-primary));
-		color: rgb(255 255 255);
+		color: rgb(var(--color-on-primary));
 		font-weight: 600;
 	}
 
 	.mobile-nav__link--cta:hover {
 		border-color: rgb(var(--color-primary-dark));
 		background: rgb(var(--color-primary-dark));
-		color: rgb(255 255 255);
+		color: rgb(var(--color-on-primary));
 	}
 
 	.mobile-nav__link--cta .mobile-nav__link-icon {

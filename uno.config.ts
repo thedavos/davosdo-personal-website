@@ -60,6 +60,7 @@ export default defineConfig({
 		colors: {
 			primary: "rgb(var(--color-primary))",
 			"primary-dark": "rgb(var(--color-primary-dark))",
+			"on-primary": "rgb(var(--color-on-primary))",
 			"primary-soft": "var(--color-primary-soft)",
 			"primary-border": "var(--color-primary-border)",
 			"primary-hover": "var(--color-primary-hover)",

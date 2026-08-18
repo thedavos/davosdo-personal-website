@@ -7,9 +7,18 @@
 @import "./form.css";
 
 :root {
-	/* Brand colors */
-	--color-primary: 99 102 241; /* #6366f1 */
-	--color-primary-dark: 79 70 229; /* #4f46e5 */
+	/* Brand colors.
+	   Indigo 600 and 700 rather than 500 and 600. Indigo 500 (#6366f1) reaches
+	   only 4.47 against white and 4.27 against `--color-surface`, and white on
+	   top of it as a button fill reaches 4.47 as well, all short of the 4.5 that
+	   WCAG AA asks for small text. Indigo 600 clears every one of those three
+	   cases at 6.01 or better, so the scale moved one step and `primary-dark`
+	   followed it to keep the hover state a step apart. */
+	--color-primary: 79 70 229; /* #4f46e5 */
+	--color-primary-dark: 67 56 202; /* #4338ca */
+	/* What goes on top of a primary fill. White clears 6.29 on indigo 600 and
+	   7.9 on the indigo 700 hover. */
+	--color-on-primary: 255 255 255;
 	--color-primary-soft: rgba(var(--color-primary), 0.08);
 	--color-primary-border: rgba(var(--color-primary), 0.14);
 	--color-primary-hover: rgba(var(--color-primary), 0.32);
@@ -64,8 +73,16 @@ select {
 }
 
 html[data-theme='dark'] {
+	/* Indigo 400 and 300. The dark theme keeps the lighter end of the scale
+	   because it sits on a dark background, where indigo 400 reads at 5.98.
+	   `primary-dark` is indigo 300 rather than 500, so the hover state gets
+	   lighter instead of darker. Darkening it under dark text dropped the
+	   button to 4.0. Lightening takes it to 8.96. */
 	--color-primary: 129 140 248;
-	--color-primary-dark: 99 102 241;
+	--color-primary-dark: 165 180 252;
+	/* Dark text on a light accent, the inverse of the light theme. 5.98 at
+	   rest, 8.96 on hover. */
+	--color-on-primary: 15 23 42;
 	--color-primary-soft: rgba(var(--color-primary), 0.15);
 	--color-primary-border: rgba(var(--color-primary), 0.25);
 	--color-primary-hover: rgba(var(--color-primary), 0.35);
