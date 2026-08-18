@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import { Picture } from "astro:assets";
 import Card from "@components/commons/Card.astro";
 import Chip from "@components/commons/Chip.astro";
 import BlogPostMeta from "@components/blog/BlogPostMeta.astro";
@@ -28,16 +28,30 @@ const { title, category, pubDate, heroImage } = post.data;
 		{
 			heroImage && (
 				<div class="blog-archive-card__media">
-					<Image
-						src={heroImage}
-						alt=""
-						width={400}
-						widths={[280, 420, 560, 840, 1120]}
-						sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 900px) calc((100vw - 56px) / 2), 273px"
-						loading="lazy"
-						decoding="async"
-						class="blog-archive-card__image"
-					/>
+					{heroImage.format === "svg" ? (
+						<img
+							src={heroImage.src}
+							alt=""
+							width={heroImage.width}
+							height={heroImage.height}
+							loading="lazy"
+							decoding="async"
+							class="blog-archive-card__image"
+						/>
+					) : (
+						<Picture
+							src={heroImage}
+							alt=""
+							formats={["avif"]}
+							fallbackFormat="webp"
+							width={400}
+							widths={[280, 420, 560, 840, 1120]}
+							sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 900px) calc((100vw - 56px) / 2), 273px"
+							loading="lazy"
+							decoding="async"
+							class="blog-archive-card__image"
+						/>
+					)}
 				</div>
 			)
 		}

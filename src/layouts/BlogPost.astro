@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { Image } from "astro:assets";
+import { Picture } from "astro:assets";
 import PageLayout from "@layouts/PageLayout.astro";
 import FormattedDate from "@components/FormattedDate.astro";
 import "@styles/blog.css";
@@ -20,17 +20,32 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		{
 			heroImage && (
 				<figure class="blog-post__hero">
-					<Image
-						class="blog-post__hero-image"
-						src={heroImage}
-						alt=""
-						width={1020}
-						widths={[400, 720, 1020, 1400]}
-						sizes="(max-width: 1020px) 100vw, 1020px"
-						loading="eager"
-						fetchpriority="high"
-						decoding="async"
-					/>
+					{heroImage.format === "svg" ? (
+						<img
+							class="blog-post__hero-image"
+							src={heroImage.src}
+							alt=""
+							width={heroImage.width}
+							height={heroImage.height}
+							loading="eager"
+							fetchpriority="high"
+							decoding="async"
+						/>
+					) : (
+						<Picture
+							class="blog-post__hero-image"
+							src={heroImage}
+							alt=""
+							formats={["avif"]}
+							fallbackFormat="webp"
+							width={1020}
+							widths={[400, 720, 1020, 1400]}
+							sizes="(max-width: 1020px) 100vw, 1020px"
+							loading="eager"
+							fetchpriority="high"
+							decoding="async"
+						/>
+					)}
 				</figure>
 			)
 		}

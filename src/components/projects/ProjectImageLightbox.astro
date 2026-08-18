@@ -1,5 +1,5 @@
 ---
-import { Image, getImage } from "astro:assets";
+import { Image, Picture, getImage } from "astro:assets";
 import ProjectHeroImage from "@components/projects/ProjectHeroImage.astro";
 import { resolveImage } from "@/lib/project-images";
 
@@ -129,9 +129,11 @@ const dialogImages =
 							decoding="async"
 						/>
 					) : (
-						<Image
+						<Picture
 							src={img.resolved}
 							alt={img.alt}
+							formats={["avif"]}
+							fallbackFormat="webp"
 							width={THUMB_WIDTHS[THUMB_WIDTHS.length - 1]}
 							height={thumbHeight(THUMB_WIDTHS[THUMB_WIDTHS.length - 1])}
 							widths={THUMB_WIDTHS}
