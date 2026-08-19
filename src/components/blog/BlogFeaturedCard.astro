@@ -14,6 +14,7 @@ type Props = {
 	readingTimeLabel: string;
 	url: string;
 	layout?: Layout;
+	priority?: boolean;
 	class?: string;
 	style?: string;
 };
@@ -23,6 +24,7 @@ const {
 	readingTimeLabel,
 	url,
 	layout = "vertical",
+	priority = false,
 	class: className,
 	style,
 } = Astro.props;
@@ -52,8 +54,8 @@ const isHorizontal = layout === "horizontal";
 								alt=""
 								width={heroImage.width}
 								height={heroImage.height}
-								loading="eager"
-								fetchpriority="high"
+								loading={priority ? "eager" : "lazy"}
+								fetchpriority={priority ? "high" : undefined}
 								decoding="async"
 								class="blog-featured__image"
 							/>
@@ -66,8 +68,8 @@ const isHorizontal = layout === "horizontal";
 								width={720}
 								widths={[360, 540, 720, 840, 1080]}
 								sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1024px) 45vw, 420px"
-								loading="eager"
-								fetchpriority="high"
+								loading={priority ? "eager" : "lazy"}
+								fetchpriority={priority ? "high" : undefined}
 								decoding="async"
 								class="blog-featured__image"
 							/>
