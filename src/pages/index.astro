@@ -31,6 +31,21 @@ const turnstileSiteKey = disableTurnstile
 	description={SITE_DESCRIPTION}
 	containerClass="home-page py-0"
 >
+	{
+		/* The contact form injects the Turnstile script on demand, and warming
+		   the connection removes DNS and TLS from the critical path at submit
+		   time. This lives on the page rather than in the layout because the form
+		   only exists here. In the layout it made every blog, project and
+		   experience page open a TLS connection for a widget they never load. */
+		!disableTurnstile && (
+			<link
+				slot="head"
+				rel="preconnect"
+				href="https://challenges.cloudflare.com"
+				crossorigin
+			/>
+		)
+	}
 	<HomeHero />
 	<HomeProjects projects={visibleProjects} />
 	<HomeServices services={services} />

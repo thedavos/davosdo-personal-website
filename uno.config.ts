@@ -2,10 +2,18 @@ import { defineConfig, presetMini, presetIcons, transformerDirectives } from "un
 
 
 export default defineConfig({
+	// Icons referenced from `.ts` data files rather than from markup. UnoCSS does
+	// not extract those, so every icon named in `src/data/*.ts` has to be
+	// repeated here or it vanishes from the built CSS and renders as an empty 1em
+	// box. Icons written directly in `.astro` or `.vue` are extracted
+	// automatically and do not belong in this list.
 	safelist: [
 		"i-lucide-rocket",
 		"i-lucide-github",
 		"i-lucide-play",
+		"i-lucide-book-open",
+		"i-lucide-newspaper",
+		"i-lucide-download",
 		"i-simple-icons-android",
 		"i-simple-icons-apple",
 		"i-lucide-sun",
@@ -40,6 +48,11 @@ export default defineConfig({
 		transformerDirectives(),
 	],
 	rules: [
+		// `presetMini` ships neither of these. Nothing uses them as classes yet.
+		// The matching occurrences in the codebase are longhand `object-fit` and
+		// `text-transform` in component CSS, and keeping the rules lets that CSS
+		// move to utilities, which is what AGENTS.md asks for. Unused rules emit
+		// no bytes.
 		["object-cover", { "object-fit": "cover" }],
 		["uppercase", { "text-transform": "uppercase" }],
 	],
@@ -47,6 +60,7 @@ export default defineConfig({
 		colors: {
 			primary: "rgb(var(--color-primary))",
 			"primary-dark": "rgb(var(--color-primary-dark))",
+			"on-primary": "rgb(var(--color-on-primary))",
 			"primary-soft": "var(--color-primary-soft)",
 			"primary-border": "var(--color-primary-border)",
 			"primary-hover": "var(--color-primary-hover)",
@@ -92,16 +106,7 @@ export default defineConfig({
 	},
 	shortcuts: {
 		"site-container": "w-full max-w-[900px] mx-auto px-4",
-		"page-container": "w-[720px] max-w-[calc(100%-2em)] mx-auto px-6 py-12",
-		"page-container-wide": "w-[960px] max-w-[calc(100%-2em)] mx-auto px-6 py-12",
-		"surface-card": "rounded-xl bg-surface shadow-md",
-		"meta-text": "text-muted",
-		"content-prose": "text-body leading-[1.7]",
-		"section-title": "mb-2 text-body leading-tight",
-		"link-primary": "text-primary hover:text-primary-dark transition-colors",
 		"text-logo": "text-body text-lg no-underline transition-colors hover:text-primary",
-		"card-surface":
-			"border border-[var(--form-panel-border)] rounded-2xl bg-surface shadow-[0_1px_2px_rgb(var(--color-secondary)/0.06),0_4px_14px_rgb(var(--color-secondary)/0.05)]",
 		"service-card-surface":
 			"!border !border-[var(--form-panel-border)] !rounded-2xl !bg-surface !shadow-[0_1px_2px_rgb(var(--color-secondary)/0.06),0_4px_14px_rgb(var(--color-secondary)/0.05)] transition-[border-color,box-shadow,background-color] duration-150 ease-out",
 		"service-card-surface-hover":

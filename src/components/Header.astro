@@ -2,7 +2,6 @@
 import HeaderLink from "@components/HeaderLink.astro";
 import MobileNav from "@components/commons/MobileNav.vue";
 import Logo from "@components/commons/Logo.astro";
-// import LanguageSwitcher from "@components/commons/LanguageSwitcher.vue";
 import ThemeToggle from "@components/commons/ThemeToggle.astro";
 import { SITE_NAV_ITEMS, SITE_TITLE } from "@/consts";
 
@@ -80,7 +79,10 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 
 	if (!document.documentElement.dataset.headerNavigationBound) {
 		document.documentElement.dataset.headerNavigationBound = "true";
-		document.addEventListener("swup:contentReplaced", syncHeaderNavigation);
+		// `swup:content:replace` is the Swup v4 event name. The v2 spelling,
+		// `swup:contentReplaced`, never fired, so the nav only caught up later
+		// through `visit:end`, after the transition rather than at the swap.
+		document.addEventListener("swup:content:replace", syncHeaderNavigation);
 		document.addEventListener("swup:visit:end", syncHeaderNavigation);
 		window.addEventListener("popstate", syncHeaderNavigation);
 	}

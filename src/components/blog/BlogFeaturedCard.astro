@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import { Picture } from "astro:assets";
 import Button from "@components/commons/Button.astro";
 import Card from "@components/commons/Card.astro";
 import Chip from "@components/commons/Chip.astro";
@@ -46,17 +46,32 @@ const isHorizontal = layout === "horizontal";
 			{
 				heroImage && (
 					<div class="blog-featured__media">
-						<Image
-							src={heroImage}
-							alt=""
-							width={720}
-							widths={[360, 540, 720, 840, 1080]}
-							sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1024px) 45vw, 420px"
-							loading="eager"
-							fetchpriority="high"
-							decoding="async"
-							class="blog-featured__image"
-						/>
+						{heroImage.format === "svg" ? (
+							<img
+								src={heroImage.src}
+								alt=""
+								width={heroImage.width}
+								height={heroImage.height}
+								loading="eager"
+								fetchpriority="high"
+								decoding="async"
+								class="blog-featured__image"
+							/>
+						) : (
+							<Picture
+								src={heroImage}
+								alt=""
+								formats={["avif"]}
+								fallbackFormat="webp"
+								width={720}
+								widths={[360, 540, 720, 840, 1080]}
+								sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1024px) 45vw, 420px"
+								loading="eager"
+								fetchpriority="high"
+								decoding="async"
+								class="blog-featured__image"
+							/>
+						)}
 					</div>
 				)
 			}
@@ -170,7 +185,7 @@ const isHorizontal = layout === "horizontal";
 	}
 
 	.blog-featured__title-link:hover {
-		color: var(--color-primary);
+		color: rgb(var(--color-primary));
 	}
 
 	.blog-featured__cta {

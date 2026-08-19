@@ -168,6 +168,9 @@ export function setupProjectFilters() {
 	if (win.__projectFiltersBound) return;
 
 	win.__projectFiltersBound = true;
+	// `astro:after-swap` only. It fires at content replacement, ahead of
+	// `astro:page-load`, so the grid is never briefly interactive without its
+	// filters. Listening to both ran `initProjectFilters` twice per navigation,
+	// three times once you count the `reloadScripts` re-execution of this module.
 	document.addEventListener("astro:after-swap", () => initProjectFilters());
-	document.addEventListener("astro:page-load", () => initProjectFilters());
 }

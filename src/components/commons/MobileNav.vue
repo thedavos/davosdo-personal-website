@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-// import LanguageSwitcher from "@/components/commons/LanguageSwitcher.vue";
 import type { NavigationItem } from "@/types";
 
 interface Props {
@@ -209,12 +208,6 @@ onBeforeUnmount(() => {
 							</li>
 						</ul>
 					</nav>
-
-					<!-- Multilenguaje pendiente
-					<div class="mobile-nav__language">
-						<LanguageSwitcher variant="panel" />
-					</div>
-					-->
 				</div>
 			</aside>
 		</Transition>
@@ -409,14 +402,14 @@ onBeforeUnmount(() => {
 		margin-top: 0.35rem;
 		border: 1px solid rgb(var(--color-primary));
 		background: rgb(var(--color-primary));
-		color: rgb(255 255 255);
+		color: rgb(var(--color-on-primary));
 		font-weight: 600;
 	}
 
 	.mobile-nav__link--cta:hover {
 		border-color: rgb(var(--color-primary-dark));
 		background: rgb(var(--color-primary-dark));
-		color: rgb(255 255 255);
+		color: rgb(var(--color-on-primary));
 	}
 
 	.mobile-nav__link--cta .mobile-nav__link-icon {
@@ -433,14 +426,6 @@ onBeforeUnmount(() => {
 		height: 1rem;
 		flex-shrink: 0;
 		opacity: 0.72;
-	}
-
-	.mobile-nav__language {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-		padding-top: 0.75rem;
-		border-top: 1px solid rgb(var(--color-border));
 	}
 
 	.mobile-nav-fade-enter-active,

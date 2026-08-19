@@ -33,9 +33,19 @@ const {
 	<body>
 		<a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 		<Header />
+		{
+			/* `swup-cascade-enter` is deliberately absent here. The cascade holds
+			   every child at `opacity: 0` through `animation-fill-mode: backwards`,
+			   and an invisible element is never an LCP candidate. Rendering the
+			   class server-side therefore delayed LCP until the animation finished.
+			   On `/` that measured 164ms FCP against 692ms LCP, which is the 0.08s
+			   delay plus the 0.45s duration. `SwupCascadeScript` adds the class on
+			   `astro:after-swap`, so navigations still animate. Only the first
+			   paint skips it. */
+		}
 		<div
 			id="swup-container"
-			class="min-h-[calc(100vh-61px)] flex flex-col transition-swup-slide swup-cascade-enter md:min-h-[calc(100vh-72px)]"
+			class="min-h-[calc(100vh-61px)] flex flex-col transition-swup-slide md:min-h-[calc(100vh-72px)]"
 		>
 			<main
 				id="main-content"
