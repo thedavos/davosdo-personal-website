@@ -32,8 +32,8 @@ const remote =
  * - `card`   renders ~422px wide in the two-column project grid.
  * - `detail` spans the full 868px container.
  *
- * The top width in each ladder covers a 2x DPR screen. Extra `srcset`
- * candidates are free here because transforms happen on demand, not at build.
+ * The top width in each ladder covers a 2x DPR screen without generating
+ * candidates wider than the rendered layout can select.
  */
 const sizes =
 	layout === "card"
@@ -42,7 +42,7 @@ const sizes =
 
 const widths =
 	layout === "card"
-		? [320, 480, 640, 844, 1080]
+		? [320, 480, 640, 844]
 		: [400, 640, 868, 1200, 1400];
 
 const imageClass = [
@@ -71,7 +71,7 @@ const imageProps = {
 			<Image src={resolved} width={1200} height={600} {...imageProps} />
 		)
 	) : (
-		<Image src={resolved} width={1200} {...imageProps} />
+		<Image src={resolved} width={1200} height={600} {...imageProps} />
 	)
 }
 
