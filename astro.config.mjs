@@ -83,7 +83,12 @@ export default defineConfig({
 			preload: true,
 			accessibility: false,
 			morph: ['header'],
-			updateHead: true,
+			updateHead: {
+				awaitAssets: true,
+				// Keep previously loaded route styles available while Swup replaces the
+				// head. Removing them first briefly reveals the outgoing page unstyled.
+				persistTags: 'link[rel="stylesheet"]',
+			},
 			updateBodyClass: false,
 			reloadScripts: true,
 			globalInstance: true,
