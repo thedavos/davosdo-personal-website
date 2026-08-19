@@ -82,20 +82,20 @@ html[data-theme='dark'] {
 	--color-primary-dark: 165 180 252;
 	/* Dark text on a light accent, the inverse of the light theme. 5.98 at
 	   rest, 8.96 on hover. */
-	--color-on-primary: 15 23 42;
+	--color-on-primary: 9 9 11;
 	--color-primary-soft: rgba(var(--color-primary), 0.15);
 	--color-primary-border: rgba(var(--color-primary), 0.25);
 	--color-primary-hover: rgba(var(--color-primary), 0.35);
 
-	--color-secondary: 148 163 184;
-	--color-neutral: 15 23 42;
-	--color-background: 15 23 42;
-	--color-surface: 30 41 59;
-	--color-panel: 51 65 85;
+	--color-secondary: 161 161 170;
+	--color-neutral: 9 9 11;
+	--color-background: 9 9 11;
+	--color-surface: 24 24 27;
+	--color-panel: 39 39 42;
 	--color-body: 248 250 252;
 	--color-text: 248 250 252;
-	--color-text-muted: 148 163 184;
-	--color-border: 51 65 85;
+	--color-text-muted: 161 161 170;
+	--color-border: 63 63 70;
 	--color-card-border: rgba(255, 255, 255, 0.08);
 	--box-shadow-color: rgba(0, 0, 0, 0.45);
 
