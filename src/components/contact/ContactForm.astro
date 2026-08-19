@@ -210,6 +210,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 
 <script>
 	const TURNSTILE_SCRIPT_ID = "cf-turnstile-api";
+	const TURNSTILE_ROOT_MARGIN = "600px 0px";
 
 	function ensureTurnstileScript() {
 		if (document.getElementById(TURNSTILE_SCRIPT_ID)) {
@@ -220,7 +221,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 		script.id = TURNSTILE_SCRIPT_ID;
 		script.src =
 			"https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-		script.async = false;
+		script.async = true;
 		document.head.appendChild(script);
 	}
 
@@ -254,10 +255,6 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 		const turnstileSiteKey = root.dataset.turnstileSiteKey?.trim() ?? "";
 		const isTurnstileDisabled = root.dataset.turnstileDisabled === "true";
 
-		if (!isTurnstileDisabled) {
-			ensureTurnstileScript();
-		}
-
 		const feedback = root.querySelector("[data-form-feedback]");
 		const submitButtonCandidate = root.querySelector("[data-form-submit]");
 		const submitButton =
@@ -290,6 +287,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 		let isSubmitting = false;
 		let turnstileWidgetId: string | null = null;
 		let turnstileNeedsRefresh = false;
+		let turnstileObserver: IntersectionObserver | null = null;
 
 		const resetTurnstile = () => {
 			if (turnstileWidgetId === null || typeof turnstile === "undefined") {
@@ -344,7 +342,39 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 			});
 		};
 
-		initTurnstile();
+		const requestTurnstile = () => {
+			turnstileObserver?.disconnect();
+			turnstileObserver = null;
+
+			if (isTurnstileDisabled || !turnstileContainer || !turnstileSiteKey) {
+				return;
+			}
+
+			ensureTurnstileScript();
+			initTurnstile();
+		};
+
+		if (!isTurnstileDisabled && turnstileContainer && turnstileSiteKey) {
+			if ("IntersectionObserver" in window) {
+				turnstileObserver = new IntersectionObserver(
+					(entries) => {
+						if (entries.some((entry) => entry.isIntersecting)) {
+							requestTurnstile();
+						}
+					},
+					{ rootMargin: TURNSTILE_ROOT_MARGIN },
+				);
+				turnstileObserver.observe(root);
+			} else {
+				requestTurnstile();
+			}
+		}
+
+		document.addEventListener(
+			"astro:before-swap",
+			() => turnstileObserver?.disconnect(),
+			{ once: true },
+		);
 
 		root.addEventListener("focusin", (event) => {
 			const target = event.target;
@@ -356,6 +386,7 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 				return;
 			}
 
+			requestTurnstile();
 			refreshTurnstileForNewSubmit();
 		});
 
@@ -433,17 +464,24 @@ const validService = getServiceBySlug(selectedService)?.slug ?? "";
 				refreshTurnstileForNewSubmit();
 			}
 
-			if (
-				!isTurnstileDisabled &&
-				turnstileWidgetId !== null &&
-				typeof turnstile !== "undefined" &&
-				!turnstile.getResponse(turnstileWidgetId)
-			) {
-				setFeedback(
-					"error",
-					"Completa la verificación de seguridad antes de enviar.",
-				);
-				return;
+			if (!isTurnstileDisabled) {
+				requestTurnstile();
+
+				if (turnstileWidgetId === null || typeof turnstile === "undefined") {
+					setFeedback(
+						"error",
+						"La verificación de seguridad se está preparando. Espera un momento y vuelve a enviar.",
+					);
+					return;
+				}
+
+				if (!turnstile.getResponse(turnstileWidgetId)) {
+					setFeedback(
+						"error",
+						"Completa la verificación de seguridad antes de enviar.",
+					);
+					return;
+				}
 			}
 
 			isSubmitting = true;
