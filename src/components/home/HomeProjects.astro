@@ -106,7 +106,6 @@ const initialResultLabel = `${projects.length} ${projects.length === 1 ? "proyec
 									? project.images.hero
 									: undefined
 							}
-							priority={project.importance === "high" && index === 0}
 							colSpan={project.colSpan}
 							filterTokens={getProjectFilterTokens(project)}
 							url={`/projects/${project.slug}`}
