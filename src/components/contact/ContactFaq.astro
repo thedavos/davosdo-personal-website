@@ -47,14 +47,10 @@ import { contactFaqItems } from "@data/contact-faq";
 	.contact-faq {
 		display: flex;
 		flex-direction: column;
-		border: 1px solid var(--form-panel-border, rgba(var(--color-secondary), 0.12));
-		border-radius: var(--radius-2xl, 1rem);
-		background: rgb(var(--color-surface));
-		box-shadow: 0 1px 2px rgb(var(--color-secondary) / 0.04);
 	}
 
 	.contact-faq__item {
-		border-bottom: 1px solid var(--form-field-border, rgb(226 232 240));
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	.contact-faq__item[data-faq-last="true"] {
@@ -71,7 +67,7 @@ import { contactFaqItems } from "@data/contact-faq";
 		align-items: center;
 		justify-content: space-between;
 		gap: 12px;
-		padding: 14px 16px;
+		padding: 16px 0;
 		border: none;
 		background: transparent;
 		color: rgb(var(--color-body));
@@ -87,7 +83,7 @@ import { contactFaqItems } from "@data/contact-faq";
 
 	.contact-faq__trigger:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px rgba(var(--color-primary), 0.15);
+		box-shadow: inset 0 0 0 2px rgb(var(--color-primary)/ 0.15);
 	}
 
 	.contact-faq__item[data-open="true"] .contact-faq__trigger {
@@ -95,22 +91,20 @@ import { contactFaqItems } from "@data/contact-faq";
 	}
 
 	.contact-faq__question {
-		font-size: 13px;
+		font-size: 15px;
 		font-weight: 500;
 		line-height: 1.45;
-		letter-spacing: 0.01em;
 	}
 
 	.contact-faq__icon {
 		flex-shrink: 0;
 		font-size: 16px;
-		color: rgb(var(--color-secondary) / 0.55);
+		color: rgb(var(--color-secondary));
 		transition: transform 200ms ease, color 150ms ease;
 	}
 
 	.contact-faq__item[data-open="true"] .contact-faq__icon {
 		transform: rotate(180deg);
-		color: rgb(var(--color-primary));
 	}
 
 	.contact-faq__item[data-open="true"] .contact-faq__question {
@@ -137,9 +131,9 @@ import { contactFaqItems } from "@data/contact-faq";
 
 	.contact-faq__answer {
 		margin: 0;
-		padding: 14px 16px;
+		padding: 0 40px 16px 0;
 		color: rgb(var(--color-secondary));
-		font-size: 13px;
+		font-size: 14px;
 		line-height: 1.6;
 		text-wrap: pretty;
 	}

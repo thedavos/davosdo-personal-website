@@ -79,20 +79,18 @@ const featuredEnriched = featured ? enrichPost(featured) : undefined;
 
 	.blog-all-page__hero {
 		max-width: 720px;
-		margin: 0 auto;
-		text-align: center;
 	}
 
 	.blog-all-page__title {
 		margin: 0 0 16px;
 		font-size: 56px;
-		letter-spacing: 0;
+		letter-spacing: -0.02em;
 		line-height: 1;
 	}
 
 	.blog-all-page__subtitle {
 		max-width: 58ch;
-		margin: 0 auto;
+		margin: 0;
 		color: rgb(var(--color-text-muted));
 		font-size: 18px;
 		line-height: 1.55;
@@ -104,7 +102,6 @@ const featuredEnriched = featured ? enrichPost(featured) : undefined;
 		flex-direction: column;
 		gap: 24px;
 		padding-top: 8px;
-		border-top: 1px solid var(--form-panel-border);
 	}
 
 	.blog-all-page__archive-header {
@@ -160,16 +157,9 @@ const featuredEnriched = featured ? enrichPost(featured) : undefined;
 	.blog-all-page__empty {
 		margin: 0;
 		color: rgb(var(--color-text-muted));
-		text-align: center;
 	}
 
 	@media (max-width: 760px) {
-		.blog-all-page__hero {
-			max-width: none;
-			margin: 0;
-			text-align: left;
-		}
-
 		.blog-all-page__subtitle {
 			margin: 0;
 		}

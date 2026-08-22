@@ -17,7 +17,7 @@ const {
 <section id="contacto" class="home-section home-section--surface home-contact" data-cascade-scope>
 	<div class="home-section__inner">
 		<header
-			class="home-section__header"
+			class="home-section__header home-contact__header"
 			data-cascade-item
 			style="--cascade-delay: 0.04s"
 		>
@@ -43,6 +43,18 @@ const {
 </section>
 
 <style>
+	.home-contact__header {
+		width: 100%;
+		max-width: 720px;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	.home-contact__header .home-section__subtitle {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
 	.home-contact__form {
 		width: 100%;
 		max-width: 640px;

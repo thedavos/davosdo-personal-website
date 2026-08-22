@@ -108,11 +108,11 @@ export default defineConfig({
 		"site-container": "w-full max-w-[900px] mx-auto px-4",
 		"text-logo": "text-body text-lg no-underline transition-colors hover:text-primary",
 		"service-card-surface":
-			"!border !border-[var(--form-panel-border)] !rounded-2xl !bg-surface !shadow-[0_1px_2px_rgb(var(--color-secondary)/0.06),0_4px_14px_rgb(var(--color-secondary)/0.05)] transition-[border-color,box-shadow,background-color] duration-150 ease-out",
+			"!border !border-[var(--color-card-border)] !rounded-lg !bg-surface transition-[border-color,background-color,box-shadow] duration-200 ease-out",
 		"service-card-surface-hover":
-			"hover:!border-primary/25 hover:!shadow-[0_2px_6px_rgb(var(--color-secondary)/0.08),0_8px_20px_rgb(var(--color-secondary)/0.07)]",
+			"hover:!border-[var(--color-border-strong)]",
 		"form-panel":
-			"rounded-2xl border border-[var(--form-panel-border)] bg-surface shadow-[0_1px_2px_rgb(var(--color-secondary)/0.04)]",
+			"rounded-lg border border-[var(--form-panel-border)] bg-surface",
 		"form-label":
 			"block text-[13px] font-medium text-muted leading-snug tracking-[0.01em]",
 		"form-label-compact":

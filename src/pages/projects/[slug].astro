@@ -261,9 +261,9 @@ const lightboxImages: LightboxImage[] = project.images.gallery.map(
 
 	.project-detail__role {
 		margin: 0;
-		color: rgb(var(--color-primary));
+		color: rgb(var(--color-text-muted));
 		font-size: 16px;
-		font-weight: 600;
+		font-weight: 500;
 	}
 
 	.project-detail__description {
@@ -327,7 +327,7 @@ const lightboxImages: LightboxImage[] = project.images.gallery.map(
 	.project-detail__feature-bullet {
 		flex: 0 0 auto;
 		margin-top: 4px;
-		color: rgb(var(--color-primary));
+		color: rgb(var(--color-text-muted));
 		font-size: 18px;
 	}
 
@@ -341,9 +341,7 @@ const lightboxImages: LightboxImage[] = project.images.gallery.map(
 	.project-detail__stack-category {
 		margin: 0 0 12px;
 		font-size: 14px;
-		font-weight: 700;
-		letter-spacing: 0.02em;
-		text-transform: uppercase;
+		font-weight: 500;
 		color: rgb(var(--color-text-muted));
 	}
 
@@ -368,12 +366,11 @@ const lightboxImages: LightboxImage[] = project.images.gallery.map(
 		display: grid;
 		gap: 32px;
 		padding-top: 16px;
-		border-top: 1px solid rgba(71, 85, 105, 0.08);
+		border-top: 1px solid var(--color-border);
 	}
 
 	.project-detail__bottom-nav {
 		display: flex;
-		justify-content: center;
 	}
 
 	/* ══════════════════════════════════

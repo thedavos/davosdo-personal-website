@@ -66,7 +66,7 @@ const classes = [
 		as="article"
 		variant="outlined"
 		padding="none"
-		class="service-card-surface service-card-surface-hover h-full flex flex-col"
+		class="service-card-surface service-card-surface-hover card-lift h-full flex flex-col"
 	>
 		<div class="project-card__inner">
 			{
@@ -167,7 +167,9 @@ const classes = [
 		min-height: 0;
 		max-height: min(52vh, 420px);
 		overflow: hidden;
-		border-radius: 16px 16px 0 0;
+		/* 1px less than the card radius so the curves stay concentric with
+		   the card's own border and no background sliver shows through. */
+		border-radius: calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px) 0 0;
 		aspect-ratio: 2 / 1;
 		text-decoration: none;
 	}
@@ -177,11 +179,12 @@ const classes = [
 		outline-offset: -2px;
 	}
 
-	.project-card__image {
-		display: block;
-		width: 100%;
-		height: 100%;
-		min-height: 100%;
+	/* The wrapper clips; the image itself stays square so the global img
+	   radius can't open gaps at the top corners or round the bottom edge
+	   where the image meets the card body. The img is rendered by the child
+	   ProjectHeroImage component, hence :global. */
+	.project-card__media :global(img) {
+		border-radius: 0;
 	}
 
 	.project-card__body {
@@ -233,7 +236,7 @@ const classes = [
 	}
 
 	.project-card__cta {
-		align-self: flex-end;
+		align-self: flex-start;
 		line-height: 1.2;
 	}
 

@@ -82,16 +82,6 @@ import HomeHeroTrust from "@components/home/HomeHeroTrust.astro";
 		background: rgb(var(--color-background));
 	}
 
-	.home-hero::after {
-		content: "";
-		position: absolute;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		height: 1px;
-		background: rgb(var(--color-border));
-	}
-
 	.home-hero__inner {
 		display: flex;
 		flex-direction: column;
@@ -110,9 +100,9 @@ import HomeHeroTrust from "@components/home/HomeHeroTrust.astro";
 		margin: 0 0 10px;
 		text-align: left;
 		font-size: clamp(2.75rem, 8vw, 4.5rem);
-		font-weight: 700;
+		font-weight: 600;
 		line-height: 0.98;
-		letter-spacing: 0;
+		letter-spacing: -0.02em;
 	}
 
 	.home-hero__role {
@@ -146,7 +136,7 @@ import HomeHeroTrust from "@components/home/HomeHeroTrust.astro";
 		display: flex;
 		max-width: 100%;
 		flex-wrap: wrap;
-		justify-content: center;
+		justify-content: flex-start;
 		gap: 12px 8px;
 		margin-bottom: 28px;
 	}

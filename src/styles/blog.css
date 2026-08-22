@@ -32,9 +32,9 @@
 .blog-post__title {
 	margin: 0;
 	font-size: clamp(1.875rem, 5.5vw, 2.75rem);
-	font-weight: 700;
+	font-weight: 600;
 	line-height: 1.08;
-	letter-spacing: -0.03em;
+	letter-spacing: -0.02em;
 	text-wrap: balance;
 }
 
@@ -117,7 +117,7 @@
 .blog-post__content blockquote {
 	margin: 0 0 1.25rem;
 	padding-left: 1rem;
-	border-left: 3px solid rgb(var(--color-primary));
+	border-left: 3px solid var(--color-border-strong);
 	color: rgb(var(--color-text-muted));
 	font-size: 1.05em;
 }
