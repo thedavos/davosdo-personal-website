@@ -15,11 +15,10 @@ const isPageActive =
 	href={href}
 	aria-current={isPageActive ? "page" : undefined}
 	class:list={[
-		"inline-flex items-center rounded-full px-3 py-2 text-sm font-medium no-underline text-body transition-colors whitespace-nowrap hover:bg-primary-soft hover:text-primary focus-visible:outline-[2px] focus-visible:outline-primary-hover focus-visible:outline-offset-[3px]",
+		"inline-flex items-center rounded-md px-3 py-2 text-sm font-medium no-underline text-body transition-colors whitespace-nowrap hover:bg-[rgb(var(--color-body)/0.05)] focus-visible:outline-[2px] focus-visible:outline-primary-hover focus-visible:outline-offset-[3px]",
 		className,
-		isPageActive && "text-primary font-700 font-semibold",
+		isPageActive && "text-body font-semibold",
 	]}
-	style="letter-spacing: -0.25px;"
 	{...props}
 >
 	<slot />

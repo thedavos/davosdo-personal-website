@@ -1,8 +1,8 @@
 :root {
-	--form-field-border: rgba(var(--color-secondary), 0.18);
-	--form-field-border-hover: rgba(var(--color-secondary), 0.3);
+	--form-field-border: rgb(var(--color-secondary)/ 0.18);
+	--form-field-border-hover: rgb(var(--color-secondary)/ 0.3);
 	--form-field-border-focus: rgb(var(--color-primary));
-	--form-panel-border: rgba(var(--color-secondary), 0.12);
+	--form-panel-border: rgb(var(--color-secondary)/ 0.12);
 }
 
 html[data-theme="dark"] {

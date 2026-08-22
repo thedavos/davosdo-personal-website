@@ -17,7 +17,7 @@ const {
 const classes = [
 	"selectable-chip min-h-9 cursor-pointer select-none",
 	"transition-[transform,background-color,border-color,color,box-shadow] duration-150 ease-out",
-	"hover:border-primary/30 hover:bg-primary-soft hover:text-primary",
+	"hover:border-[var(--color-border-strong)] hover:bg-[rgb(var(--color-body)/0.04)]",
 	"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
 	"active:translate-y-[1px]",
 	className,
@@ -41,17 +41,13 @@ const classes = [
 </Chip>
 
 <style is:global>
+	/* Selected reads through weight and border, not fill: quieter than an
+	   accent-colored chip and consistent with the neutral chrome. */
 	.selectable-chip[aria-pressed="true"] {
-		border-color: rgb(var(--color-primary));
-		background: rgb(var(--color-primary));
-		color: rgb(var(--color-on-primary));
-		box-shadow: 0 1px 2px rgba(var(--color-primary), 0.18);
-	}
-
-	.selectable-chip[aria-pressed="true"]:hover {
-		border-color: rgb(var(--color-primary-dark));
-		background: rgb(var(--color-primary-dark));
-		color: rgb(var(--color-on-primary));
+		border-color: rgb(var(--color-body));
+		background: transparent;
+		color: rgb(var(--color-body));
+		font-weight: 600;
 	}
 
 	@media (prefers-reduced-motion: reduce) {

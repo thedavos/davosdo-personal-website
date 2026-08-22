@@ -42,7 +42,7 @@ const { services } = Astro.props as Props;
 						))}
 					</ul>
 
-					<div class="mt-auto flex justify-end">
+					<div class="mt-auto flex">
 						<Button
 							as="a"
 							href={`/?service=${slug}#contacto`}
@@ -86,7 +86,7 @@ const { services } = Astro.props as Props;
 		flex-shrink: 0;
 		width: 1.35rem;
 		height: 1.35rem;
-		color: rgb(var(--color-primary));
+		color: rgb(var(--color-text-muted));
 	}
 
 	.service-card__title {

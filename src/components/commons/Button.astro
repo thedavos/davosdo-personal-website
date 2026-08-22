@@ -45,18 +45,18 @@ const Component = as ?? (href ? "a" : "button");
 const isDisabled = disabled || loading;
 
 const baseClass =
-	"button inline-flex items-center justify-center gap-2 rounded-xl border text-sm font-semibold no-underline transition-[transform,background-color,border-color,color,box-shadow] duration-200 ease-out select-none whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-4 focus-visible:ring-offset-background active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer";
+	"button inline-flex items-center justify-center gap-2 rounded-lg border text-sm font-medium no-underline transition-[transform,background-color,border-color,color] duration-150 ease-out select-none whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-4 focus-visible:ring-offset-background active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer";
 
 const variantClasses: Record<ButtonVariant, string> = {
 	primary:
-		"border-primary bg-primary text-on-primary shadow-sm hover:border-primary-dark hover:bg-primary-dark",
+		"border-primary bg-primary text-on-primary hover:border-primary-dark hover:bg-primary-dark",
 	secondary:
-		"border-border bg-panel text-body hover:border-primary/25 hover:bg-primary-soft",
+		"border-border bg-panel text-body hover:border-[var(--color-border-strong)]",
 	outline:
-		"border-border bg-surface text-body hover:border-primary/25 hover:bg-primary-soft hover:text-primary",
+		"border-border bg-surface text-body hover:border-[var(--color-border-strong)] hover:bg-[rgb(var(--color-body)/0.04)]",
 	ghost:
-		"border-transparent bg-transparent text-body hover:bg-primary-soft hover:text-primary",
-	link: "border-transparent bg-transparent px-0 py-0 text-primary rounded-none hover:text-primary-dark hover:underline shadow-none",
+		"border-transparent bg-transparent text-muted hover:bg-[rgb(var(--color-body)/0.05)] hover:text-body",
+	link: "border-transparent bg-transparent px-0 py-0 text-primary rounded-none hover:text-primary-dark hover:underline",
 	destructive:
 		"border-red-600 bg-red-600 text-white hover:border-red-700 hover:bg-red-700",
 };
@@ -157,15 +157,6 @@ const sharedProps = {
 }
 
 <style>
-	.button {
-		box-shadow: 0 1px 2px var(--color-card-border);
-	}
-
-	.button[data-variant="ghost"],
-	.button[data-variant="link"] {
-		box-shadow: none;
-	}
-
 	.button[data-size="icon"] {
 		gap: 0;
 	}

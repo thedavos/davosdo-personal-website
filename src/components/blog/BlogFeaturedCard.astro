@@ -42,7 +42,7 @@ const isHorizontal = layout === "horizontal";
 		as="article"
 		variant="outlined"
 		padding="none"
-		class="service-card-surface service-card-surface-hover blog-featured__card h-full"
+		class="service-card-surface service-card-surface-hover card-lift blog-featured__card h-full"
 	>
 		<div class="blog-featured__inner">
 			{
@@ -143,7 +143,7 @@ const isHorizontal = layout === "horizontal";
 	.blog-featured__media {
 		flex-shrink: 0;
 		overflow: hidden;
-		border-radius: 16px 16px 0 0;
+		border-radius: calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px) 0 0;
 	}
 
 	.blog-featured__image {
@@ -203,7 +203,7 @@ const isHorizontal = layout === "horizontal";
 	.blog-featured--horizontal .blog-featured__media {
 		flex: 0 0 42%;
 		max-width: 420px;
-		border-radius: 16px 0 0 16px;
+		border-radius: calc(var(--radius-lg) - 1px) 0 0 calc(var(--radius-lg) - 1px);
 	}
 
 	.blog-featured--horizontal .blog-featured__image {
@@ -229,7 +229,7 @@ const isHorizontal = layout === "horizontal";
 			flex: none;
 			max-width: none;
 			width: 100%;
-			border-radius: 16px 16px 0 0;
+			border-radius: calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px) 0 0;
 		}
 
 		.blog-featured--horizontal .blog-featured__image {

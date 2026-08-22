@@ -22,13 +22,17 @@
 	};
 
 	const setTheme = (theme: string) => {
-		document.documentElement.setAttribute("data-theme", theme);
+		const root = document.documentElement;
+		root.classList.add("theme-transition");
+		window.setTimeout(() => root.classList.remove("theme-transition"), 300);
+
+		root.setAttribute("data-theme", theme);
 		localStorage.setItem("theme", theme);
 
 		if (theme === "dark") {
-			document.documentElement.classList.add("dark");
+			root.classList.add("dark");
 		} else {
-			document.documentElement.classList.remove("dark");
+			root.classList.remove("dark");
 		}
 	};
 
@@ -85,9 +89,5 @@
 		.theme-toggle {
 			transition: none;
 		}
-	}
-
-	:global(body) {
-		transition: background-color 0.3s ease, color 0.3s ease;
 	}
 </style>

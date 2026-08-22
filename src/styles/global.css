@@ -19,27 +19,32 @@
 	/* What goes on top of a primary fill. White clears 6.29 on indigo 600 and
 	   7.9 on the indigo 700 hover. */
 	--color-on-primary: 255 255 255;
-	--color-primary-soft: rgba(var(--color-primary), 0.08);
-	--color-primary-border: rgba(var(--color-primary), 0.14);
-	--color-primary-hover: rgba(var(--color-primary), 0.32);
-	--color-secondary: 71 85 105; /* #475569 */
-	--color-tertiary: 185 95 0; /* #b95f00 */
-	--color-neutral: 248 250 252; /* #f8fafc */
+	--color-primary-soft: rgb(var(--color-primary)/ 0.06);
+	--color-primary-border: rgb(var(--color-primary)/ 0.14);
+	--color-primary-hover: rgb(var(--color-primary)/ 0.32);
+	/* Neutral ink ladder: alpha black over white, no warm or cool cast.
+	   Solid equivalents of the alpha rungs so the triplet-token pattern keeps
+	   working: 64% black on white for supporting text, 10% for borders,
+	   ~4% for the alternating section band. */
+	--color-secondary: 92 92 92; /* 64% ink */
+	--color-neutral: 247 247 247; /* band fill */
 
 	/* Semantic surfaces */
-	--color-background: var(--color-neutral);
+	--color-background: 255 255 255;
 	--color-surface: 255 255 255; /* #ffffff */
-	--color-panel: 230 232 234; /* #e6e8ea */
-	--color-body: 30 41 59; /* #1e293b */
+	--color-panel: 240 240 240;
+	--color-body: 23 23 23; /* primary ink */
 	--color-text: var(--color-body);
 	--color-text-muted: var(--color-secondary);
-	--color-border: 241 245 249; /* #f1f5f9 */
-	--color-outline: 199 196 215; /* #c7c4d7 */
-	--color-card-border: rgba(var(--color-secondary), 0.08);
+	--color-border: 229 229 229; /* 10% ink */
+	/* Full-color token (like --color-card-border), not a raw triplet, so
+	   consumers can reference it directly with var(). */
+	--color-border-strong: rgb(204 204 204); /* ~20% ink */
+	--color-outline: 163 163 163;
+	--color-card-border: rgba(0, 0, 0, 0.08);
 
 	/* Decorative */
-	--color-background-gradient: rgba(var(--color-neutral), 0.95), rgb(var(--color-surface));
-	--box-shadow-color: rgba(var(--color-secondary), 0.1);
+	--box-shadow-color: rgba(0, 0, 0, 0.08);
 
 	/* Typography Scale */
 	--font-size-xs: 0.75rem;
@@ -64,6 +69,17 @@
 	box-sizing: border-box;
 }
 
+/* UnoCSS presetMini ships no base reset, so utility widths like `border` or
+   `border-b` set only the width and computed style stays `none`. Mirror the
+   Tailwind reset so border utilities actually paint. Hand-written borders
+   elsewhere use the full `border` shorthand and are unaffected. */
+*,
+*::before,
+*::after {
+	border-width: 0;
+	border-style: solid;
+}
+
 button,
 input,
 textarea,
@@ -83,9 +99,9 @@ html[data-theme='dark'] {
 	/* Dark text on a light accent, the inverse of the light theme. 5.98 at
 	   rest, 8.96 on hover. */
 	--color-on-primary: 9 9 11;
-	--color-primary-soft: rgba(var(--color-primary), 0.15);
-	--color-primary-border: rgba(var(--color-primary), 0.25);
-	--color-primary-hover: rgba(var(--color-primary), 0.35);
+	--color-primary-soft: rgb(var(--color-primary)/ 0.15);
+	--color-primary-border: rgb(var(--color-primary)/ 0.25);
+	--color-primary-hover: rgb(var(--color-primary)/ 0.35);
 
 	--color-secondary: 161 161 170;
 	--color-neutral: 9 9 11;
@@ -96,22 +112,20 @@ html[data-theme='dark'] {
 	--color-text: 248 250 252;
 	--color-text-muted: 161 161 170;
 	--color-border: 63 63 70;
+	--color-border-strong: rgb(82 82 91);
+	--color-outline: 212 212 216;
 	--color-card-border: rgba(255, 255, 255, 0.08);
 	--box-shadow-color: rgba(0, 0, 0, 0.45);
-
-	--color-background-gradient: rgba(var(--color-background), 0.95), rgb(var(--color-surface));
 }
 
 html[data-theme='dark'] .card,
-html[data-theme='dark'] .service-card-surface,
-html[data-theme='dark'] .contact-faq {
+html[data-theme='dark'] .service-card-surface {
 	box-shadow: none !important;
 	border: 1px solid rgb(var(--color-border)) !important;
 }
 
 html[data-theme='dark'] .home-section--surface .service-card-surface,
-html[data-theme='dark'] .home-section--surface .card,
-html[data-theme='dark'] .home-section--surface .contact-faq {
+html[data-theme='dark'] .home-section--surface .card {
 	border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
@@ -119,6 +133,31 @@ html[data-theme='dark'] .service-card-surface-hover:hover,
 html[data-theme='dark'] .card:hover {
 	box-shadow: none !important;
 	border-color: rgba(255, 255, 255, 0.28) !important;
+}
+
+/* Hover elevation: the card stays put; a soft two-stop shadow fades in.
+   Movement reads as jitter in dense grids, so only elevation changes. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+	.card-lift:hover,
+	.card[data-variant='interactive']:hover {
+		box-shadow:
+			0 1px 2px rgb(0 0 0 / 6%),
+			0 8px 24px rgb(0 0 0 / 10%);
+	}
+}
+
+/* Theme switch: colors cross-fade inside a short window instead of snapping.
+   Scoped to a temporary class so it never competes with element transitions
+   outside the swap. */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+	transition:
+		background-color 200ms ease,
+		color 200ms ease,
+		border-color 200ms ease,
+		fill 200ms ease !important;
 }
 
 html {
@@ -168,6 +207,7 @@ h5,
 h6 {
 	margin: 0 0 0.5rem 0;
 	color: rgb(var(--color-body));
+	font-weight: 600;
 	line-height: 1.2;
 }
 
@@ -237,7 +277,7 @@ pre>code {
 }
 
 blockquote {
-	border-left: 4px solid rgb(var(--color-tertiary));
+	border-left: 3px solid var(--color-border-strong);
 	padding: 0 0 0 20px;
 	margin: 0px;
 	font-size: 1.333em;
