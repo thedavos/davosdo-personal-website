@@ -34,6 +34,10 @@ Otro tip es no poner rutinas demasiado seguidas. Una cada 15 minutos corre casi 
 
 Al final me quedó esto.
 
-Manda el trabajo en 1:1. Reserva el canal para lo que todo el equipo necesita oír. Antes de un job largo, mira el uso en la pantalla de plan. Empieza con el alcance chico. El crédito se gasta en lo que hace el agente, no en lo prolijo que se ve el chat.
+- Manda el trabajo en 1:1. 
+- Reserva el canal para lo que todo el equipo necesita oír. 
+- Antes de un job largo, mira el uso en la pantalla de plan. 
+- Empieza con el alcance chico. 
+- El crédito se gasta en lo que hace el agente, no en lo prolijo que se ve el chat.
 
 Si ya estás con Grok Bot, ¿cómo lo administras?
