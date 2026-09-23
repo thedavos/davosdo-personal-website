@@ -2,7 +2,6 @@ import { defineConfig, fontProviders } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import unocss from "@unocss/astro";
-import vue from "@astrojs/vue";
 import swup from "@swup/astro";
 
 import cloudflare from "@astrojs/cloudflare";
@@ -73,7 +72,6 @@ export default defineConfig({
 		mdx(),
 		sitemap(),
 		unocss(),
-		vue(),
 		swup({
 			theme: false,
 			animationClass: 'transition-swup-',
@@ -82,7 +80,6 @@ export default defineConfig({
 			cache: process.env.NODE_ENV === 'production',
 			preload: true,
 			accessibility: false,
-			morph: ['header'],
 			updateHead: {
 				awaitAssets: true,
 				// Keep previously loaded route styles available while Swup replaces the

@@ -1,9 +1,9 @@
 ---
 import BaseHead from "@components/BaseHead.astro";
-import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import SwupCascadeScript from "@components/SwupCascadeScript.astro";
 import GlobalKeyboardPageNav from "@components/commons/GlobalKeyboardPageNav.astro";
+import GlobalThemeControls from "@components/commons/GlobalThemeControls.astro";
 
 interface Props {
 	title: string;
@@ -12,16 +12,22 @@ interface Props {
 	containerClass?: string;
 	centerContent?: boolean;
 	showFooter?: boolean;
+	parent?: { href: string; label: string };
 }
 
 const {
 	title,
 	description,
 	lang = "es",
-	containerClass = "w-full max-w-[720px] lg:max-w-[1024px] mx-auto px-4 py-12",
+	containerClass = "w-full max-w-[720px] lg:max-w-[1024px] mx-auto px-5 py-12",
 	centerContent = false,
 	showFooter = false,
+	parent,
 } = Astro.props;
+
+const isHome = Astro.url.pathname === "/";
+const trailLinkClass =
+	"rounded-sm text-muted no-underline transition-colors hover:text-body focus-visible:outline-[2px] focus-visible:outline-primary-hover focus-visible:outline-offset-[3px]";
 ---
 
 <!doctype html>
@@ -32,7 +38,6 @@ const {
 	</head>
 	<body>
 		<a href="#main-content" class="skip-link">Saltar al contenido principal</a>
-		<Header />
 		{
 			/* `swup-cascade-enter` is deliberately absent here. The cascade holds
 			   every child at `opacity: 0` through `animation-fill-mode: backwards`,
@@ -45,7 +50,7 @@ const {
 		}
 		<div
 			id="swup-container"
-			class="min-h-[calc(100vh-61px)] flex flex-col transition-swup-slide md:min-h-[calc(100vh-72px)]"
+			class="min-h-screen flex flex-col transition-swup-slide"
 		>
 			<main
 				id="main-content"
@@ -53,6 +58,28 @@ const {
 				class:list={["flex w-full min-w-0 flex-1 flex-col", centerContent && "items-center"]}
 			>
 				<div class={containerClass}>
+					{
+						!isHome && (
+							<nav aria-label="Ruta de navegación" class="mb-8">
+								<ol class="m-0 flex flex-wrap items-center gap-2 p-0 text-[14px] font-medium leading-snug [list-style:none]">
+									<li>
+										<a href="/" class:list={["inline-flex items-center gap-1.5", trailLinkClass]}>
+											<span class="i-lucide-arrow-left text-[15px]" aria-hidden="true" />
+											David Vargas
+										</a>
+									</li>
+									{parent && (
+										<li class="flex items-center gap-2">
+											<span class="text-muted opacity-60" aria-hidden="true">/</span>
+											<a href={parent.href} class={trailLinkClass}>
+												{parent.label}
+											</a>
+										</li>
+									)}
+								</ol>
+							</nav>
+						)
+					}
 					<slot />
 				</div>
 			</main>
@@ -60,5 +87,6 @@ const {
 		</div>
 		<SwupCascadeScript />
 		<GlobalKeyboardPageNav />
+		<GlobalThemeControls />
 	</body>
 </html>
