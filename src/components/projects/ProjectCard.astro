@@ -38,8 +38,7 @@ const {
 } = Astro.props as Props;
 
 const isCompact = variant === "compact";
-const showHeroImage =
-	importance === "high" && variant === "masonry" && Boolean(heroSrc);
+const showHeroImage = Boolean(heroSrc);
 
 const classes = [
 	"project-card",
@@ -76,7 +75,7 @@ const classes = [
 							src={heroSrc}
 							alt={`Vista principal de ${title}`}
 							layout="card"
-							loading={priority ? "eager" : "lazy"}
+							loading="eager"
 							fetchpriority={priority ? "high" : undefined}
 							class="project-card__image"
 						/>
@@ -112,7 +111,6 @@ const classes = [
 						variant="ghost"
 						size="sm"
 						rightIcon="i-lucide-arrow-right"
-						class="-mr-4"
 					>
 						Ver proyecto
 					</Button>
@@ -155,22 +153,19 @@ const classes = [
 
 	.project-card__inner {
 		display: flex;
-		flex: 1;
-		flex-direction: column;
+		flex-direction: row;
+		align-items: flex-start;
+		gap: 16px;
+		height: auto;
 		min-height: 0;
-		height: 100%;
+		padding: 16px;
 	}
 
 	.project-card__media {
 		display: block;
-		flex: 1;
-		min-height: 0;
-		max-height: min(52vh, 420px);
-		overflow: hidden;
-		/* 1px less than the card radius so the curves stay concentric with
-		   the card's own border and no background sliver shows through. */
-		border-radius: calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px) 0 0;
-		aspect-ratio: 2 / 1;
+		flex: 0 0 auto;
+		width: 128px;
+		line-height: 0;
 		text-decoration: none;
 	}
 
@@ -179,12 +174,9 @@ const classes = [
 		outline-offset: -2px;
 	}
 
-	/* The wrapper clips; the image itself stays square so the global img
-	   radius can't open gaps at the top corners or round the bottom edge
-	   where the image meets the card body. The img is rendered by the child
-	   ProjectHeroImage component, hence :global. */
 	.project-card__media :global(img) {
-		border-radius: 0;
+		display: block;
+		border-radius: var(--radius-md);
 	}
 
 	.project-card__body {
@@ -192,9 +184,10 @@ const classes = [
 		flex: 1;
 		flex-direction: column;
 		justify-content: space-between;
-		gap: 20px;
-		padding: 20px;
-		height: 100%;
+		gap: 12px;
+		min-width: 0;
+		padding: 0;
+		height: auto;
 	}
 
 	.project-card--medium .project-card__body,
@@ -219,9 +212,10 @@ const classes = [
 	.project-card__title {
 		min-width: 0;
 		margin: 0;
-		font-size: 19px;
+		font-size: 16px;
+		font-weight: 500;
 		letter-spacing: 0;
-		line-height: 1.12;
+		line-height: 1.35;
 		text-wrap: balance;
 	}
 
@@ -236,7 +230,7 @@ const classes = [
 	}
 
 	.project-card__cta {
-		align-self: flex-start;
+		align-self: flex-end;
 		line-height: 1.2;
 	}
 
@@ -247,8 +241,8 @@ const classes = [
 		overflow: hidden;
 		margin: 0;
 		color: rgb(var(--color-text-muted));
-		font-size: 13px;
-		line-height: 1.45;
+		font-size: 14px;
+		line-height: 1.6;
 		text-wrap: pretty;
 	}
 
@@ -271,26 +265,20 @@ const classes = [
 	}
 
 	.project-card--medium .project-card__body {
-		gap: 22px;
-		padding: 22px;
-	}
-
-	.project-card--medium .project-card__title {
-		font-size: 22px;
+		gap: 12px;
+		padding: 0;
 	}
 
 	.project-card--medium .project-card__description {
 		max-width: 52ch;
 		-webkit-line-clamp: 3;
-		font-size: 14px;
-		line-height: 1.5;
 	}
 
 	.project-card--high .project-card__body {
-		flex: 0 0 auto;
+		flex: 1 1 auto;
 		height: auto;
-		gap: 20px;
-		padding: 20px 24px 24px;
+		gap: 12px;
+		padding: 0;
 	}
 
 	.project-card--high .project-card__body-content {
@@ -302,32 +290,22 @@ const classes = [
 	}
 
 	.project-card--high .project-card__title {
-		max-width: 10ch;
-		font-size: 34px;
-		line-height: 1;
+		max-width: none;
 	}
 
 	.project-card--high .project-card__description {
 		max-width: 46ch;
 		-webkit-line-clamp: 4;
-		font-size: 15px;
-		line-height: 1.55;
 	}
 
 	.project-card--compact .project-card__body {
-		min-height: 220px;
-		gap: 20px;
-		padding: 20px;
-	}
-
-	.project-card--compact .project-card__title {
-		font-size: 18px;
+		min-height: 0;
+		gap: 12px;
+		padding: 0;
 	}
 
 	.project-card--compact .project-card__description {
 		-webkit-line-clamp: 3;
-		font-size: 13px;
-		line-height: 1.5;
 	}
 
 	@media (max-width: 900px) {
@@ -351,17 +329,16 @@ const classes = [
 
 		.project-card--high .project-card__media {
 			flex: 0 0 auto;
-			max-height: min(44vh, 320px);
+			max-height: none;
 		}
 
 		.project-card--high .project-card__body {
-			gap: 16px;
-			padding: 20px;
+			gap: 12px;
+			padding: 0;
 		}
 
 		.project-card--high .project-card__title {
 			max-width: none;
-			font-size: 28px;
 		}
 	}
 
@@ -380,26 +357,20 @@ const classes = [
 
 		.project-card--high .project-card__media {
 			flex: 0 0 auto;
-			max-height: 280px;
+			max-height: none;
 		}
 
 		.project-card--high .project-card__body,
 		.project-card--medium .project-card__body,
 		.project-card__body {
-			gap: 16px;
-			padding: 20px;
+			gap: 12px;
+			padding: 0;
 		}
 
 		.project-card--high .project-card__copy,
 		.project-card--medium .project-card__copy,
 		.project-card__copy {
 			gap: 8px;
-		}
-
-		.project-card--high .project-card__title,
-		.project-card--medium .project-card__title,
-		.project-card__title {
-			font-size: 22px;
 		}
 
 		.project-card--high .project-card__description,
@@ -409,7 +380,17 @@ const classes = [
 		.project-card__description {
 			-webkit-line-clamp: unset;
 			overflow: visible;
-			font-size: 13px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.project-card__inner {
+			gap: 12px;
+			padding: 12px;
+		}
+
+		.project-card__media {
+			width: 88px;
 		}
 	}
 </style>

@@ -1,5 +1,31 @@
 ---
-export const prerender = false;
+import ProjectCatalog from "@components/projects/ProjectCatalog.astro";
+import PageLayout from "@layouts/PageLayout.astro";
+import { getVisibleProjects } from "@data/projects";
 
-return Astro.redirect("/#proyectos", 301);
+const visibleProjects = getVisibleProjects();
 ---
+
+<PageLayout
+	showFooter
+	title="Proyectos | davosdo.dev"
+	description="Proyectos reales de David Vargas Domínguez: banca digital, fintech, herramientas propias y automatizaciones."
+	containerClass="site-column py-12"
+>
+	<div class="flex flex-col gap-10" data-cascade-scope>
+		<header
+			data-cascade-item
+			style="--cascade-delay: 0.04s"
+		>
+			<h1 class="m-0 mb-3 text-[22px] font-semibold leading-[1.25] tracking-[-0.01em]">
+				Proyectos
+			</h1>
+			<p class="m-0 max-w-[58ch] text-[17px] leading-[1.7] text-body [text-wrap:pretty]">
+				Proyectos reales, cero maquetas. Desde flujos de automatización hasta
+				aplicaciones web de alto rendimiento.
+			</p>
+		</header>
+
+		<ProjectCatalog projects={visibleProjects} />
+	</div>
+</PageLayout>

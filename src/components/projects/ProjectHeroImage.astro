@@ -27,23 +27,16 @@ const remote =
 	typeof resolved === "string" && isRemoteImageSrc(resolved);
 
 /**
- * Measured against the real layout, both inside `site-container`
- * (`max-w-[900px]` + 16px padding each side, so 868px of content):
- * - `card`   renders ~422px wide in the two-column project grid.
- * - `detail` spans the full 868px container.
- *
- * The top width in each ladder covers a 2x DPR screen without generating
- * candidates wider than the rendered layout can select.
+ * `detail` fills `site-column` (600px of content, 1200 at 2x).
+ * `card` is the catalog thumbnail: 128px, or 88px below 480px. 256 covers
+ * the larger size at 2x.
  */
 const sizes =
 	layout === "card"
-		? "(max-width: 640px) calc(100vw - 32px), (max-width: 932px) calc((100vw - 48px) / 2), 422px"
-		: "(max-width: 932px) calc(100vw - 32px), 868px";
+		? "(max-width: 480px) 88px, 128px"
+		: "(max-width: 640px) calc(100vw - 40px), 600px";
 
-const widths =
-	layout === "card"
-		? [320, 480, 640, 844]
-		: [400, 640, 868, 1200, 1400];
+const widths = layout === "card" ? [88, 128, 176, 256] : [400, 600, 800, 1200];
 
 const imageClass = [
 	"project-hero-image",
@@ -70,6 +63,13 @@ const imageProps = {
 		) : (
 			<Image src={resolved} width={1200} height={600} {...imageProps} />
 		)
+	) : layout === "card" ? (
+		<Image
+			src={resolved}
+			width={256}
+			height={Math.round((256 * resolved.height) / resolved.width)}
+			{...imageProps}
+		/>
 	) : (
 		<Image src={resolved} width={1200} height={600} {...imageProps} />
 	)
@@ -83,9 +83,17 @@ const imageProps = {
 	}
 
 	.project-hero-image--card {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
+		width: 128px;
+		height: auto;
+		max-height: 160px;
+		object-fit: contain;
+	}
+
+	@media (max-width: 480px) {
+		.project-hero-image--card {
+			width: 88px;
+			max-height: 110px;
+		}
 	}
 
 	.project-hero-image--detail {

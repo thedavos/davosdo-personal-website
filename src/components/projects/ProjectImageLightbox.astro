@@ -30,14 +30,12 @@ const {
 const totalCount = images.length;
 
 /**
- * Gallery thumbnails sit in a `repeat(auto-fit, minmax(280px, 1fr))` grid with
- * a 16px gap, inside `site-container` (`max-w-[900px]` + 16px padding each
- * side). That resolves to two 426px columns once the container maxes out, and
- * a single full-width column on small screens. 852 covers 426px at 2x DPR.
+ * Gallery thumbnails are a single column inside `site-column`
+ * (`max-w-[640px]` + 20px padding each side, so 600px of content). 1200
+ * covers that width at 2x DPR.
  */
-const THUMB_WIDTHS = [320, 480, 640, 852];
-const THUMB_SIZES =
-	"(max-width: 640px) calc(100vw - 32px), (max-width: 932px) calc((100vw - 48px) / 2), 426px";
+const THUMB_WIDTHS = [400, 600, 800, 1200];
+const THUMB_SIZES = "(max-width: 640px) calc(100vw - 40px), 600px";
 
 /**
  * Thumbnails are displayed at `aspect-ratio: 16 / 10` with `object-fit: cover`.

@@ -1,0 +1,137 @@
+---
+import Button from "@components/commons/Button.astro";
+import SelectableChip from "@components/commons/SelectableChip.astro";
+import ProjectCard from "@components/projects/ProjectCard.astro";
+import {
+	getProjectFilterTokens,
+	projectTechnologyFilters,
+	type ProjectDetail,
+} from "@data/projects";
+
+type Props = {
+	projects: ProjectDetail[];
+};
+
+const { projects } = Astro.props as Props;
+const initialResultLabel = `${projects.length} ${projects.length === 1 ? "proyecto" : "proyectos"}`;
+---
+
+<div class="flex flex-col gap-6" data-project-filter-root>
+	<div
+		class="flex flex-col gap-4"
+		data-cascade-item
+		style="--cascade-delay: 0.08s"
+	>
+		<div class="flex flex-wrap items-center justify-between gap-3">
+			<p
+				id="project-filter-label"
+				class="m-0 text-sm font-medium leading-snug text-body"
+			>
+				Filtrar por tecnología
+				<span class="font-normal text-muted">
+					·
+					<span
+						data-project-filter-count
+						aria-live="polite"
+						aria-atomic="true"
+					>
+						{initialResultLabel}
+					</span>
+				</span>
+			</p>
+			<Button
+				variant="ghost"
+				size="sm"
+				leftIcon="i-lucide-x"
+				class="-mr-3"
+				data-project-filter-clear
+				hidden
+			>
+				Limpiar filtros
+			</Button>
+		</div>
+
+		<div
+			class="flex flex-wrap gap-2"
+			role="group"
+			aria-labelledby="project-filter-label"
+		>
+			{
+				projectTechnologyFilters.map((filter) => (
+					<SelectableChip
+						value={filter.value}
+						data-filter-tokens={filter.tokens.join(" ")}
+						aria-controls="project-grid"
+					>
+						{filter.label}
+					</SelectableChip>
+				))
+			}
+		</div>
+	</div>
+
+	<div
+		id="project-grid"
+		class="project-catalog__grid"
+		aria-label="Proyectos"
+		data-project-filter-grid
+	>
+		{
+			projects.map((project, index) => (
+				<ProjectCard
+					title={project.title}
+					description={project.description}
+					tags={project.tags}
+					importance={project.importance}
+					heroSrc={project.images.hero}
+					priority={index === 0}
+					colSpan={project.colSpan}
+					filterTokens={getProjectFilterTokens(project)}
+					url={`/projects/${project.slug}`}
+					style={`--cascade-delay: ${0.12 + index * 0.04}s`}
+				/>
+			))
+		}
+	</div>
+
+	<div
+		class="project-catalog__empty px-6 py-10"
+		data-project-filter-empty
+		hidden
+	>
+		<h2 class="m-0 text-lg leading-tight text-body">
+			No hay proyectos con esos filtros
+		</h2>
+		<p class="mb-0 mt-2 max-w-[44ch] text-sm leading-relaxed text-muted">
+			Prueba otra combinación de tecnologías o limpia los filtros para ver
+			todos los proyectos.
+		</p>
+	</div>
+</div>
+
+<style>
+	.project-catalog__grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 20px;
+		align-items: stretch;
+	}
+
+	/* Card variants still declare a multi-column span. Inside this
+	   single column that span would open an implicit second track. */
+	.project-catalog__grid :global(.project-card) {
+		grid-column: auto;
+		grid-row: auto;
+	}
+
+	:global([data-project-filter-clear][hidden]),
+	.project-catalog__empty[hidden] {
+		display: none;
+	}
+
+</style>
+
+<script>
+	import { setupProjectFilters } from "@/utils/project-filter";
+	setupProjectFilters();
+</script>

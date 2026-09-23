@@ -504,7 +504,7 @@ export const projects: ProjectDetail[] = [
 			{ category: "Integraciones", items: ["WhatsApp fallback"] },
 		],
 		links: [
-			{ label: "Repositorio", url: "https://github.com/davosdo/vitalia", icon: "i-lucide-github" },
+			{ label: "Repositorio", url: "https://github.com/davion-software/vitalia", icon: "i-lucide-github" },
 		],
 		images: {
 			hero: "https://placehold.co/1200x600/1a1a2e/6366f1?text=Vitalia+Hero",
@@ -711,64 +711,6 @@ export function getProjectFilterTokens(project: ProjectDetail): string[] {
 	];
 
 	return [...new Set(technologyValues.flatMap(tokenizeProjectTechnology))];
-}
-
-const importanceRank: Record<ProjectImportance, number> = {
-	high: 0,
-	medium: 1,
-	low: 2,
-};
-
-function normalizeTechnologyTerm(term: string): string {
-	return term
-		.toLowerCase()
-		.replace(/\([^)]*\)/g, "")
-		.replace(/\bv?\d+(\.\d+)*\b/g, "")
-		.replace(/\bcss\b/g, "")
-		.replace(/\s+/g, " ")
-		.trim();
-}
-
-export function getProjectTechnologyTerms(project: ProjectDetail): string[] {
-	const stackItems = project.stack.flatMap((group) => group.items);
-	const terms = [...project.tags, ...stackItems]
-		.map(normalizeTechnologyTerm)
-		.filter(Boolean);
-
-	return [...new Set(terms)];
-}
-
-export function getRelatedProjects(
-	project: ProjectDetail,
-	limit = 3,
-): ProjectDetail[] {
-	const sourceTerms = new Set(getProjectTechnologyTerms(project));
-
-	return projects
-		.map((candidate, index) => {
-			const matches = getProjectTechnologyTerms(candidate).filter((term) =>
-				sourceTerms.has(term),
-			);
-
-			return {
-				project: candidate,
-				index,
-				score: matches.length,
-			};
-		})
-		.filter(({ project: candidate, score }) =>
-			candidate.show && candidate.slug !== project.slug && score > 0
-		)
-		.sort((a, b) => {
-			const scoreDelta = b.score - a.score;
-			const importanceDelta =
-				importanceRank[a.project.importance] -
-				importanceRank[b.project.importance];
-
-			return scoreDelta || importanceDelta || a.index - b.index;
-		})
-		.slice(0, limit)
-		.map(({ project: relatedProject }) => relatedProject);
 }
 
 export function getStatusLabel(status: ProjectStatus): string {
