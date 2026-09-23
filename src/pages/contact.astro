@@ -1,10 +1,74 @@
 ---
+import { env } from "cloudflare:workers";
+import ContactFaq from "@components/contact/ContactFaq.astro";
+import ContactForm from "@components/contact/ContactForm.astro";
+import PageLayout from "@layouts/PageLayout.astro";
+import { getServiceBySlug } from "@data/services";
+
 export const prerender = false;
 
-const serviceParam = Astro.url.searchParams.get("service");
-const serviceQuery = serviceParam
-	? `?service=${encodeURIComponent(serviceParam)}`
-	: "";
-
-return Astro.redirect(`/${serviceQuery}#contacto`, 301);
+const serviceParam = Astro.url.searchParams.get("service") ?? "";
+const serviceSlug = getServiceBySlug(serviceParam)?.slug ?? "";
+const disableTurnstile =
+	env.PUBLIC_DISABLE_TURNSTILE === "true" ||
+	import.meta.env.PUBLIC_DISABLE_TURNSTILE === "true";
+const turnstileSiteKey = disableTurnstile
+	? ""
+	: env.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
 ---
+
+<PageLayout
+	showFooter
+	title="Contacto | davosdo.dev"
+	description="Cuéntame sobre tu proyecto web, móvil, bot o automatización. Respondo en menos de 24 horas."
+	containerClass="site-column py-12 md:py-16"
+>
+	{
+		/* The form injects the Turnstile script on demand, and warming the
+		   connection removes DNS and TLS from the critical path at submit time.
+		   It lives on this page rather than in the layout so pages without the
+		   form never open a connection for a widget they don't load. */
+		!disableTurnstile && (
+			<link
+				slot="head"
+				rel="preconnect"
+				href="https://challenges.cloudflare.com"
+				crossorigin
+			/>
+		)
+	}
+	<div class="flex flex-col gap-16" data-cascade-scope>
+		<header data-cascade-item style="--cascade-delay: 0.04s">
+			<h1 class="m-0 mb-3 text-[22px] font-semibold leading-[1.25] tracking-[-0.01em]">
+				Contacto
+			</h1>
+			<p class="m-0 max-w-[58ch] text-[17px] leading-[1.7] text-body [text-wrap:pretty]">
+				Cuéntame sobre tu idea, ya sea una app, un bot, una plataforma web o
+				una automatización. Te respondo en menos de 24 horas.
+			</p>
+		</header>
+
+		<div data-cascade-item style="--cascade-delay: 0.08s">
+			<ContactForm
+				selectedService={serviceSlug}
+				turnstileSiteKey={turnstileSiteKey}
+				disableTurnstile={disableTurnstile}
+			/>
+		</div>
+
+		<section
+			aria-labelledby="preguntas-frecuentes-title"
+			class="flex flex-col gap-6"
+			data-cascade-item
+			style="--cascade-delay: 0.12s"
+		>
+			<h2
+				id="preguntas-frecuentes-title"
+				class="m-0 text-[15px] font-medium leading-snug text-muted"
+			>
+				Preguntas frecuentes
+			</h2>
+			<ContactFaq />
+		</section>
+	</div>
+</PageLayout>
