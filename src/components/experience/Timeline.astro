@@ -31,20 +31,15 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 	<ol class="timeline__list" aria-label={ariaLabel}>
 		{
 			items.map((item, index) => {
-				const side = index % 2 === 0 ? "start" : "end";
 				const hasHighlights = Boolean(item.highlights?.length);
 				const hasTags = Boolean(item.tags?.length);
 
 				return (
 					<li
-						class:list={["timeline__item", `timeline__item--${side}`]}
+						class="timeline__item"
 						data-cascade-item
 						style={`--cascade-delay: ${0.22 + index * 0.08}s`}
 					>
-						<div class="timeline__marker" aria-hidden="true">
-							<span class="timeline__dot" />
-						</div>
-
 						<div class="timeline__content">
 							<Card
 								as="article"
@@ -107,89 +102,58 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 	}
 
 	.timeline__list {
-		position: relative;
 		box-sizing: border-box;
-		display: grid;
-		gap: 32px;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
 		width: 100%;
-		max-width: 920px;
-		margin: 0 auto;
-		padding: 8px 0;
+		margin: 0;
+		padding: 0;
 		list-style: none;
 	}
 
-	/* Central spine on desktop; plain neutral hairline. */
-	.timeline__list::before {
-		content: "";
-		position: absolute;
-		top: 20px;
-		bottom: 20px;
-		left: 50%;
-		width: 1px;
-		transform: translateX(-50%);
-		background: rgb(var(--color-border));
-	}
-
 	.timeline__item {
-		position: relative;
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
-		align-items: start;
 		min-width: 0;
 	}
 
-	.timeline__marker {
-		z-index: 1;
-		grid-column: 2;
-		display: flex;
-		justify-content: center;
-		padding-top: 32px;
-	}
-
-	.timeline__dot {
-		/* A span defaults to display:inline, which ignores width and height
-		   and collapses the marker to nothing on the spine. */
-		display: block;
-		width: 11px;
-		height: 11px;
-		border: 1px solid var(--color-border-strong);
-		border-radius: 999px;
-		background: rgb(var(--color-surface));
-	}
-
 	.timeline__content {
-		position: relative;
 		box-sizing: border-box;
 		min-width: 0;
 	}
 
-	.timeline__item--start .timeline__content {
-		grid-column: 1;
-		margin-right: 12px;
+	/* Card separates header, body and footer with a 24px gap plus a ruled
+	   padding. Here the company line and the description are one block, so
+	   that break reads as a hole. */
+	.timeline :global(article.card) {
+		gap: 12px;
 	}
 
-	.timeline__item--end .timeline__content {
-		grid-column: 3;
-		margin-left: 12px;
+	.timeline :global(.card__header),
+	.timeline :global(.card__footer) {
+		padding: 0;
+		border: 0;
 	}
 
 	.timeline-card__header {
 		display: grid;
-		gap: 10px;
+		gap: 6px;
 	}
 
 	.timeline-card__period {
 		margin: 0;
 		color: rgb(var(--color-text-muted));
-		font-size: 14px;
-		font-weight: 500;
-		line-height: 1.3;
+		font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+		font-size: 13px;
+		font-variant-numeric: tabular-nums;
+		font-weight: 400;
+		line-height: 1.4;
 	}
 
 	.timeline-card__role {
 		margin: 0;
-		font-size: 22px;
-		line-height: 1.15;
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 1.35;
 		letter-spacing: 0;
 	}
 
@@ -200,7 +164,7 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 		margin: 0;
 		color: rgb(var(--color-text-muted));
 		font-size: 14px;
-		font-weight: 500;
+		font-weight: 400;
 		line-height: 1.45;
 	}
 
@@ -212,7 +176,7 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 
 	.timeline-card__description {
 		margin: 0;
-		color: rgb(var(--color-text-muted));
+		color: rgb(var(--color-body));
 		font-size: 15px;
 		line-height: 1.65;
 		text-wrap: pretty;
@@ -242,40 +206,4 @@ const classes = ["timeline", className].filter(Boolean).join(" ");
 		list-style: none;
 	}
 
-	@media (max-width: 760px) {
-		.timeline__list {
-			max-width: none;
-			margin: 0;
-			padding-left: 32px;
-		}
-
-		.timeline__list::before {
-			left: 5px;
-			transform: none;
-		}
-
-		.timeline__item {
-			display: block;
-		}
-
-		.timeline__marker {
-			position: absolute;
-			top: 30px;
-			left: -32px;
-			width: 13px;
-			padding-top: 0;
-		}
-
-		.timeline__content {
-			margin: 0;
-		}
-
-		.timeline-card__role {
-			font-size: 20px;
-		}
-
-		.timeline-card__description {
-			font-size: 14px;
-		}
-	}
 </style>
