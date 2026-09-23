@@ -20,16 +20,6 @@ export function getPostUrl(post: BlogPost): string {
 	return `/blog/${post.id}/`;
 }
 
-export function getFeaturedAndRecent(
-	posts: BlogPost[],
-	count = 5,
-): { featured: BlogPost | undefined; recent: BlogPost[] } {
-	const sorted = sortPostsByDate(posts);
-	const featured = sorted[0];
-	const recent = sorted.slice(1, count);
-	return { featured, recent };
-}
-
 export function enrichPost(post: BlogPost) {
 	const readingTime = getReadingTime(post.body ?? "");
 	return {

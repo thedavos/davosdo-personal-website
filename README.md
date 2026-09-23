@@ -4,7 +4,7 @@ Sitio personal y portfolio de [David Vargas Domínguez](https://davosdo.dev): la
 
 ## Stack
 
-- [Astro](https://astro.build) 6 + islands de [Vue](https://vuejs.org) donde hace falta interactividad
+- [Astro](https://astro.build) 6, con scripts de cliente mínimos donde hace falta interactividad
 - [UnoCSS](https://unocss.dev) para estilos utilitarios y tokens del sitio
 - [Cloudflare Workers](https://developers.cloudflare.com/workers/) para hosting, assets estáticos y el endpoint de contacto
 - [Swup](https://swup.js.org) para transiciones entre páginas
@@ -55,7 +55,7 @@ src/
 ├── data/           # Proyectos, servicios, experiencia, FAQ
 ├── layouts/        # PageLayout, BlogPost
 ├── pages/          # Rutas del sitio
-└── styles/         # CSS global, home, blog, formularios
+└── styles/         # CSS global, blog, formularios
 public/             # Assets estáticos (logos, imágenes del blog, etc.)
 ```
 

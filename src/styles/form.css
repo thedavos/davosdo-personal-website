@@ -11,14 +11,6 @@ html[data-theme="dark"] {
 	--form-panel-border: rgba(255, 255, 255, 0.18);
 }
 
-html[data-theme="dark"] .home-section--surface .form-fields :is(input, select, textarea):not(:disabled):not(.form-control-error) {
-	border-color: rgba(255, 255, 255, 0.18);
-}
-
-html[data-theme="dark"] .home-section--surface .form-fields :is(input, select, textarea):not(:disabled):not(:focus-visible):not(.form-control-error):hover {
-	border-color: rgba(255, 255, 255, 0.26);
-}
-
 .form-fields {
 	box-sizing: border-box;
 	max-width: 100%;

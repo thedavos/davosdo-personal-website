@@ -346,7 +346,7 @@ export const siteConfig: SiteConfig = {
   // Optional Content Types - Enable/disable optional content sections (takes priority over homeOptions)
   optionalContentTypes: {
     // [CONFIG:OPTIONAL_CONTENT_TYPES_PROJECTS]
-    projects: false, // Home projects are handled by src/components/home/HomeProjects.astro.
+    projects: false, // Projects are handled by src/pages/projects/ and src/data/projects.ts.
     // [CONFIG:OPTIONAL_CONTENT_TYPES_DOCS]
     docs: false, // This site does not expose docs pages.
   },

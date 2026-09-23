@@ -1,0 +1,81 @@
+---
+import { Picture } from "astro:assets";
+import SocialLinks from "@components/commons/SocialLinks.astro";
+import ThemeToggle from "@components/commons/ThemeToggle.astro";
+import profilePhoto from "@/assets/profile/davosdo-profile.png";
+
+const AVATAR_SIZE = 80;
+---
+
+<section id="sobre-mi" aria-labelledby="sobre-mi-title" class="flex flex-col gap-8">
+	<header
+		class="flex items-center gap-5"
+		data-cascade-item
+		style="--cascade-delay: 0.04s"
+	>
+		<div class="h-20 w-20 shrink-0 overflow-hidden rounded-full bg-panel">
+			<Picture
+				src={profilePhoto}
+				alt="Retrato de David Vargas Domínguez"
+				formats={["avif"]}
+				fallbackFormat="webp"
+				width={AVATAR_SIZE}
+				height={AVATAR_SIZE}
+				widths={[AVATAR_SIZE, AVATAR_SIZE * 2]}
+				sizes={`${AVATAR_SIZE}px`}
+				loading="eager"
+				decoding="async"
+				class="block h-full w-full scale-[1.04] rounded-none object-cover"
+			/>
+		</div>
+		<div class="flex min-w-0 flex-col">
+			<h1
+				id="sobre-mi-title"
+				class="m-0 text-[22px] font-semibold leading-tight tracking-[-0.01em]"
+			>
+				David Vargas Domínguez
+			</h1>
+			<p class="m-0 mt-0.5 text-[15px] leading-snug text-muted">
+				Senior Fullstack Developer
+			</p>
+			<SocialLinks class="-ml-3 mt-1 flex flex-wrap items-center">
+				<ThemeToggle />
+			</SocialLinks>
+		</div>
+	</header>
+
+	<div
+		class="flex flex-col gap-4 text-[17px] leading-[1.7] text-body [text-wrap:pretty]"
+		data-cascade-item
+		style="--cascade-delay: 0.08s"
+	>
+		<p class="m-0">
+			Soy David, fullstack & mobile developer. Llevo siete años construyendo productos
+			web y móviles que se usan en producción: hoy trabajo en la banca digital
+			de <a href="/projects/interbank" class="text-link">Interbank</a>, antes
+			pasé cuatro años en la app fintech de
+			<a href="/projects/global66" class="text-link">Global66</a> y lideré el
+			equipo frontend de FractalUp.
+		</p>
+		<p class="m-0">
+			Fuera del trabajo construyo mis propias herramientas, casi siempre sobre
+			Cloudflare, como <a href="/projects/davos-links" class="text-link">atajo</a>
+			y <a href="/projects/rutasec" class="text-link">RutaSec</a>, y
+			<a href="#escritura" class="text-link" data-no-swup>escribo</a> sobre lo que voy
+			aprendiendo en desarrollo, automatización y ciberseguridad.
+		</p>
+		<p class="m-0">
+			Si tienes un proyecto web, móvil o una automatización en mente,
+			escríbeme a <a href="mailto:hola@davosdo.dev" class="text-link"
+				>hola@davosdo.dev</a
+			> o <a href="/contact" class="text-link">cuéntamelo aquí</a>. Respondo en
+			menos de 24 horas.
+		</p>
+	</div>
+</section>
+
+<script>
+	import { bindSamePageHashLinks } from "@/utils/scroll";
+
+	bindSamePageHashLinks();
+</script>

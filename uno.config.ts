@@ -10,6 +10,8 @@ export default defineConfig({
 	safelist: [
 		"i-lucide-rocket",
 		"i-lucide-github",
+		"i-lucide-linkedin",
+		"i-lucide-mail",
 		"i-lucide-play",
 		"i-lucide-book-open",
 		"i-lucide-newspaper",
@@ -105,7 +107,12 @@ export default defineConfig({
 		},
 	},
 	shortcuts: {
-		"site-container": "w-full max-w-[900px] mx-auto px-4",
+		"site-container": "w-full max-w-[900px] mx-auto px-5",
+		"site-column": "w-full max-w-[640px] mx-auto px-5",
+		"text-link":
+			"rounded-sm text-body underline decoration-[rgb(var(--color-outline))] decoration-1 underline-offset-4 transition-colors hover:decoration-current focus-visible:outline-[2px] focus-visible:outline-primary-hover focus-visible:outline-offset-[3px]",
+		"text-meta":
+			"font-mono text-[13px] leading-snug text-muted [font-variant-numeric:tabular-nums]",
 		"text-logo": "text-body text-lg no-underline transition-colors hover:text-primary",
 		"service-card-surface":
 			"!border !border-[var(--color-card-border)] !rounded-lg !bg-surface transition-[border-color,background-color,box-shadow] duration-200 ease-out",

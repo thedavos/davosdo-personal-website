@@ -1,0 +1,59 @@
+---
+interface Props {
+	title: string;
+	href?: string;
+	note?: string;
+	meta?: string;
+	datetime?: string;
+	external?: boolean;
+}
+
+const { title, href, note, meta, datetime, external = false } = Astro.props;
+---
+
+<li class="flex flex-col gap-1">
+	<div class="flex items-baseline justify-between gap-4">
+		{
+			href ? (
+				<a
+					href={href}
+					class="text-link text-[16px] font-medium leading-snug"
+					target={external ? "_blank" : undefined}
+					rel={external ? "noreferrer" : undefined}
+				>
+					{title}
+					{external && (
+						<>
+							<span
+								class="i-lucide-arrow-up-right ml-0.5 inline-block align-[-1px] text-[13px] text-muted"
+								aria-hidden="true"
+							/>
+							<span class="sr-only">(se abre en otra pestaña)</span>
+						</>
+					)}
+				</a>
+			) : (
+				<span class="text-[16px] font-medium leading-snug text-body">{title}</span>
+			)
+		}
+		<slot name="meta">
+			{
+				meta &&
+					(datetime ? (
+						<time datetime={datetime} class="text-meta shrink-0">
+							{meta}
+						</time>
+					) : (
+						<span class="text-meta shrink-0">{meta}</span>
+					))
+			}
+		</slot>
+	</div>
+	{
+		note && (
+			<p class="m-0 max-w-[60ch] text-[14px] leading-relaxed text-muted [text-wrap:pretty]">
+				{note}
+			</p>
+		)
+	}
+</li>

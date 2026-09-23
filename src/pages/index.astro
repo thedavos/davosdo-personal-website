@@ -1,59 +1,160 @@
 ---
-import { env } from "cloudflare:workers";
-import HomeBlog from "@components/home/HomeBlog.astro";
-import HomeContact from "@components/home/HomeContact.astro";
-import HomeFaq from "@components/home/HomeFaq.astro";
-import HomeHero from "@components/home/HomeHero.astro";
-import HomeProjects from "@components/home/HomeProjects.astro";
-import HomeServices from "@components/home/HomeServices.astro";
+import { getCollection } from "astro:content";
+import HomeIntro from "@components/home/HomeIntro.astro";
+import HomeRow from "@components/home/HomeRow.astro";
+import HomeSection from "@components/home/HomeSection.astro";
 import PageLayout from "@layouts/PageLayout.astro";
-import "@styles/home.css";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
-import { getVisibleProjects } from "@data/projects";
-import { getServiceBySlug, services } from "@data/services";
+import { getPostUrl, sortPostsByDate } from "@/lib/blog";
+import { experienceItems } from "@data/experience";
+import { nowProjects } from "@data/now";
+import { getStatusLabel, getVisibleProjects } from "@data/projects";
+import { services } from "@data/services";
+import { socialLinks } from "@data/social-links";
 
-export const prerender = false;
-
-const serviceParam = Astro.url.searchParams.get("service") ?? "";
-const serviceSlug = getServiceBySlug(serviceParam)?.slug ?? "";
 const visibleProjects = getVisibleProjects();
-const disableTurnstile =
-	env.PUBLIC_DISABLE_TURNSTILE === "true" ||
-	import.meta.env.PUBLIC_DISABLE_TURNSTILE === "true";
-const turnstileSiteKey = disableTurnstile
-	? ""
-	: env.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
+const employerNames = new Set(experienceItems.map(({ company }) => company));
+
+const experienceRows = experienceItems.map((item) => {
+	const caseStudy = visibleProjects.find(
+		({ title }) => title === item.company,
+	);
+	const years = item.period.match(/\d{4}/g) ?? [];
+	const start = years[0] ?? item.period;
+	const end = /actualidad/i.test(item.period) ? "hoy" : years[1];
+
+	return {
+		title: item.company,
+		href: caseStudy ? `/projects/${caseStudy.slug}` : "/experience",
+		note: item.role,
+		meta: end ? `${start} – ${end}` : start,
+	};
+});
+
+const personalProjects = visibleProjects.filter(
+	({ title }) => !employerNames.has(title),
+);
+
+const latestPosts = sortPostsByDate(await getCollection("blog")).slice(0, 3);
+
+const formatPostDate = (date: Date) =>
+	date
+		.toLocaleDateString("es", { day: "numeric", month: "short", year: "numeric" })
+		.replace(".", "");
 ---
 
 <PageLayout
 	showFooter
 	title={SITE_TITLE}
 	description={SITE_DESCRIPTION}
-	containerClass="home-page py-0"
+	containerClass="site-column py-14 md:py-20"
 >
-	{
-		/* The contact form injects the Turnstile script on demand, and warming
-		   the connection removes DNS and TLS from the critical path at submit
-		   time. This lives on the page rather than in the layout because the form
-		   only exists here. In the layout it made every blog, project and
-		   experience page open a TLS connection for a widget they never load. */
-		!disableTurnstile && (
-			<link
-				slot="head"
-				rel="preconnect"
-				href="https://challenges.cloudflare.com"
-				crossorigin
-			/>
-		)
-	}
-	<HomeHero />
-	<HomeProjects projects={visibleProjects} />
-	<HomeServices services={services} />
-	<HomeBlog />
-	<HomeFaq />
-	<HomeContact
-		selectedService={serviceSlug}
-		turnstileSiteKey={turnstileSiteKey}
-		disableTurnstile={disableTurnstile}
-	/>
+	<div class="flex flex-col gap-14" data-cascade-scope>
+		<HomeIntro />
+
+		<HomeSection id="ahora" title="Ahora" delay={0.12}>
+			<ul
+				class="m-0 flex [list-style:none] flex-col gap-5 rounded-lg border border-border px-5 py-4"
+			>
+				{
+					nowProjects.map((project) => (
+						<HomeRow
+							title={project.title}
+							href={project.href}
+							note={project.description}
+							meta={project.status}
+							external
+						/>
+					))
+				}
+			</ul>
+		</HomeSection>
+
+		<HomeSection id="experiencia" title="Experiencia" delay={0.16}>
+			<ul class="m-0 flex [list-style:none] flex-col gap-5 p-0">
+				{experienceRows.map((row) => <HomeRow {...row} />)}
+			</ul>
+			<p class="m-0 mt-5 text-[14px]">
+				<a href="/experience" class="text-link">Trayectoria completa</a>
+			</p>
+		</HomeSection>
+
+		<HomeSection id="proyectos" title="Proyectos" delay={0.2}>
+			<ul class="m-0 flex [list-style:none] flex-col gap-5 p-0">
+				{
+					personalProjects.map((project) => (
+						<HomeRow
+							title={project.title}
+							href={`/projects/${project.slug}`}
+							note={project.description}
+							meta={getStatusLabel(project.status).toLowerCase()}
+						/>
+					))
+				}
+			</ul>
+			<p class="m-0 mt-5 text-[14px]">
+				<a href="/projects" class="text-link">Todos los proyectos</a>
+			</p>
+		</HomeSection>
+
+		<HomeSection id="escritura" title="Escritura" delay={0.24}>
+			{
+				latestPosts.length > 0 ? (
+					<ul class="m-0 flex [list-style:none] flex-col gap-4 p-0">
+						{latestPosts.map((post) => (
+							<HomeRow
+								title={post.data.title}
+								href={getPostUrl(post)}
+								meta={formatPostDate(post.data.pubDate)}
+								datetime={post.data.pubDate.toISOString()}
+							/>
+						))}
+					</ul>
+				) : (
+					<p class="m-0 text-[15px] text-muted">Aún no hay artículos publicados.</p>
+				)
+			}
+			<p class="m-0 mt-5 text-[14px]">
+				<a href="/blog" class="text-link">Todos los artículos</a>
+			</p>
+		</HomeSection>
+
+		<HomeSection id="servicios" title="Servicios" delay={0.28}>
+			<ul class="m-0 flex [list-style:none] flex-col gap-5 p-0">
+				{
+					services.map((service) => (
+						<HomeRow title={service.title} note={service.description}>
+							<a
+								slot="meta"
+								href={`/contact?service=${service.slug}`}
+								class="text-link shrink-0 text-[13px]"
+								aria-label={`Hablemos sobre ${service.title}`}
+							>
+								Hablemos
+							</a>
+						</HomeRow>
+					))
+				}
+			</ul>
+		</HomeSection>
+
+		<HomeSection id="contacto" title="Contacto" delay={0.32}>
+			<ul class="m-0 flex [list-style:none] flex-col gap-3 p-0">
+				{
+					socialLinks.map((link) => (
+						<HomeRow
+							title={link.label}
+							href={link.href}
+							meta={link.handle}
+							external={link.external}
+						/>
+					))
+				}
+			</ul>
+			<p class="m-0 mt-5 text-[14px]">
+				¿Prefieres contarme tu proyecto con más detalle?
+				<a href="/contact" class="text-link">Usa el formulario</a>.
+			</p>
+		</HomeSection>
+	</div>
 </PageLayout>

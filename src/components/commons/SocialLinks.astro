@@ -4,65 +4,34 @@ import Button from "@components/commons/Button.astro";
 import BskyIcon from "@components/icons/BskyIcon.astro";
 import HackTheBoxIcon from "@components/icons/HackTheBoxIcon.astro";
 import XIcon from "@components/icons/XIcon.astro";
-
-type SocialLink = {
-	label: string;
-	href: string;
-	icon?: string;
-	iconComponent?: typeof XIcon | typeof HackTheBoxIcon | typeof BskyIcon;
-	external: boolean;
-};
+import {
+	socialLinks,
+	type SocialIconComponent,
+	type SocialLink,
+} from "@data/social-links";
 
 interface Props extends HTMLAttributes<"div"> {
 	links?: SocialLink[];
 }
 
-const defaultLinks: SocialLink[] = [
-	{
-		label: "GitHub",
-		href: "https://github.com/thedavos",
-		icon: "i-lucide-github",
-		external: true,
-	},
-	{
-		label: "LinkedIn",
-		href: "https://www.linkedin.com/in/thedavos/",
-		icon: "i-lucide-linkedin",
-		external: true,
-	},
-	{
-		label: "X",
-		href: "https://x.com/davosdodev",
-		iconComponent: XIcon,
-		external: true,
-	},
-	{
-		label: "Bluesky",
-		href: "https://bsky.app/profile/davoscode.bsky.social",
-		iconComponent: BskyIcon,
-		external: true,
-	},
-	{
-		label: "Hack The Box",
-		href: "https://profile.hackthebox.com/profile/019dad09-0788-7249-9f3b-00d8edd49171",
-		iconComponent: HackTheBoxIcon,
-		external: true,
-	},
-	{
-		label: "Email",
-		href: "mailto:hola@davosdo.dev",
-		icon: "i-lucide-mail",
-		external: false,
-	},
-];
+const iconComponents: Record<
+	SocialIconComponent,
+	typeof XIcon | typeof BskyIcon | typeof HackTheBoxIcon
+> = {
+	x: XIcon,
+	bluesky: BskyIcon,
+	hackthebox: HackTheBoxIcon,
+};
 
-const { class: className, links = defaultLinks, ...props } = Astro.props;
+const { class: className, links = socialLinks, ...props } = Astro.props;
 ---
 
 <div class:list={[className]} {...props}>
 	{
 		links.map((social) => {
-			const Icon = social.iconComponent;
+			const Icon = social.iconComponent
+				? iconComponents[social.iconComponent]
+				: undefined;
 
 			return (
 				<Button
@@ -81,4 +50,5 @@ const { class: className, links = defaultLinks, ...props } = Astro.props;
 			);
 		})
 	}
+	<slot />
 </div>

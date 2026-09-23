@@ -1,0 +1,24 @@
+---
+interface Props {
+	id: string;
+	title: string;
+	delay?: number;
+}
+
+const { id, title, delay = 0.04 } = Astro.props;
+---
+
+<section
+	id={id}
+	aria-labelledby={`${id}-title`}
+	data-cascade-item
+	style={`--cascade-delay: ${delay}s`}
+>
+	<h2
+		id={`${id}-title`}
+		class="m-0 mb-5 text-[15px] font-medium leading-snug tracking-normal text-muted"
+	>
+		{title}
+	</h2>
+	<slot />
+</section>

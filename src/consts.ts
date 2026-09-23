@@ -8,6 +8,7 @@ export const SITE_DESCRIPTION =
 
 export const SITE_NAV_ITEMS: NavigationItem[] = [
 	{ url: "/", title: "Sobre mi", navigationOrder: 1 },
-	{ url: "/experience", title: "Experiencia", navigationOrder: 2 },
-	{ url: "/blog", title: "Blog", navigationOrder: 3 },
+	{ url: "/projects", title: "Proyectos", navigationOrder: 2 },
+	{ url: "/experience", title: "Experiencia", navigationOrder: 3 },
+	{ url: "/blog", title: "Blog", navigationOrder: 4 },
 ] as const;
