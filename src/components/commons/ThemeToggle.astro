@@ -3,72 +3,17 @@
 
 <button
 	data-theme-toggle
-	class="theme-toggle inline-flex h-10 w-10 items-center justify-center rounded-full border-0 bg-transparent p-0 text-body transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-[2px] focus-visible:outline-primary-hover focus-visible:outline-offset-[3px]"
+	class="theme-toggle inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-transparent p-0 text-muted transition-colors duration-150 ease-out hover:bg-[rgb(var(--color-body)/0.05)] hover:text-body focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
 	aria-label="Cambiar tema"
+	aria-keyshortcuts="T"
+	title="Cambiar tema (T)"
 	type="button"
 >
-	<span class="theme-toggle__icon theme-toggle__icon--sun i-lucide-sun text-lg" aria-hidden="true"></span>
-	<span class="theme-toggle__icon theme-toggle__icon--moon i-lucide-moon text-lg" aria-hidden="true"></span>
+	<span class="theme-toggle__icon theme-toggle__icon--sun i-lucide-sun text-[18px]" aria-hidden="true"></span>
+	<span class="theme-toggle__icon theme-toggle__icon--moon i-lucide-moon text-[18px]" aria-hidden="true"></span>
 </button>
 
-<script>
-	const getTheme = () => {
-		if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
-			return localStorage.getItem("theme");
-		}
-		return window.matchMedia("(prefers-color-scheme: dark)").matches
-			? "dark"
-			: "light";
-	};
-
-	const setTheme = (theme: string) => {
-		const root = document.documentElement;
-		root.classList.add("theme-transition");
-		window.setTimeout(() => root.classList.remove("theme-transition"), 300);
-
-		root.setAttribute("data-theme", theme);
-		localStorage.setItem("theme", theme);
-
-		if (theme === "dark") {
-			root.classList.add("dark");
-		} else {
-			root.classList.remove("dark");
-		}
-	};
-
-	function syncThemeFromStorage() {
-		setTheme(getTheme() ?? "light");
-	}
-
-	function bindThemeToggle() {
-		if (document.documentElement.dataset.themeToggleBound) return;
-
-		document.documentElement.dataset.themeToggleBound = "true";
-
-		document.addEventListener("click", (event) => {
-			const toggle = (event.target as HTMLElement).closest("[data-theme-toggle]");
-			if (!toggle) return;
-
-			const currentTheme = document.documentElement.getAttribute("data-theme");
-			const newTheme = currentTheme === "dark" ? "light" : "dark";
-			setTheme(newTheme);
-		});
-	}
-
-	function setupThemeToggle() {
-		syncThemeFromStorage();
-		bindThemeToggle();
-	}
-
-	setupThemeToggle();
-	document.addEventListener("astro:page-load", setupThemeToggle);
-</script>
-
 <style>
-	.theme-toggle {
-		cursor: pointer;
-	}
-
 	.theme-toggle__icon {
 		display: inline-flex;
 	}

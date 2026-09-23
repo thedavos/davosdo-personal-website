@@ -89,6 +89,7 @@ select {
 }
 
 html[data-theme='dark'] {
+	color-scheme: dark;
 	/* Indigo 400 and 300. The dark theme keeps the lighter end of the scale
 	   because it sits on a dark background, where indigo 400 reads at 5.98.
 	   `primary-dark` is indigo 300 rather than 500, so the hover state gets
@@ -124,11 +125,6 @@ html[data-theme='dark'] .service-card-surface {
 	border: 1px solid rgb(var(--color-border)) !important;
 }
 
-html[data-theme='dark'] .home-section--surface .service-card-surface,
-html[data-theme='dark'] .home-section--surface .card {
-	border-color: rgba(255, 255, 255, 0.2) !important;
-}
-
 html[data-theme='dark'] .service-card-surface-hover:hover,
 html[data-theme='dark'] .card:hover {
 	box-shadow: none !important;
@@ -161,6 +157,7 @@ html.theme-transition *::after {
 }
 
 html {
+	color-scheme: light;
 	scrollbar-width: thin;
 	scrollbar-color: gray transparent;
 	scroll-padding-top: 2rem;

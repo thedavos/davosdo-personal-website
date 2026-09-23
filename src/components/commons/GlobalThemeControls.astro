@@ -1,0 +1,43 @@
+<script>
+	import { followSystemTheme, toggleTheme } from "@/utils/theme";
+
+	const isEditableTarget = (target: EventTarget | null) => {
+		if (!(target instanceof HTMLElement)) return false;
+
+		return (
+			target.isContentEditable ||
+			target.closest("input, textarea, select, [contenteditable]") !== null
+		);
+	};
+
+	const onKeydown = (event: KeyboardEvent) => {
+		if (
+			event.key.toLowerCase() !== "t" ||
+			event.repeat ||
+			event.metaKey ||
+			event.ctrlKey ||
+			event.altKey ||
+			event.defaultPrevented ||
+			isEditableTarget(event.target)
+		) {
+			return;
+		}
+
+		event.preventDefault();
+		toggleTheme();
+	};
+
+	const onClick = (event: MouseEvent) => {
+		if (!(event.target instanceof Element)) return;
+		if (!event.target.closest("[data-theme-toggle]")) return;
+
+		toggleTheme();
+	};
+
+	if (!document.documentElement.dataset.themeControlsBound) {
+		document.documentElement.dataset.themeControlsBound = "true";
+		followSystemTheme();
+		window.addEventListener("keydown", onKeydown);
+		document.addEventListener("click", onClick);
+	}
+</script>

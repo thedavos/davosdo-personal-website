@@ -66,19 +66,15 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url);
 <meta name="twitter:image:alt" content={imageAlt} />
 
 <script is:inline>
-	const theme = (() => {
-		if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-			return localStorage.getItem('theme');
-		}
-		if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-			return 'dark';
-		}
-		return 'light';
-	})();
-	document.documentElement.setAttribute('data-theme', theme);
-	if (theme === 'dark') {
-		document.documentElement.classList.add('dark');
-	} else {
-		document.documentElement.classList.remove('dark');
-	}
+	const stored = localStorage.getItem("theme");
+	const theme =
+		stored === "light" || stored === "dark"
+			? stored
+			: window.matchMedia("(prefers-color-scheme: dark)").matches
+				? "dark"
+				: "light";
+	const root = document.documentElement;
+	root.setAttribute("data-theme", theme);
+	root.classList.toggle("dark", theme === "dark");
+	root.style.colorScheme = theme;
 </script>
